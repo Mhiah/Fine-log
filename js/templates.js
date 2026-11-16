@@ -4,7 +4,7 @@
    The structure, layout and responsive notes feed the prompt generator. */
 /* Photos are served by Unsplash (free to use under the Unsplash License). If one fails to load, the tinted block behind it shows instead. */
 function flPhoto(id, alt, w) {
-  return '<img src="https://images.unsplash.com/photo-' + id + '?auto=format&fit=crop&w=' + (w || 800) + '&q=70" alt="' + alt + '" loading="lazy" onerror="this.remove()">';
+  return '<img src="https://images.unsplash.com/photo-' + id + '?auto=format&fit=crop&w=' + (w || 800) + '&q=70" alt="' + alt + '" decoding="async" onerror="this.remove()">';
 }
 window.FL_TEMPLATES = [
   {
