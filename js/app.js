@@ -46,18 +46,19 @@ function fontCss(name, bold) { return "font-family:" + fam(name) + ";font-weight
 
 /* ---------- state ---------- */
 const DEFAULT = {
-  fonts: { head: "Bricolage Grotesque", body: "Instrument Sans", mono: "DM Mono" },
-  colors: { bg: "#F3F4EF", text: "#151821", primary: "#2B3FE0" },
-  auto: { surface: true, muted: true, secondary: true, accent: true, border: true },
+  fonts: { head: "Inter", body: "Inter", mono: "IBM Plex Mono" },
+  colors: { bg: "#FFFFFF", text: "#111111", primary: "#111111", secondary: "#6B7280", accent: "#2B3FE0" },
+  auto: { surface: true, muted: true, secondary: false, accent: false, border: true },
   shape: { radius: "soft", shadow: "soft", density: "comfortable", spacing: "tight", size: "medium" },
-  tpl: "dashboard", view: "desktop",
+  tpl: "landing", view: "desktop",
   prompt: { mode: "new", tool: "any", len: "full" }
 };
 function sanitize(o) {
   const S = JSON.parse(JSON.stringify(DEFAULT)); o = o || {};
   ["head", "body", "mono"].forEach((k) => { const f = info(o.fonts && o.fonts[k]); if (f) S.fonts[k] = f.n; });
   FL.ROLES.forEach((r) => { const h = FL.normHex(o.colors && o.colors[r[0]]); if (h) S.colors[r[0]] = h; });
-  FL.AUTO_ROLES.forEach((k) => { S.auto[k] = !(o.auto && o.auto[k] === false && S.colors[k]); });
+  if (o.auto) FL.AUTO_ROLES.forEach((k) => { S.auto[k] = !(o.auto[k] === false && S.colors[k]); });
+  else if (o.colors) FL.AUTO_ROLES.forEach((k) => { S.auto[k] = !FL.normHex(o.colors[k]); });
   Object.keys(FL.SHAPE).forEach((k) => { if (o.shape && FL.SHAPE[k][o.shape[k]]) S.shape[k] = o.shape[k]; });
   if (TPLS.some((t) => t.id === o.tpl)) S.tpl = o.tpl;
   if (o.view === "mobile") S.view = "mobile";
@@ -84,16 +85,16 @@ let S, cameFromLink = false;
 (function boot() {
   let o = null;
   if (/^#s=/.test(location.hash)) { o = decodeState(location.hash.slice(3)); cameFromLink = !!o; }
-  if (!o) { try { o = JSON.parse(localStorage.getItem("fl-state-v2") || "null"); } catch (e) {} }
+  if (!o) { try { o = JSON.parse(localStorage.getItem("fl-state-v6") || "null"); } catch (e) {} }
   S = sanitize(o);
 })();
 let target = "primary", cur = S.colors.primary;
-function save() { try { localStorage.setItem("fl-state-v2", JSON.stringify(S)); } catch (e) {} }
+function save() { try { localStorage.setItem("fl-state-v6", JSON.stringify(S)); } catch (e) {} }
 
 /* ---------- welcome ---------- */
 const CYCLE = ["Playfair Display", "Bebas Neue", "Pacifico", "Abril Fatface", "Caveat", "Monoton", "Fraunces", "Permanent Marker", "Cinzel", "Righteous", "Dancing Script", "Space Mono", "Bungee", "Syne", "Great Vibes", "Unbounded", "Amatic SC", "Press Start 2P", "DM Serif Display", "Anton", "Sacramento", "Fredoka", "Shrikhand", "Italiana"];
-const FINAL = "Bricolage Grotesque", word = $("word"), stage = $("stage");
-let running = false;
+const FINAL = "San Francisco / Inter", word = $("word"), stage = $("stage"), intro = $("intro");
+let running = false, introT;
 function fitWord() { word.style.transform = ""; word.style.transform = "scale(" + Math.min(1, stage.clientWidth / word.offsetWidth) + ")"; }
 function setWelcome(i) {
   if (i < CYCLE.length) word.style.cssText = "font-family:" + fam(CYCLE[i]) + ";font-weight:400;letter-spacing:0";
@@ -101,18 +102,20 @@ function setWelcome(i) {
   $("tick").textContent = ("0" + (i + 1)).slice(-2) + " / " + (CYCLE.length + 1) + " · " + (i < CYCLE.length ? CYCLE[i] : FINAL);
   fitWord();
 }
+function closeIntro() { running = false; clearTimeout(introT); intro.classList.add("out"); setTimeout(() => intro.classList.remove("show", "out"), 520); }
 function playWelcome() {
-  if (running) return; running = true; $("rule").classList.remove("draw");
+  if (running) return; running = true; intro.classList.remove("out"); intro.classList.add("show"); $("rule").classList.remove("draw");
   let i = 0; const n = CYCLE.length;
   (function step() {
+    if (!running) return;
     setWelcome(i);
-    if (i >= n) { running = false; void $("rule").offsetWidth; $("rule").classList.add("draw"); return; }
-    const d = 95 + 240 * Math.pow(i / n, 3); i++; setTimeout(step, d);
+    if (i >= n) { void $("rule").offsetWidth; $("rule").classList.add("draw"); introT = setTimeout(closeIntro, 1100); return; }
+    const d = 95 + 240 * Math.pow(i / n, 3); i++; introT = setTimeout(step, d);
   })();
 }
 function startWelcome() {
-  fitWord();
   if (window.matchMedia && matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  intro.classList.add("show"); setWelcome(0);
   const l = document.createElement("link"); l.rel = "stylesheet";
   l.href = "https://fonts.googleapis.com/css2?" + CYCLE.map((n) => "family=" + n.replace(/ /g, "+")).join("&") + "&text=Welcome&display=block";
   let go = false; const begin = () => { if (go) return; go = true; playWelcome(); };
@@ -120,10 +123,11 @@ function startWelcome() {
     if (!document.fonts || !document.fonts.load) return begin();
     Promise.all(CYCLE.map((n) => document.fonts.load("64px '" + n + "'", "Welcome").catch(() => {}))).then(begin);
   };
-  l.onerror = begin; document.head.appendChild(l); setTimeout(begin, 3500);
+  l.onerror = begin; document.head.appendChild(l); setTimeout(begin, 2500);
 }
 $("replay").onclick = playWelcome;
-window.addEventListener("resize", fitWord);
+$("skip").onclick = closeIntro;
+window.addEventListener("resize", () => { if (running) fitWord(); });
 
 /* ---------- font library ---------- */
 let fq = "", fcat = "all", fshown = 0, flist = FONTS;
@@ -276,14 +280,15 @@ function fitFrame(frame) {
   if (mode === "mobile") { const w = Math.min(390, W - 16); inner.style.width = w + "px"; inner.style.transform = ""; inner.style.marginLeft = (W - w) / 2 + "px"; frame.style.height = ""; return; }
   const tw = Math.max(W, 1040), s = W / tw;
   inner.style.marginLeft = "0"; inner.style.width = tw + "px"; inner.style.transform = s < 1 ? "scale(" + s + ")" : "";
-  frame.style.height = (mode === "thumb" ? Math.round(W * 0.66) : Math.ceil(inner.offsetHeight * s)) + "px";
+  frame.style.height = (mode === "thumb" ? Math.round(W * (+frame.dataset.ratio || 0.66)) : Math.ceil(inner.offsetHeight * s)) + "px";
 }
 const ro = "ResizeObserver" in window ? new ResizeObserver((es) => es.forEach((e) => fitFrame(e.target.classList.contains("frame") ? e.target : e.target.parentNode))) : null;
 function watch(frame) { if (ro) { ro.observe(frame); ro.observe(frame.firstElementChild); } fitFrame(frame); }
 function buildPreviewStatic() {
   $("gallery").innerHTML = TPLS.map((t) => '<button class="thumb" type="button" data-tpl="' + t.id + '" aria-pressed="' + (S.tpl === t.id) + '"><div class="frame" data-mode="thumb"><div class="tpl">' + t.html + "</div></div><span><b>" + t.name + "</b><small>" + t.blurb + "</small></span></button>").join("");
   each("#gallery .frame", watch);
-  $("pvinner").className = "tpl"; watch($("pvframe"));
+  $("filters").innerHTML = seg("cat", [["All", "All"]].concat(TPLS.map((t) => [t.cat, t.cat])), "All").replace(/class="btn small"/g, "");
+  $("pvinner").className = "tpl"; watch($("pvframe")); watch($("heroprev").firstElementChild);
   window.addEventListener("resize", () => each(".frame", fitFrame));
 }
 function renderTools() {
@@ -294,9 +299,16 @@ function renderTools() {
 }
 $("tools").addEventListener("click", (e) => { const b = e.target.closest("[data-k]"); if (!b) return; if (b.dataset.k === "view") S.view = b.dataset.v; else S.shape[b.dataset.k] = b.dataset.v; apply(); });
 $("gallery").addEventListener("click", (e) => { const b = e.target.closest("[data-tpl]"); if (!b) return; S.tpl = b.dataset.tpl; apply(); });
+$("filters").addEventListener("click", function (e) {
+  const b = e.target.closest("[data-v]"); if (!b) return; const c = b.dataset.v;
+  each("button", (x) => x.setAttribute("aria-pressed", x === b), this);
+  each("#gallery .thumb", (t) => { t.hidden = c !== "All" && tplOf(t.dataset.tpl).cat !== c; });
+  each("#gallery .frame", fitFrame);
+});
+$("heroprev").onclick = () => { showTab("library"); $("pvframe").scrollIntoView({ block: "start" }); };
 let shownTpl = null;
 function renderPreview() {
-  if (shownTpl !== S.tpl) { $("pvinner").innerHTML = tplOf(S.tpl).html; shownTpl = S.tpl; each("#gallery .thumb", (b) => b.setAttribute("aria-pressed", b.dataset.tpl === S.tpl)); }
+  if (shownTpl !== S.tpl) { $("pvinner").innerHTML = tplOf(S.tpl).html; $("heroinner").innerHTML = tplOf(S.tpl).html; shownTpl = S.tpl; each("#gallery .thumb", (b) => b.setAttribute("aria-pressed", b.dataset.tpl === S.tpl)); }
   $("pvframe").dataset.mode = S.view; fitFrame($("pvframe"));
 }
 
@@ -330,8 +342,9 @@ function apply() {
   ["head", "body", "mono"].forEach((k) => ensureFont(S.fonts[k]));
   setVars(); renderRoles(); renderPair(); syncSegs(); renderPreview(); renderExport(); markFonts();
   $("dockaa").style.cssText = fontCss(S.fonts.head, true) + ";background:" + S.colors.bg + ";color:" + S.colors.text;
-  $("dockfonts").textContent = S.fonts.head + " + " + S.fonts.body;
-  $("dockhex").textContent = S.colors.bg + " · " + S.colors.text + " · " + S.colors.primary;
+  $("dockfonts").textContent = S.fonts.head === S.fonts.body ? S.fonts.head : S.fonts.head + " + " + S.fonts.body;
+  $("dockcols").innerHTML = ["bg", "text", "primary", "accent"].map((k) => '<i style="background:' + S.colors[k] + '" title="' + k + " " + S.colors[k] + '"></i>').join("") + ["primary", "accent", "surface", "bg"].map((k) => "<span>" + S.colors[k] + "</span>").join("");
+  $("docktpl").textContent = tplOf(S.tpl).name;
   if (promptShown) writePrompt(true);
   save();
 }
@@ -395,7 +408,7 @@ $("askex").onclick = suggest;
 $("examples").addEventListener("click", (e) => {
   const a = e.target.closest('[data-k="around"]'); if (a) { around = a.dataset.v; suggest(); return; }
   const b = e.target.closest("[data-ex]"); if (!b) return; const c = examples[+b.dataset.ex];
-  S.fonts.head = c.heading; S.fonts.body = c.body; applyPalette(c.pal); toast("Applied. See it under Pick your UI.");
+  S.fonts.head = c.heading; S.fonts.body = c.body; applyPalette(c.pal); toast("Applied. See it in the UI Library.");
 });
 
 /* ---------- export, share, saved ---------- */
@@ -421,16 +434,30 @@ $("saved").addEventListener("click", (e) => {
   if (d) { a.splice(+d.dataset.del, 1); putSaved(a); renderSaved(); }
 });
 
-/* ---------- nav highlight ---------- */
-if ("IntersectionObserver" in window) {
-  const navio = new IntersectionObserver((es) => es.forEach((e) => { if (!e.isIntersecting) return; each(".top nav a", (l) => l.classList.toggle("on", l.getAttribute("href") === "#" + e.target.id)); }), { rootMargin: "-45% 0px -50% 0px" });
-  each("section,.hero", (x) => navio.observe(x));
+/* ---------- tabs ---------- */
+const TABS = ["fonts", "colours", "library", "prompt", "export"];
+let tab = "library";
+function showTab(id, scroll) {
+  if (TABS.indexOf(id) < 0) return; tab = id;
+  each("section", (s) => s.classList.toggle("on", s.id === id));
+  each("#nav a, #steps a", (l) => l.classList.toggle("on", l.getAttribute("href") === "#" + id));
+  each(".frame", fitFrame);
+  if (scroll) { const y = document.querySelector(".hero").getBoundingClientRect().bottom + window.scrollY - 70; window.scrollTo({ top: Math.max(0, y), behavior: "auto" }); }
 }
+document.addEventListener("click", (e) => {
+  const a = e.target.closest('a[href^="#"]'); if (!a) return; const id = a.getAttribute("href").slice(1);
+  if (TABS.indexOf(id) < 0) return; e.preventDefault();
+  showTab(id, true);
+  if (a.id === "dockprev") $("pvframe").scrollIntoView({ block: "start" });
+  if (a.id === "dockprompt") { writePrompt(false); $("out").scrollIntoView({ block: "start" }); }
+  try { history.replaceState(null, "", "#" + id); } catch (err) {}
+});
 
 /* ---------- boot ---------- */
 FL._names = [].concat(MONOS, CYCLE, ...Object.keys(PAIRS).map((k) => [k].concat(PAIRS[k])), ...Object.keys(PAIR_BY_CAT).map((k) => PAIR_BY_CAT[k]), ...Object.keys(MOODS).map((k) => MOODS[k].heads.concat(MOODS[k].bodies))).filter((n) => !info(n));
 buildColourStatic(); buildPreviewStatic(); renderTools(); renderPromptOpts(); renderFonts(true); renderSaved();
 $("target").value = target; setCur(cur, null, true); apply(); startWelcome();
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!running) fitWord(); each(".frame", fitFrame); });
+showTab(TABS.indexOf(location.hash.slice(1)) > -1 ? location.hash.slice(1) : "library");
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => each(".frame", fitFrame));
 if (cameFromLink) { toast("Opened a shared design"); try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
 })();

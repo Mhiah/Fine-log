@@ -7,31 +7,37 @@
 <meta name="description" content="Pick fonts and colours, see them on a real UI, and leave with an exact prompt any AI can build from.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Instrument+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div id="intro"><div class="box">
+  <div class="stage" id="stage"><div class="word" id="word">Welcome</div></div>
+  <div class="rule" id="rule"></div>
+  <span class="mono muted" id="tick"></span>
+  <button class="btn small" id="skip" type="button">Skip</button>
+</div></div>
+
 <div class="wrap">
   <div class="top">
     <div class="brand">Fine-log</div>
-    <nav aria-label="Sections">
-      <a href="#fonts">Fonts</a><a href="#colours">Colours</a><a href="#preview">Pick your UI</a><a href="#prompt">Prompt</a><a href="#export">Export</a>
+    <nav aria-label="Sections" id="nav">
+      <a href="#fonts">Fonts</a><a href="#colours">Colours</a><a href="#library">UI Library</a><a href="#prompt">Prompt</a><a href="#export">Export</a>
     </nav>
   </div>
 
   <div class="hero">
-    <div class="stage" id="stage"><h1 class="word" id="word">Welcome</h1></div>
-    <div class="rule" id="rule"></div>
-    <div class="ticker">
-      <span class="mono" id="tick">25 / 25 · Bricolage Grotesque</span>
-      <button class="btn small" id="replay" type="button">Replay welcome</button>
+    <div>
+      <h1>A design catalog for your next build.</h1>
+      <div class="rule"></div>
+      <p class="lede">Explore fonts, choose colours, pick a UI, and get a complete prompt another AI can build from.</p>
+      <div class="stats">
+        <div><b id="statFonts">1,908</b><span>font families</span></div>
+        <div><b>16,777,216</b><span>colours (hex)</span></div>
+        <div><b id="statTpl">5</b><span>ready-made UIs</span></div>
+      </div>
     </div>
-    <p class="lede">Choose fonts and colours, see them on a real interface, then leave with an exact prompt any AI can build from.</p>
-    <div class="stats">
-      <div><b id="statFonts">1,908</b><span>font families</span></div>
-      <div><b>16,777,216</b><span>colours, each with its hex code</span></div>
-      <div><b id="statTpl">4</b><span>working UI templates</span></div>
-    </div>
+    <button class="heroprev" id="heroprev" type="button" aria-label="Open the UI Library preview"><div class="frame" data-mode="thumb" data-ratio="0.6"><div class="tpl" id="heroinner"></div></div></button>
   </div>
 
   <section id="fonts">
@@ -80,16 +86,19 @@
     <div class="named" id="named"></div>
   </section>
 
-  <section id="preview">
-    <div class="shead"><span class="mono">03</span><h2>Pick your UI</h2></div>
-    <p class="sub">Choose the interface you want to build. Each one is a working preview that restyles as you change fonts, colours and shape.</p>
+  <section id="library">
+    <div class="libhead">
+      <div><div class="shead"><span class="mono">03</span><h2>UI Library</h2></div>
+      <p class="sub">Choose a design, apply your fonts and colours, and see it live.</p></div>
+      <div class="filters" id="filters" role="group" aria-label="Filter designs"></div>
+    </div>
     <div class="gallery" id="gallery"></div>
     <div class="tools" id="tools"></div>
     <div class="frame main" id="pvframe" data-mode="desktop"><div id="pvinner"></div></div>
   </section>
 
   <section id="prompt">
-    <div class="shead"><span class="mono">04</span><h2>Get your prompt</h2></div>
+    <div class="shead"><span class="mono">04</span><h2>Get the prompt</h2></div>
     <p class="sub">A complete build specification made from your picks: structure, type, colour tokens, components, responsive rules and checks. Paste it into the AI tool you use.</p>
     <label class="lab" for="brief">What are you building? (optional)</label>
     <textarea class="field" id="brief" placeholder="e.g. Landing page for an NFT art drop. Bold, playful, a little retro."></textarea>
@@ -132,14 +141,17 @@
     <p class="note">Saved designs stay in this browser only.</p>
   </section>
 
-  <footer>Fonts load from Google Fonts. Colour contrast follows the WCAG 2 formula; 4.5 or higher passes for body text. Suggestions and prompts are built from preset rules, not an AI model.</footer>
+  <footer>Fonts load from Google Fonts. Colour contrast follows the WCAG 2 formula; 4.5 or higher passes for body text. Suggestions and prompts are built from preset rules, not an AI model. <button class="btn small" id="replay" type="button" style="margin-left:6px">Replay welcome</button></footer>
 </div>
 
 <div class="dock"><div class="in">
   <div class="aa" id="dockaa">Aa</div>
-  <div class="names"><b id="dockfonts"></b><span id="dockhex"></span></div>
-  <a class="btn small" href="#preview">Preview</a>
-  <a class="btn small primary" href="#prompt">Prompt</a>
+  <div class="names"><b id="dockfonts"></b><span>Heading · Body</span></div>
+  <div class="cols" id="dockcols"></div>
+  <div class="tplname"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><span id="docktpl"></span></div>
+  <span class="sp"></span>
+  <a class="btn" href="#library" id="dockprev">Preview</a>
+  <a class="btn primary" href="#prompt" id="dockprompt">Generate Prompt</a>
 </div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 

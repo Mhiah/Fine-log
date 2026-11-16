@@ -20,7 +20,11 @@ What you picked is what gets built.
 
 ### Welcome
 
-When the page opens, the word "Welcome" runs through 24 different fonts and settles on the 25th. A counter names each font as it passes, and a Replay button plays it again. Visitors who have reduced motion turned on see the final word without the animation.
+When the site opens, a full-screen "Welcome" runs through 24 different fonts and settles on the 25th, then fades into the home page. A counter names each font as it passes. There is a Skip button, and "Replay welcome" at the bottom of the page plays it again. Visitors who have reduced motion turned on go straight to the home page.
+
+### Home
+
+One headline, three numbers and a live preview of the design you have chosen. The menu at the top (Fonts, Colours, UI Library, Prompt, Export) opens one screen at a time, and a bar at the bottom always shows your current fonts and colours with Preview and Generate Prompt buttons.
 
 ### 1. Fonts
 
@@ -42,15 +46,16 @@ A complete interface needs more than three colours, so Fine-log works with eight
 - Twelve ready-made palettes, a swatch book of 13 colour families in 9 shades, and the standard named web colours with their hex codes.
 - Four contrast checks using the WCAG 2 formula: text, muted text, button text on primary, and primary on background.
 
-### 3. Pick your UI
+### 3. UI Library
 
-Four working interface templates, each restyled live by your fonts, colours and shape settings:
+Five working interface designs, each restyled live by your fonts, colours and shape settings. A filter row narrows them by type.
 
 | Template | What it contains |
 | --- | --- |
 | Fintech dashboard | Sidebar, stat cards, cash-flow chart, spending breakdown, transactions table |
-| SaaS landing page | Navigation, hero, customer names, feature cards, pricing, call-to-action band |
+| Landing page | Navigation, split hero with artwork, client names, feature cards, offers, call-to-action band |
 | Portfolio | Editorial headline, intro, project grid, about section |
+| Blog | Navigation, featured post, post cards, newsletter band |
 | E-commerce | Navigation with cart, filter chips, product grid, order summary |
 
 Controls above the preview:
@@ -96,16 +101,17 @@ Fine-log is a static site. There is no build step, no framework and no backend.
 
 - **Design tokens:** every template is styled only through CSS variables (`--t-bg`, `--t-primary`, `--t-fh` and so on). Changing a pick updates the variables, and every template restyles at once.
 - **Derived colours:** surface, muted text and border are mixes of background and text. Secondary and accent are hue shifts of primary.
+- **One screen at a time:** the five menu items switch screens without reloading, and each has its own link (`#fonts`, `#colours`, `#library`, `#prompt`, `#export`).
 - **Responsive previews:** templates use container queries, so they respond to the preview frame's width. The desktop view is drawn at 1040px and scaled to fit.
 - **Font files:** loaded on demand from Google Fonts, one stylesheet per font.
 - **Your picks:** saved in the browser's local storage. Share links carry the design inside the link itself. Nothing is sent to a server.
-- **Themes:** the page chrome follows the visitor's light or dark setting. The templates show only your chosen colours.
+- **Look:** the site itself is always white and minimal, whatever the device theme. It uses the system font on Apple devices (San Francisco, the iPhone font) and Inter everywhere else. The designs in the library show only your chosen fonts and colours.
 
 ## Project structure
 
 ```
 index.html          Page markup
-styles.css          Page styles and the four UI templates' styles
+styles.css          Page styles and the UI designs' styles
 js/fonts.js         The Google Fonts family list (name, style, weights)
 js/colour.js        Colour maths, the eight roles and how five are derived
 js/templates.js     Template markup plus the structure notes used in prompts
@@ -133,7 +139,7 @@ Add an entry to `js/templates.js` with an `id`, `name`, `blurb`, `html`, and the
 
 ## Roadmap
 
-1. More templates: blog, documentation, analytics, admin and mobile app.
+1. More designs: documentation, analytics, admin and mobile app.
 2. Layout controls such as sidebar or top navigation and content width.
 3. More font pairings and palettes.
 4. A real AI model behind the suggestions, through a small server function.

@@ -6,7 +6,8 @@ window.FL_TEMPLATES = [
   {
     id: "dashboard",
     name: "Fintech dashboard",
-    blurb: "Sidebar, balances, chart, table",
+    blurb: "Product, admin or analytics",
+    cat: "Dashboard",
     what: "a fintech dashboard web app",
     html:
       '<div class="t-dash">' +
@@ -67,37 +68,44 @@ window.FL_TEMPLATES = [
   },
   {
     id: "landing",
-    name: "SaaS landing page",
-    blurb: "Hero, features, pricing, call to action",
-    what: "a SaaS marketing landing page",
+    name: "Landing page",
+    blurb: "Product, startup or creative site",
+    cat: "Landing",
+    what: "a marketing landing page",
     html:
       '<div class="t-land">' +
-        '<div class="nav"><span class="h logo">Relay</span><div class="links"><span class="hidem">Product</span><span class="hidem">Pricing</span><span class="hidem">Docs</span><span class="bt">Start free</span></div></div>' +
-        '<div class="lead"><span class="pill">New: shared inboxes</span>' +
-          '<span class="h">Answer every customer in one place</span>' +
-          '<p>Relay pulls email, chat and social messages into a single queue, so your team replies faster and nothing gets missed.</p>' +
-          '<div class="acts"><span class="bt">Start free</span><span class="bt gh">Watch the demo</span></div></div>' +
+        '<div class="nav"><span class="h logo">Studio</span><div class="links"><span class="hidem">Work</span><span class="hidem">Services</span><span class="hidem">About</span><span class="bt">Contact</span></div></div>' +
+        '<div class="lead"><div class="txt"><span class="pill">Booking for spring</span>' +
+          '<span class="h">Creative work with <span class="ac">purpose.</span></span>' +
+          '<p>A small studio for brands, websites and product launches. We make things that are clear, considered and built to last.</p>' +
+          '<div class="acts"><span class="bt">Get started</span><span class="bt gh">View work</span></div></div>' +
+          '<svg class="art" viewBox="0 0 400 300" role="img" aria-label="Abstract building artwork">' +
+            '<polygon points="400,34 236,128 236,300 400,300" style="fill:var(--t-accent)" opacity=".55"/>' +
+            '<polygon points="236,128 40,262 40,300 236,300" style="fill:var(--t-primary)"/>' +
+            '<polygon points="400,34 236,128 40,262 40,250 236,112 400,20" style="fill:var(--t-surface)"/>' +
+            '<g style="stroke:var(--t-surface)" stroke-width="2" opacity=".5"><line x1="290" y1="98" x2="290" y2="300"/><line x1="345" y1="66" x2="345" y2="300"/><line x1="236" y1="190" x2="400" y2="150"/><line x1="236" y1="246" x2="400" y2="224"/></g>' +
+          '</svg></div>' +
         '<div class="logos"><span>Northwind</span><span>Lumen</span><span>Fieldnote</span><span>Harbor</span><span>Quill</span></div>' +
         '<div class="feat">' +
-          '<div class="card"><div class="ic g1"></div><span class="h">One shared queue</span><p class="mu">Every channel lands in the same list, sorted by who has waited longest.</p></div>' +
-          '<div class="card"><div class="ic g2"></div><span class="h">Replies that sound like you</span><p class="mu">Saved answers adapt to each customer and stay in your tone.</p></div>' +
-          '<div class="card"><div class="ic g3"></div><span class="h">Numbers you can act on</span><p class="mu">See response time and workload per person, updated live.</p></div>' +
+          '<div class="card"><div class="ic g1"></div><span class="h">Brand identity</span><p class="mu">Names, marks and a visual system your team can actually use.</p></div>' +
+          '<div class="card"><div class="ic g2"></div><span class="h">Websites</span><p class="mu">Fast, readable sites designed and built in one place.</p></div>' +
+          '<div class="card"><div class="ic g3"></div><span class="h">Launch support</span><p class="mu">Copy, visuals and a plan for the first ninety days.</p></div>' +
         '</div>' +
-        '<span class="h sec">Simple pricing</span>' +
+        '<span class="h sec">Ways to work together</span>' +
         '<div class="price">' +
-          '<div class="card"><b>Starter</b><b class="m">$0</b><span class="mu sm">Up to 2 teammates</span><span class="bt gh">Choose Starter</span></div>' +
-          '<div class="card best"><b>Team</b><b class="m">$29</b><span class="mu sm">Per teammate, per month</span><span class="bt">Choose Team</span></div>' +
-          '<div class="card"><b>Scale</b><b class="m">$79</b><span class="mu sm">Advanced routing and reports</span><span class="bt gh">Talk to sales</span></div>' +
+          '<div class="card"><b>Sprint</b><b class="m">$2,400</b><span class="mu sm">One week, one clear outcome</span><span class="bt gh">Book a sprint</span></div>' +
+          '<div class="card best"><b>Project</b><b class="m">$9,800</b><span class="mu sm">Brand and website, six weeks</span><span class="bt">Start a project</span></div>' +
+          '<div class="card"><b>Retainer</b><b class="m">$3,200</b><span class="mu sm">Per month, ongoing design</span><span class="bt gh">Talk to us</span></div>' +
         '</div>' +
-        '<div class="cta"><span class="h">Clear your inbox by Friday</span><span class="bt">Start free</span></div>' +
-        '<div class="foot"><span>Relay, Inc.</span><span>Privacy · Terms · Status</span></div>' +
+        '<div class="cta"><span class="h">Have a launch coming up?</span><span class="bt">Get started</span></div>' +
+        '<div class="foot"><span>Studio, Ltd.</span><span>Privacy · Terms · Status</span></div>' +
       '</div>',
     structure: [
       "Top navigation: product name on the left, three text links and a primary button on the right.",
-      "Centred hero: a small accent badge, a large headline, one supporting paragraph in muted text, and two buttons (primary and outlined).",
-      "A row of customer names in muted text as social proof.",
+      "Split hero: on the left a small accent badge, a large headline with its last word in the accent colour, one supporting paragraph and two buttons (primary and outlined); on the right a large image or illustration with the card radius.",
+      "A row of client names in muted text as social proof.",
       "Three feature cards, each with a small coloured icon tile, a heading and a short description.",
-      "Pricing: a centred section heading and three plan cards. The middle plan is filled with the primary colour and uses the on-primary colour for its text.",
+      "Offers: a centred section heading and three cards with a name, a price in the monospace font, a short note and a button. The middle card is filled with the primary colour and uses the on-primary colour for its text.",
       "A call-to-action band filled with the secondary colour: headline on the left, button on the right.",
       "A slim footer with the company name and legal links."
     ],
@@ -107,13 +115,14 @@ window.FL_TEMPLATES = [
     ],
     responsive: [
       "Below 640px the text links hide and only the primary button stays in the navigation.",
-      "The headline drops to about two thirds of its size. Feature and pricing cards stack. The call-to-action band stacks with the button under the headline."
+      "The hero becomes one column with the image under the text, and the headline drops to about two thirds of its size. Feature and offer cards stack. The call-to-action band stacks with the button under the headline."
     ]
   },
   {
     id: "portfolio",
     name: "Portfolio",
-    blurb: "Editorial type, projects, about",
+    blurb: "Creative portfolio or personal site",
+    cat: "Portfolio",
     what: "a personal portfolio website",
     html:
       '<div class="t-port">' +
@@ -145,9 +154,46 @@ window.FL_TEMPLATES = [
     ]
   },
   {
+    id: "blog",
+    name: "Blog",
+    blurb: "Magazine, journal or newsletter",
+    cat: "Blog",
+    what: "a blog",
+    html:
+      '<div class="t-blog">' +
+        '<div class="nav"><span class="h logo">Fieldnotes</span><div class="links"><span class="hidem">Essays</span><span class="hidem">Guides</span><span class="hidem">About</span><span class="bt">Subscribe</span></div></div>' +
+        '<div class="feat"><div><div class="meta"><span class="pill">Featured</span><span class="m mu sm">12 Nov 2026 · 8 min read</span></div>' +
+          '<span class="h">Why the best interfaces feel a little boring</span>' +
+          '<p class="mu">Familiar patterns are not a lack of imagination. They are a kindness to the person trying to get something done.</p>' +
+          '<div class="meta" style="margin-top:16px"><span class="bt">Read the essay</span><span class="sm">By Tolu Bakare</span></div></div>' +
+          '<div class="ph g1"></div></div>' +
+        '<div class="posts">' +
+          '<div class="card"><div class="ph g5"></div><span class="pill">Guide</span><span class="h">A type scale you can set once and forget</span><span class="m mu sm">05 Nov · 6 min</span></div>' +
+          '<div class="card"><div class="ph g6"></div><span class="pill">Essay</span><span class="h">Colour is a job title, not a mood</span><span class="m mu sm">29 Oct · 5 min</span></div>' +
+          '<div class="card"><div class="ph g4"></div><span class="pill">Notes</span><span class="h">What I learned shipping forty landing pages</span><span class="m mu sm">21 Oct · 9 min</span></div>' +
+        '</div>' +
+        '<div class="news"><span class="h">One good essay, every other Thursday</span><div class="in"><span class="fld hidem">you@example.com</span><span class="bt">Subscribe</span></div></div>' +
+      '</div>',
+    structure: [
+      "Top navigation: publication name on the left, three text links and a primary Subscribe button on the right.",
+      "A featured post in two columns: on the left an accent badge, the date and reading time in the monospace font, a large headline, a muted excerpt, a primary button and the author; on the right a large image with the card radius.",
+      "A row of three post cards. Each has an image, an accent category badge, a headline in the heading font, and the date and reading time in the monospace font.",
+      "A newsletter band filled with the primary colour: a headline on the left, an email field and a button on the right, all using the on-primary colour."
+    ],
+    layout: [
+      "Single centred column, content max width about 1100px, 40px side padding.",
+      "Post cards are three equal columns with the standard gap. Article pages keep text to about 65 characters wide."
+    ],
+    responsive: [
+      "Below 640px the featured post becomes one column with the image under the text, and post cards stack.",
+      "The newsletter band stacks, with the button under the headline."
+    ]
+  },
+  {
     id: "shop",
     name: "E-commerce",
-    blurb: "Product grid, filters, order summary",
+    blurb: "Store, catalog or product launch",
+    cat: "E-commerce",
     what: "an online shop",
     html:
       '<div class="t-shop">' +
