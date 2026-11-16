@@ -110,11 +110,12 @@ function setWelcome(i) {
   if (i < CYCLE.length) word.style.cssText = "font-family:" + fam(CYCLE[i]) + ";font-weight:400;letter-spacing:0";
   else word.style.cssText = "";
   $("tick").textContent = i < CYCLE.length ? CYCLE[i] : FINAL;
-  fitWord();
+  fitWord(); requestAnimationFrame(fitWord);
 }
-function closeIntro() { running = false; clearTimeout(introT); intro.classList.add("out"); setTimeout(() => intro.classList.remove("show", "out"), 520); }
+function lockScroll(on) { document.documentElement.classList.toggle("intro-on", on); }
+function closeIntro() { running = false; clearTimeout(introT); intro.classList.add("out"); lockScroll(false); setTimeout(() => intro.classList.remove("show", "out"), 520); }
 function playWelcome() {
-  if (running) return; running = true; intro.classList.remove("out"); intro.classList.add("show"); $("rule").classList.remove("draw");
+  if (running) return; running = true; intro.classList.remove("out"); intro.classList.add("show"); lockScroll(true); $("rule").classList.remove("draw");
   let i = 0; const n = CYCLE.length;
   (function step() {
     if (!running) return;
@@ -126,7 +127,7 @@ function playWelcome() {
 }
 function startWelcome() {
   if (window.matchMedia && matchMedia("(prefers-reduced-motion:reduce)").matches) return;
-  intro.classList.add("show"); setWelcome(0);
+  intro.classList.add("show"); lockScroll(true); setWelcome(0);
   let go = false, left = 0; const begin = () => { if (go) return; go = true; playWelcome(); };
   const sheetDone = () => {
     if (--left > 0) return;

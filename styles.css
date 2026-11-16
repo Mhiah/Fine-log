@@ -518,3 +518,6 @@ h2,.brand{letter-spacing:-.025em}
 .word{font-weight:700;letter-spacing:-.04em}
 body{letter-spacing:-.006em}
 
+
+/* no page scrollbar while the welcome is showing */
+html.intro-on,html.intro-on body{overflow:hidden}
