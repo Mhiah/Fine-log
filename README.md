@@ -20,7 +20,7 @@ What you picked is what gets built.
 
 ### Welcome
 
-When the site opens, a full-screen "Welcome" runs through 99 different fonts and settles on the 100th, then fades into the home page. A counter names each font as it passes. There is a Skip button, and "Replay welcome" at the bottom of the page plays it again. Visitors who have reduced motion turned on go straight to the home page.
+When the site opens, a full-screen "Welcome" runs through 49 different fonts and settles on the 50th, then fades into the home page. The fonts are ordered by resemblance, from cursive down to clean, and each font's name shows under the word as it passes. There is a Skip button, and "Replay welcome" at the bottom of the page plays it again. Visitors who have reduced motion turned on go straight to the home page.
 
 ### Home
 
