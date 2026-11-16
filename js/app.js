@@ -92,14 +92,24 @@ let target = "primary", cur = S.colors.primary;
 function save() { try { localStorage.setItem("fl-state-v6", JSON.stringify(S)); } catch (e) {} }
 
 /* ---------- welcome ---------- */
-const CYCLE = ["Playfair Display", "Bebas Neue", "Pacifico", "Abril Fatface", "Caveat", "Monoton", "Fraunces", "Permanent Marker", "Cinzel", "Righteous", "Dancing Script", "Space Mono", "Bungee", "Syne", "Great Vibes", "Unbounded", "Amatic SC", "Press Start 2P", "DM Serif Display", "Anton", "Sacramento", "Fredoka", "Shrikhand", "Italiana"];
+/* 99 fonts grouped by resemblance, from cursive down to clean, then the site font: 100 in all */
+const CYCLE = [
+  /* cursive */ "Pinyon Script", "Tangerine", "Great Vibes", "Alex Brush", "Allura", "Parisienne", "Sacramento", "Dancing Script", "Marck Script", "Mr Dafoe", "Yellowtail", "Satisfy", "Cookie", "Lobster", "Pacifico", "Kaushan Script", "Courgette",
+  /* handwriting */ "Homemade Apple", "Rock Salt", "Permanent Marker", "Sedgwick Ave", "Zeyada", "Nothing You Could Do", "Reenie Beanie", "Covered By Your Grace", "Gloria Hallelujah", "Shadows Into Light", "Amatic SC", "Caveat", "Indie Flower", "Kalam", "Patrick Hand",
+  /* display */ "Fredericka the Great", "Monoton", "Limelight", "Shrikhand", "Chewy", "Bangers", "Luckiest Guy", "Sigmar One", "Bowlby One", "Bungee", "Black Ops One", "Audiowide", "Orbitron", "Unbounded", "Fugaz One", "Righteous",
+  /* mono and pixel */ "Rubik Mono One", "Press Start 2P", "Silkscreen", "VT323", "Major Mono Display", "Space Mono", "IBM Plex Mono",
+  /* slab */ "Special Elite", "Rye", "Ultra", "Alfa Slab One", "Zilla Slab", "Bitter",
+  /* serif */ "Abril Fatface", "Yeseva One", "DM Serif Display", "Fraunces", "Italiana", "Cinzel", "Marcellus", "Bodoni Moda", "Prata", "Playfair Display", "Cormorant Garamond", "Libre Baskerville", "Vollkorn", "Spectral", "Crimson Text", "Merriweather", "Lora",
+  /* bold sans */ "Titan One", "Lilita One", "Russo One", "Archivo Black", "Anton", "Staatliches", "Bebas Neue", "Fjalla One", "Oswald",
+  /* clean sans */ "Fredoka", "Poiret One", "Syne", "Space Grotesk", "Rubik", "Comfortaa", "Josefin Sans", "Quicksand", "Raleway", "DM Sans", "Montserrat", "Poppins"
+];
 const FINAL = "San Francisco / Inter", word = $("word"), stage = $("stage"), intro = $("intro");
 let running = false, introT;
 function fitWord() { word.style.transform = ""; word.style.transform = "scale(" + Math.min(1, stage.clientWidth / word.offsetWidth) + ")"; }
 function setWelcome(i) {
   if (i < CYCLE.length) word.style.cssText = "font-family:" + fam(CYCLE[i]) + ";font-weight:400;letter-spacing:0";
   else word.style.cssText = "";
-  $("tick").textContent = ("0" + (i + 1)).slice(-2) + " / " + (CYCLE.length + 1) + " · " + (i < CYCLE.length ? CYCLE[i] : FINAL);
+  $("tick").textContent = ("00" + (i + 1)).slice(-3) + " / " + (CYCLE.length + 1) + " · " + (i < CYCLE.length ? CYCLE[i] : FINAL);
   fitWord();
 }
 function closeIntro() { running = false; clearTimeout(introT); intro.classList.add("out"); setTimeout(() => intro.classList.remove("show", "out"), 520); }
@@ -110,20 +120,25 @@ function playWelcome() {
     if (!running) return;
     setWelcome(i);
     if (i >= n) { void $("rule").offsetWidth; $("rule").classList.add("draw"); introT = setTimeout(closeIntro, 1100); return; }
-    const d = 95 + 240 * Math.pow(i / n, 3); i++; introT = setTimeout(step, d);
+    /* fonts 1 to 80 at one steady, readable speed; 81 to 100 slow down to the landing */
+    const d = i < 80 ? 220 : 220 + 430 * Math.pow((i - 79) / (n - 79), 1.4); i++; introT = setTimeout(step, d);
   })();
 }
 function startWelcome() {
   if (window.matchMedia && matchMedia("(prefers-reduced-motion:reduce)").matches) return;
   intro.classList.add("show"); setWelcome(0);
-  const l = document.createElement("link"); l.rel = "stylesheet";
-  l.href = "https://fonts.googleapis.com/css2?" + CYCLE.map((n) => "family=" + n.replace(/ /g, "+")).join("&") + "&text=Welcome&display=block";
-  let go = false; const begin = () => { if (go) return; go = true; playWelcome(); };
-  l.onload = () => {
+  let go = false, left = 0; const begin = () => { if (go) return; go = true; playWelcome(); };
+  const sheetDone = () => {
+    if (--left > 0) return;
     if (!document.fonts || !document.fonts.load) return begin();
     Promise.all(CYCLE.map((n) => document.fonts.load("64px '" + n + "'", "Welcome").catch(() => {}))).then(begin);
   };
-  l.onerror = begin; document.head.appendChild(l); setTimeout(begin, 2500);
+  for (let i = 0; i < CYCLE.length; i += 25) {   /* four small requests, only the letters of "Welcome" */
+    const l = document.createElement("link"); l.rel = "stylesheet"; left++;
+    l.href = "https://fonts.googleapis.com/css2?" + CYCLE.slice(i, i + 25).map((n) => "family=" + n.replace(/ /g, "+")).join("&") + "&text=Welcome&display=block";
+    l.onload = sheetDone; l.onerror = sheetDone; document.head.appendChild(l);
+  }
+  setTimeout(begin, 4000);
 }
 $("replay").onclick = playWelcome;
 $("skip").onclick = closeIntro;
