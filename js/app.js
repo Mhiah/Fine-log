@@ -12,9 +12,10 @@ const FONTS = window.FL_FONTS.trim().split("\n").map((l) => {
 const BYNAME = {};
 FONTS.forEach((f) => { BYNAME[f.n.toLowerCase()] = f; });
 const info = (n) => BYNAME[String(n || "").toLowerCase()];
-const TPLS = window.FL_TEMPLATES;
+const TPLS = window.FL_TEMPLATES, DESIGNS = window.FL_DESIGNS, STYLES = window.FL_STYLES;
+const designOf = (id) => DESIGNS.filter((d) => d.id === id)[0] || DESIGNS[0];
 $("statFonts").textContent = FONTS.length.toLocaleString("en");
-$("statTpl").textContent = TPLS.length;
+$("statTpl").textContent = DESIGNS.length;
 
 /* ---------- small helpers ---------- */
 let toastT;
@@ -46,8 +47,8 @@ function fontCss(name, bold) { return "font-family:" + fam(name) + ";font-weight
 
 /* ---------- state ---------- */
 const DEFAULT = {
-  fonts: { head: "Inter", body: "Inter", mono: "IBM Plex Mono" },
-  colors: { bg: "#FFFFFF", text: "#111111", primary: "#111111", secondary: "#6B7280", accent: "#2B3FE0" },
+  fonts: { head: "Manrope", body: "DM Sans", mono: "IBM Plex Mono" },
+  colors: { bg: "#FAF7F2", text: "#241A22", primary: "#32132D", secondary: "#8A5A6B", accent: "#B65B3D" },
   auto: { surface: true, muted: true, secondary: false, accent: false, border: true },
   shape: { radius: "soft", shadow: "soft", density: "comfortable", spacing: "tight", size: "medium" },
   tpl: "landing", view: "desktop",
@@ -60,7 +61,7 @@ function sanitize(o) {
   if (o.auto) FL.AUTO_ROLES.forEach((k) => { S.auto[k] = !(o.auto[k] === false && S.colors[k]); });
   else if (o.colors) FL.AUTO_ROLES.forEach((k) => { S.auto[k] = !FL.normHex(o.colors[k]); });
   Object.keys(FL.SHAPE).forEach((k) => { if (o.shape && FL.SHAPE[k][o.shape[k]]) S.shape[k] = o.shape[k]; });
-  if (TPLS.some((t) => t.id === o.tpl)) S.tpl = o.tpl;
+  if (DESIGNS.some((d) => d.id === o.tpl)) S.tpl = o.tpl;
   if (o.view === "mobile") S.view = "mobile";
   if (o.prompt) { if (o.prompt.mode === "redesign") S.prompt.mode = "redesign"; if (FL.TOOLS[o.prompt.tool]) S.prompt.tool = o.prompt.tool; if (o.prompt.len === "compact") S.prompt.len = "compact"; }
   FL.derive(S.colors, S.auto);
@@ -85,11 +86,11 @@ let S, cameFromLink = false;
 (function boot() {
   let o = null;
   if (/^#s=/.test(location.hash)) { o = decodeState(location.hash.slice(3)); cameFromLink = !!o; }
-  if (!o) { try { o = JSON.parse(localStorage.getItem("fl-state-v6") || "null"); } catch (e) {} }
+  if (!o) { try { o = JSON.parse(localStorage.getItem("fl-state-v7") || "null"); } catch (e) {} }
   S = sanitize(o);
 })();
 let target = "primary", cur = S.colors.primary;
-function save() { try { localStorage.setItem("fl-state-v6", JSON.stringify(S)); } catch (e) {} }
+function save() { try { localStorage.setItem("fl-state-v7", JSON.stringify(S)); } catch (e) {} }
 
 /* ---------- welcome ---------- */
 /* 49 fonts grouped by resemblance, from cursive down to clean, then the site font: 50 in all */
@@ -289,7 +290,14 @@ $("colours").addEventListener("click", (e) => {
 });
 
 /* ---------- live preview ---------- */
-const tplOf = (id) => TPLS.filter((t) => t.id === id)[0] || TPLS[0];
+const tplOf = (id) => { const l = designOf(id).layout; return TPLS.filter((t) => t.id === l)[0] || TPLS[0]; };
+/* a design's signature style as a full set of fonts, colours and shape */
+function styleState(key) {
+  const st = STYLES[key], c = { bg: st.colors[0], text: st.colors[1], primary: st.colors[2], secondary: st.colors[3], accent: st.colors[4] };
+  FL.derive(c, { surface: true, muted: true, border: true, secondary: false, accent: false });
+  return { fonts: { head: st.fonts[0], body: st.fonts[1], mono: st.fonts[2] }, colors: c, shape: { radius: st.shape[0], shadow: st.shape[1], density: st.shape[2], spacing: st.shape[3], size: "medium" } };
+}
+let libMode = "own";
 function fitFrame(frame) {
   const inner = frame.firstElementChild, W = frame.clientWidth; if (!W || !inner) return;
   const mode = frame.dataset.mode;
@@ -300,13 +308,25 @@ function fitFrame(frame) {
 }
 const ro = "ResizeObserver" in window ? new ResizeObserver((es) => es.forEach((e) => fitFrame(e.target.classList.contains("frame") ? e.target : e.target.parentNode))) : null;
 function watch(frame) { if (ro) { ro.observe(frame); ro.observe(frame.firstElementChild); } fitFrame(frame); }
+function paintThumbs() {
+  each("#gallery .thumb", (b) => {
+    const el = b.querySelector(".tpl"), d = designOf(b.dataset.tpl);
+    el.removeAttribute("style");
+    if (libMode === "own") { const st = styleState(d.style), v = varsFor(st.fonts, st.colors, st.shape); Object.keys(v).forEach((k) => el.style.setProperty("--t-" + k, v[k])); }
+  });
+}
 function buildPreviewStatic() {
-  $("gallery").innerHTML = TPLS.map((t) => '<button class="thumb" type="button" data-tpl="' + t.id + '" aria-pressed="' + (S.tpl === t.id) + '"><div class="frame" data-mode="thumb"><div class="tpl">' + t.html + "</div></div><span><b>" + t.name + "</b><small>" + t.blurb + "</small></span></button>").join("");
+  Object.keys(STYLES).forEach((k) => STYLES[k].fonts.forEach(ensureFont));
+  $("gallery").innerHTML = DESIGNS.map((d) => { const l = TPLS.filter((t) => t.id === d.layout)[0];
+    return '<button class="thumb" type="button" data-tpl="' + d.id + '" aria-pressed="' + (S.tpl === d.id) + '"><div class="frame" data-mode="thumb"><div class="tpl">' + l.html + "</div></div><span><b>" + esc(d.name) + "</b><small>" + l.name + "</small></span></button>"; }).join("");
   each("#gallery .frame", watch);
-  $("filters").innerHTML = seg("cat", [["All", "All"]].concat(TPLS.map((t) => [t.cat, t.cat])), "All").replace(/class="btn small"/g, "");
+  const cats = []; TPLS.forEach((t) => { if (cats.indexOf(t.cat) < 0) cats.push(t.cat); });
+  $("filters").innerHTML = seg("cat", [["All", "All"]].concat(cats.map((c) => [c, c])), "All").replace(/class="btn small"/g, "");
+  $("libmode").innerHTML = "<span>Show designs in</span>" + seg("lib", [["own", "Their own style"], ["mine", "My fonts and colours"]], libMode);
   $("pvinner").className = "tpl"; watch($("pvframe")); watch($("heroprev").firstElementChild);
   window.addEventListener("resize", () => each(".frame", fitFrame));
 }
+$("libmode").addEventListener("click", function (e) { const b = e.target.closest("[data-v]"); if (!b) return; libMode = b.dataset.v; each("button", (x) => x.setAttribute("aria-pressed", x === b), this); paintThumbs(); each("#gallery .frame", fitFrame); });
 function renderTools() {
   const sh = FL.SHAPE, opt = (k) => Object.keys(sh[k]).map((v) => [v, sh[k][v].label]);
   const grp = (label, key, options, curV) => '<div class="grp"><span>' + label + '</span><div class="seg">' + seg(key, options, curV) + "</div></div>";
@@ -314,7 +334,16 @@ function renderTools() {
     grp("Spacing", "density", opt("density"), S.shape.density) + grp("Heading spacing", "spacing", opt("spacing"), S.shape.spacing) + grp("Text size", "size", opt("size"), S.shape.size);
 }
 $("tools").addEventListener("click", (e) => { const b = e.target.closest("[data-k]"); if (!b) return; if (b.dataset.k === "view") S.view = b.dataset.v; else S.shape[b.dataset.k] = b.dataset.v; apply(); });
-$("gallery").addEventListener("click", (e) => { const b = e.target.closest("[data-tpl]"); if (!b) return; S.tpl = b.dataset.tpl; apply(); });
+$("gallery").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-tpl]"); if (!b) return; const d = designOf(b.dataset.tpl); S.tpl = d.id;
+  if (libMode === "own") {
+    const st = styleState(d.style); S.fonts = st.fonts; S.shape = st.shape;
+    ["bg", "text", "primary", "secondary", "accent"].forEach((k) => { S.colors[k] = st.colors[k]; });
+    S.auto = { surface: true, muted: true, border: true, secondary: false, accent: false };
+    toast(d.name + " applied with its own fonts and colours. Change them under Fonts and Colours.");
+  } else toast(d.name + " applied with your fonts and colours.");
+  apply(); if (target) setCur(S.colors[target], null, true);
+});
 $("filters").addEventListener("click", function (e) {
   const b = e.target.closest("[data-v]"); if (!b) return; const c = b.dataset.v;
   each("button", (x) => x.setAttribute("aria-pressed", x === b), this);
@@ -329,16 +358,16 @@ function renderPreview() {
 }
 
 /* ---------- apply everything ---------- */
-function setVars() {
-  const c = S.colors, sh = FL.SHAPE, st = document.documentElement.style, rad = sh.radius[S.shape.radius], den = sh.density[S.shape.density];
-  const v = {
+function varsFor(fonts, c, shape) {
+  const sh = FL.SHAPE, rad = sh.radius[shape.radius], den = sh.density[shape.density];
+  return {
     bg: c.bg, surface: c.surface, text: c.text, muted: c.muted, primary: c.primary, secondary: c.secondary, accent: c.accent, border: c.border,
     onp: FL.onColor(c.primary), ons: FL.onColor(c.secondary), ona: FL.onColor(c.accent),
-    fh: fam(S.fonts.head), fhw: wOf(S.fonts.head, true), fhs: stOf(S.fonts.head), fb: fam(S.fonts.body), fbw: wOf(S.fonts.body), fbs: stOf(S.fonts.body), fm: fam(S.fonts.mono), fmw: wOf(S.fonts.mono),
-    fs: sh.size[S.shape.size].v + "px", ls: sh.spacing[S.shape.spacing].v, r: rad.r + "px", rs: Math.min(rad.r, 8) + "px", rb: rad.rb, sh: sh.shadow[S.shape.shadow].v, pad: den.pad + "px", gap: den.gap + "px"
+    fh: fam(fonts.head), fhw: wOf(fonts.head, true), fhs: stOf(fonts.head), fb: fam(fonts.body), fbw: wOf(fonts.body), fbs: stOf(fonts.body), fm: fam(fonts.mono), fmw: wOf(fonts.mono),
+    fs: sh.size[shape.size].v + "px", ls: sh.spacing[shape.spacing].v, r: rad.r + "px", rs: Math.min(rad.r, 8) + "px", rb: rad.rb, sh: sh.shadow[shape.shadow].v, pad: den.pad + "px", gap: den.gap + "px"
   };
-  Object.keys(v).forEach((k) => st.setProperty("--t-" + k, v[k]));
 }
+function setVars() { const v = varsFor(S.fonts, S.colors, S.shape), st = document.documentElement.style; Object.keys(v).forEach((k) => st.setProperty("--t-" + k, v[k])); }
 let exTab = "css";
 function renderExport() {
   const fn = { css: FL.cssVars, tailwind: FL.tailwind, tokens: FL.tokens }[exTab];
@@ -360,7 +389,7 @@ function apply() {
   $("dockaa").style.cssText = fontCss(S.fonts.head, true) + ";background:" + S.colors.bg + ";color:" + S.colors.text;
   $("dockfonts").textContent = S.fonts.head === S.fonts.body ? S.fonts.head : S.fonts.head + " + " + S.fonts.body;
   $("dockcols").innerHTML = ["bg", "text", "primary", "accent"].map((k) => '<i style="background:' + S.colors[k] + '" title="' + k + " " + S.colors[k] + '"></i>').join("") + ["primary", "accent", "surface", "bg"].map((k) => "<span>" + S.colors[k] + "</span>").join("");
-  $("docktpl").textContent = tplOf(S.tpl).name;
+  $("docktpl").textContent = designOf(S.tpl).name;
   if (promptShown) writePrompt(true);
   save();
 }
@@ -376,7 +405,7 @@ $("popts").addEventListener("click", (e) => { const b = e.target.closest("[data-
 function writePrompt(quiet) {
   const t = tplOf(S.tpl), text = FL.buildPrompt(S, $("brief").value, t, info);
   $("out").hidden = false; $("outpre").textContent = text; promptShown = true;
-  $("outlab").textContent = "Your prompt · " + t.name + " · " + FL.TOOLS[S.prompt.tool].label + " · " + text.split(/\s+/).length + " words";
+  $("outlab").textContent = "Your prompt · " + designOf(S.tpl).name + " (" + t.name + ") · " + FL.TOOLS[S.prompt.tool].label + " · " + text.split(/\s+/).length + " words";
   if (!quiet) $("anote").textContent = "Built from your picks with preset rules. It updates as you change the design.";
 }
 $("askprompt").onclick = () => writePrompt(false);
@@ -470,8 +499,8 @@ document.addEventListener("click", (e) => {
 });
 
 /* ---------- boot ---------- */
-FL._names = [].concat(MONOS, CYCLE, ...Object.keys(PAIRS).map((k) => [k].concat(PAIRS[k])), ...Object.keys(PAIR_BY_CAT).map((k) => PAIR_BY_CAT[k]), ...Object.keys(MOODS).map((k) => MOODS[k].heads.concat(MOODS[k].bodies))).filter((n) => !info(n));
-buildColourStatic(); buildPreviewStatic(); renderTools(); renderPromptOpts(); renderFonts(true); renderSaved();
+FL._names = [].concat(MONOS, CYCLE, ...Object.keys(STYLES).map((k) => STYLES[k].fonts), ...Object.keys(PAIRS).map((k) => [k].concat(PAIRS[k])), ...Object.keys(PAIR_BY_CAT).map((k) => PAIR_BY_CAT[k]), ...Object.keys(MOODS).map((k) => MOODS[k].heads.concat(MOODS[k].bodies))).filter((n) => !info(n));
+buildColourStatic(); buildPreviewStatic(); paintThumbs(); renderTools(); renderPromptOpts(); renderFonts(true); renderSaved();
 $("target").value = target; setCur(cur, null, true); apply(); startWelcome();
 showTab(TABS.indexOf(location.hash.slice(1)) > -1 ? location.hash.slice(1) : "library");
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => each(".frame", fitFrame));

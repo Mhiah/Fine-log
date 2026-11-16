@@ -300,6 +300,151 @@ window.FL_TEMPLATES = [
     ]
   },
   {
+    id: "saas",
+    name: "SaaS product",
+    blurb: "Software product or startup",
+    cat: "SaaS",
+    what: "a SaaS product landing page",
+    html:
+      '<div class="t-saas">' +
+        '<div class="nav"><span class="h logo">Relay</span><div class="links"><span class="hidem">Product</span><span class="hidem">Pricing</span><span class="hidem">Docs</span><span class="hidem">Sign in</span><span class="bt">Start free</span></div></div>' +
+        '<div class="lead3"><span class="pill">New: shared inboxes</span><span class="h">Answer every customer in one place</span><p class="mu">Relay pulls email, chat and social messages into a single queue, so your team replies faster and nothing gets missed.</p><div class="acts"><span class="bt">Start free</span><span class="bt gh">Watch the demo</span></div></div>' +
+        '<div class="win card"><div class="wside"><b class="sm">Inbox</b><span class="on">All open <i class="m">24</i></span><span>Mine <i class="m">6</i></span><span>Unassigned <i class="m">9</i></span><span>Snoozed <i class="m">3</i></span></div>' +
+          '<div class="wmain"><div class="rowb"><b class="h">All open</b><span class="pill">Fastest first</span></div>' +
+            '<div class="msg"><i class="av g1"></i><div><b>Dana Whitfield</b><span class="mu sm">Refund for order 4471, charged twice</span></div><span class="m mu sm">2m</span></div>' +
+            '<div class="msg"><i class="av g2"></i><div><b>Kofi Mensah</b><span class="mu sm">Can I change the delivery address?</span></div><span class="m mu sm">9m</span></div>' +
+            '<div class="msg"><i class="av g3"></i><div><b>Priya Raman</b><span class="mu sm">Invoice needs our tax number added</span></div><span class="m mu sm">21m</span></div>' +
+            '<div class="msg"><i class="av g1"></i><div><b>Luca Ferri</b><span class="mu sm">Thanks, that fixed it.</span></div><span class="m mu sm">1h</span></div></div></div>' +
+        '<div class="logos"><span>Northwind</span><span>Lumen</span><span>Fieldnote</span><span>Harbor</span><span>Quill</span></div>' +
+        '<div class="feat">' +
+          '<div class="card"><div class="ic g1"></div><span class="h">One shared queue</span><p class="mu">Every channel lands in the same list, sorted by who has waited longest.</p></div>' +
+          '<div class="card"><div class="ic g2"></div><span class="h">Replies in your tone</span><p class="mu">Saved answers adapt to each customer and still sound like you.</p></div>' +
+          '<div class="card"><div class="ic g3"></div><span class="h">Numbers you can act on</span><p class="mu">Response time and workload per person, updated live.</p></div>' +
+        '</div>' +
+      '</div>',
+    structure: [
+      "Top navigation: product name on the left, four text links and a primary Start free button on the right.",
+      "A centred hero: a small accent badge, a large headline, one muted paragraph and two buttons (primary and outlined).",
+      "A product window shown as a large card: a narrow sidebar listing inbox views with counts in the monospace font (the active view filled with the primary colour), and a main area with a heading, an accent badge and a list of message rows. Each row has a round avatar, a bold name, a muted one-line preview and a time in the monospace font.",
+      "A row of customer names in muted text.",
+      "Three feature cards, each with a small coloured icon tile, a heading and a short description."
+    ],
+    layout: [
+      "Single centred column, content max width about 1100px, 40px side padding.",
+      "The product window is about 900px wide and centred; feature cards are three equal columns."
+    ],
+    responsive: [
+      "Below 640px the text links hide, the headline drops to about two thirds of its size and the product window hides its sidebar.",
+      "Feature cards stack into one column."
+    ]
+  },
+  {
+    id: "docs",
+    name: "Documentation",
+    blurb: "Docs, guides or a help centre",
+    cat: "Docs",
+    what: "a documentation site",
+    html:
+      '<div class="t-docs">' +
+        '<div class="nav"><span class="h logo">Relay Docs</span><span class="search hidem">Search the docs</span><div class="links"><span class="pill">v2.4</span><span class="hidem">API</span><span class="bt gh">Sign in</span></div></div>' +
+        '<div class="cols">' +
+          '<div class="dside hidem"><b class="sm mu">Get started</b><span>Introduction</span><span class="on">Quickstart</span><span>Authentication</span><b class="sm mu">Guides</b><span>Sending messages</span><span>Webhooks</span><span>Rate limits</span><b class="sm mu">Reference</b><span>REST API</span><span>Errors</span></div>' +
+          '<div class="art2"><span class="m mu sm">Get started / Quickstart</span><span class="h">Quickstart</span><p>Send your first message in under five minutes. You need an API key from the dashboard and any HTTP client.</p>' +
+            '<span class="h h2">1. Install the client</span><div class="code m">npm install @relay/client</div>' +
+            '<span class="h h2">2. Send a message</span><div class="code m">const relay = new Relay(process.env.RELAY_KEY)<br>await relay.messages.send({ to: "dana@example.com", text: "Hello" })</div>' +
+            '<div class="note"><b>Keep your key secret.</b> Never put it in browser code or a public repository.</div>' +
+            '<div class="rowb nextp"><span class="mu">Previous: Introduction</span><span class="lk2">Next: Authentication</span></div></div>' +
+          '<div class="toc hidem"><b class="sm mu">On this page</b><span class="on">Install the client</span><span>Send a message</span><span>Next steps</span></div>' +
+        '</div>' +
+      '</div>',
+    structure: [
+      "A top bar: docs name on the left, a wide rounded search field in the middle, and a version badge, an API link and an outlined Sign in button on the right.",
+      "A left sidebar of grouped links (Get started, Guides, Reference) with small muted group labels. The current page is highlighted with a soft primary tint and primary-coloured text.",
+      "The article: a breadcrumb in the monospace font, a large page title, body paragraphs, numbered section headings, code blocks in the monospace font on the surface colour with a border, and a callout box with an accent-coloured left edge.",
+      "Previous and next links at the bottom of the article, the next link in the primary colour.",
+      "A right-hand On this page list that tracks the current section."
+    ],
+    layout: [
+      "Three columns under the top bar: a 220px sidebar, a fluid article limited to about 70 characters wide, and a 180px table of contents.",
+      "Thin borders separate the columns; no cards or shadows around the article."
+    ],
+    responsive: [
+      "Below 640px the sidebar and table of contents hide, leaving the article full width.",
+      "Code blocks scroll sideways inside their own box."
+    ]
+  },
+  {
+    id: "auth",
+    name: "Sign in",
+    blurb: "Login, sign-up or onboarding",
+    cat: "Sign in",
+    what: "a sign-in screen",
+    html:
+      '<div class="t-auth">' +
+        '<div class="aside2"><span class="h logo">Tally</span><div><span class="h quote">&ldquo;I finally know where my money goes, and it took two minutes.&rdquo;</span><span class="by">Amara O., using Tally since 2024</span></div><span class="m sm">tally.app</span></div>' +
+        '<div class="formw"><div class="form">' +
+          '<span class="h">Welcome back</span><span class="mu">Sign in to see this week&rsquo;s picture.</span>' +
+          '<label>Email<span class="fld2">ada@example.com</span></label>' +
+          '<label><span class="rowb"><span>Password</span><span class="lk2 sm">Forgot?</span></span><span class="fld2 m">••••••••••</span></label>' +
+          '<span class="bt full">Sign in</span>' +
+          '<span class="or mu sm">or</span>' +
+          '<span class="bt gh full">Email me a sign-in link</span>' +
+          '<span class="mu sm cen">New here? <span class="lk2">Create an account</span></span>' +
+        '</div></div>' +
+      '</div>',
+    structure: [
+      "A two-panel screen. The left panel is filled with the primary colour and uses the on-primary colour for its text: the product name at the top, a large customer quote in the heading font with the customer's name under it, and the web address in the monospace font at the bottom.",
+      "The right panel holds a centred form about 360px wide: a Welcome back heading, a muted line of supporting text, an email field, a password field with a Forgot link in the primary colour above it, a full-width primary Sign in button, an 'or' divider, a full-width outlined button for a sign-in link, and a line linking to account creation."
+    ],
+    layout: [
+      "Two equal columns filling the screen height. The form is vertically and horizontally centred in its panel.",
+      "Fields have labels above them, the surface colour as background, a 1px border and the button radius."
+    ],
+    responsive: [
+      "Below 640px the coloured panel collapses to a short band showing only the product name, and the form fills the width with 20px padding."
+    ]
+  },
+  {
+    id: "event",
+    name: "Event",
+    blurb: "Conference, meetup or launch",
+    cat: "Event",
+    what: "an event or conference website",
+    html:
+      '<div class="t-event">' +
+        '<div class="nav"><span class="h logo">Form &amp; Type</span><div class="links"><span class="hidem">Speakers</span><span class="hidem">Schedule</span><span class="hidem">Venue</span><span class="bt">Get tickets</span></div></div>' +
+        '<div class="ehero"><span class="m date">12 &ndash; 13 MARCH 2027 &middot; LAGOS</span><span class="h">Two days on type, colour and the web</span><div class="rowb erow"><p class="mu">Fourteen talks, four workshops and one very long dinner. For designers and the people who build what they draw.</p><span class="bt">Get tickets</span></div></div>' +
+        '<div class="spk">' +
+          '<div class="card"><i class="av g1"></i><b class="h">Tolu Bakare</b><span class="mu sm">Type designer</span></div>' +
+          '<div class="card"><i class="av g2"></i><b class="h">Ines Carvalho</b><span class="mu sm">Design lead, Lumen</span></div>' +
+          '<div class="card"><i class="av g3"></i><b class="h">Kenji Mori</b><span class="mu sm">Colour researcher</span></div>' +
+          '<div class="card"><i class="av g1"></i><b class="h">Noor Adeyemi</b><span class="mu sm">Brand designer</span></div>' +
+        '</div>' +
+        '<div class="sched"><span class="h">Day one</span>' +
+          '<div class="slot2"><span class="m">09:30</span><b>Doors and coffee</b><span class="pill">Foyer</span></div>' +
+          '<div class="slot2"><span class="m">10:15</span><b>Why letters have feelings</b><span class="pill">Main hall</span></div>' +
+          '<div class="slot2"><span class="m">11:30</span><b>Eight colours are enough</b><span class="pill">Main hall</span></div>' +
+          '<div class="slot2"><span class="m">14:00</span><b>Workshop: a type scale in an hour</b><span class="pill">Studio 2</span></div>' +
+        '</div>' +
+        '<div class="tix"><div class="card"><b>Day pass</b><b class="m">$120</b><span class="mu sm">One day, all talks</span></div><div class="card best"><b>Full pass</b><b class="m">$210</b><span class="sm">Both days, workshops and dinner</span></div></div>' +
+      '</div>',
+    structure: [
+      "Top navigation: event name on the left, three text links and a primary Get tickets button on the right.",
+      "A hero: the dates and city in the monospace font in the accent colour, a very large headline, then a row with a muted paragraph on the left and a primary button on the right.",
+      "A row of four speaker cards, each with a round avatar, the speaker's name in the heading font and a muted role.",
+      "A schedule list under a Day one heading. Each row has a time in the monospace font, a bold talk title and an accent badge naming the room, separated by thin borders.",
+      "Two ticket cards side by side. The full pass is filled with the primary colour and uses the on-primary colour for its text; prices are in the monospace font."
+    ],
+    layout: [
+      "Single column, content max width about 1100px, 40px side padding and generous vertical gaps.",
+      "Speaker cards are four equal columns; ticket cards are two equal columns."
+    ],
+    responsive: [
+      "Below 640px speaker cards become two columns, schedule rows keep time and title on one line with the room badge under them, and ticket cards stack.",
+      "The headline drops to about half its size."
+    ]
+  },
+  {
     id: "shop",
     name: "E-commerce",
     blurb: "Store, catalog or product launch",
@@ -342,3 +487,28 @@ window.FL_TEMPLATES = [
     ]
   }
 ];
+
+/* Signature styles: each design in the library is a layout shown in its own fonts, colours and shape. */
+window.FL_STYLES = {
+  mono:     { fonts: ["Inter", "Inter", "IBM Plex Mono"], colors: ["#FFFFFF", "#111111", "#111111", "#6B7280", "#2B3FE0"], shape: ["soft", "soft", "comfortable", "tight"] },
+  midnight: { fonts: ["Space Grotesk", "DM Sans", "IBM Plex Mono"], colors: ["#0E1420", "#E8EEF2", "#3DDC97", "#4AA8FF", "#FFC857"], shape: ["round", "none", "comfortable", "tight"] },
+  plum:     { fonts: ["Manrope", "DM Sans", "IBM Plex Mono"], colors: ["#FAF7F2", "#241A22", "#32132D", "#8A5A6B", "#B65B3D"], shape: ["soft", "soft", "comfortable", "tight"] },
+  editorial:{ fonts: ["Playfair Display", "Source Serif 4", "IBM Plex Mono"], colors: ["#FBF8F3", "#231F2B", "#231F2B", "#6C3FB5", "#C75B9B"], shape: ["sharp", "none", "spacious", "normal"] },
+  sunset:   { fonts: ["Bricolage Grotesque", "Instrument Sans", "DM Mono"], colors: ["#FFF6EC", "#2B1A12", "#E4572E", "#F3A712", "#3A7D7B"], shape: ["round", "soft", "comfortable", "tight"] },
+  forest:   { fonts: ["Fraunces", "Work Sans", "IBM Plex Mono"], colors: ["#F1F5EE", "#16241B", "#1F7A4D", "#8AB661", "#E0A526"], shape: ["soft", "none", "comfortable", "normal"] },
+  violet:   { fonts: ["Unbounded", "Manrope", "Space Mono"], colors: ["#15111F", "#EFEAFB", "#9B7BFF", "#FF7AC6", "#5EEAD4"], shape: ["round", "none", "comfortable", "tight"] },
+  terminal: { fonts: ["Space Grotesk", "IBM Plex Sans", "JetBrains Mono"], colors: ["#0B0F0C", "#D7F5DD", "#35E06F", "#1FA7A0", "#F2E94E"], shape: ["sharp", "none", "compact", "normal"] },
+  ocean:    { fonts: ["Syne", "Inter", "IBM Plex Mono"], colors: ["#F0F7FA", "#0F2A3A", "#0B7FAB", "#1FB5A8", "#FF7A59"], shape: ["round", "soft", "comfortable", "tight"] },
+  rose:     { fonts: ["DM Serif Display", "Karla", "DM Mono"], colors: ["#FFF5F6", "#2D1B22", "#D6336C", "#8E5CD9", "#F59F00"], shape: ["round", "soft", "spacious", "normal"] },
+  graphite: { fonts: ["Bebas Neue", "Inter", "Space Mono"], colors: ["#111315", "#EDEDED", "#FFFFFF", "#9AA0A6", "#FF5C39"], shape: ["sharp", "none", "comfortable", "wide"] },
+  cobalt:   { fonts: ["Bricolage Grotesque", "Instrument Sans", "DM Mono"], colors: ["#F3F4EF", "#151821", "#2B3FE0", "#6B5BD6", "#F2B01E"], shape: ["soft", "soft", "comfortable", "tight"] }
+};
+/* id, layout, name, style. The first design of each layout keeps the layout's id. */
+window.FL_DESIGNS = [
+  ["landing", "landing", "Studio", "plum"], ["dashboard", "dashboard", "Ledger", "mono"], ["agency", "agency", "Northwind", "mono"], ["saas", "saas", "Relay", "ocean"],
+  ["portfolio", "portfolio", "Folio", "editorial"], ["blog", "blog", "Fieldnotes", "forest"], ["app", "app", "Tally", "sunset"], ["shop", "shop", "Clay & Co.", "plum"],
+  ["docs", "docs", "Console docs", "terminal"], ["auth", "auth", "Rose sign-in", "rose"], ["event", "event", "Form & Type", "cobalt"], ["moodboard", "moodboard", "Moodboard", "ocean"],
+  ["dashboard-2", "dashboard", "Night desk", "midnight"], ["landing-2", "landing", "Launch", "sunset"], ["agency-2", "agency", "Afterhours", "violet"], ["saas-2", "saas", "Relay dark", "midnight"],
+  ["portfolio-2", "portfolio", "Poster folio", "graphite"], ["blog-2", "blog", "Journal", "rose"], ["app-2", "app", "Tally terminal", "terminal"], ["shop-2", "shop", "Cobalt store", "cobalt"],
+  ["docs-2", "docs", "Field guide", "forest"], ["auth-2", "auth", "Violet sign-in", "violet"], ["event-2", "event", "Salon", "editorial"], ["moodboard-2", "moodboard", "Darkroom", "graphite"]
+].map(function (d) { return { id: d[0], layout: d[1], name: d[2], style: d[3] }; });
