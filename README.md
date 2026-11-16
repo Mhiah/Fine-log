@@ -24,7 +24,7 @@ When the site opens, a full-screen "Welcome" runs through 49 different fonts and
 
 ### Home
 
-One headline, three numbers and a live preview of the design you have chosen. The menu at the top (Fonts, Colours, UI Library, Prompt, Export) opens one screen at a time, and a bar at the bottom always shows your current fonts and colours with Preview and Generate Prompt buttons.
+A centred headline, two buttons, three numbers and a live preview of the design you have chosen, shown in a browser-window frame. The floating menu at the top (Fonts, Colours, UI Library, Prompt, Export) opens one screen at a time, and a bar at the bottom always shows your current fonts and colours with Preview and Generate Prompt buttons.
 
 ### 1. Fonts
 
@@ -48,15 +48,25 @@ A complete interface needs more than three colours, so Fine-log works with eight
 
 ### 3. UI Library
 
-Five working interface designs, each restyled live by your fonts, colours and shape settings. A filter row narrows them by type.
+24 ready-made designs built from 12 working layouts. Each layout appears twice in two very different styles, and every card shows its design in its own fonts, colours and shape.
 
-| Template | What it contains |
+| Layout | What it contains |
 | --- | --- |
+| Landing page | Navigation, split hero with a photo, client names, feature cards, offers, call-to-action band |
 | Fintech dashboard | Sidebar, stat cards, cash-flow chart, spending breakdown, transactions table |
-| Landing page | Navigation, split hero with artwork, client names, feature cards, offers, call-to-action band |
-| Portfolio | Editorial headline, intro, project grid, about section |
+| Agency | Floating menu, statement headline, wide photo, tile grid, client names, closing band |
+| SaaS product | Centred hero, product window with an inbox, customer names, feature cards |
+| Portfolio | Editorial headline, intro, project grid with photos, about section |
 | Blog | Navigation, featured post, post cards, newsletter band |
-| E-commerce | Navigation with cart, filter chips, product grid, order summary |
+| Mobile app | Centred hero, phone mockup with a mini app screen, feature blocks, rating |
+| E-commerce | Navigation with cart, filter chips, product grid with photos, order summary |
+| Documentation | Top bar with search, grouped sidebar, article with code blocks and a callout, on-this-page list |
+| Sign in | Coloured quote panel beside a centred sign-in form |
+| Event | Dates, large headline, speaker cards, schedule, ticket tiers |
+| Moodboard | Search, topic chips and a masonry wall of photos |
+
+- **Filter row:** narrow the designs by type.
+- **Their own style / My fonts and colours:** a switch above the cards. In the first mode, choosing a design applies its fonts, colours and shape, which you can then change. In the second, all 24 are redrawn in your picks and choosing one changes only the layout.
 
 Controls above the preview:
 
@@ -100,6 +110,8 @@ Connecting a real model would let suggestions respond to a project description i
 Fine-log is a static site. There is no build step, no framework and no backend.
 
 - **Design tokens:** every template is styled only through CSS variables (`--t-bg`, `--t-primary`, `--t-fh` and so on). Changing a pick updates the variables, and every template restyles at once.
+- **Signature styles:** twelve named styles (fonts, five colours, shape) live in `js/templates.js`. Each library card applies its style to itself through the same variables, so cards differ while sharing one set of layouts.
+- **Photos:** some designs load photos from Unsplash. If a photo fails to load, a tinted block in the design's colours shows instead.
 - **Derived colours:** surface, muted text and border are mixes of background and text. Secondary and accent are hue shifts of primary.
 - **One screen at a time:** the five menu items switch screens without reloading, and each has its own link (`#fonts`, `#colours`, `#library`, `#prompt`, `#export`).
 - **Responsive previews:** templates use container queries, so they respond to the preview frame's width. The desktop view is drawn at 1040px and scaled to fit.
@@ -114,7 +126,7 @@ index.html          Page markup
 styles.css          Page styles and the UI designs' styles
 js/fonts.js         The Google Fonts family list (name, style, weights)
 js/colour.js        Colour maths, the eight roles and how five are derived
-js/templates.js     Template markup plus the structure notes used in prompts
+js/templates.js     Layout markup, structure notes used in prompts, signature styles and the list of 24 designs
 js/prompt.js        Prompt generator and CSS, Tailwind and token exports
 js/app.js           State, font library, colour tools, preview, sharing
 README.md           This file
@@ -135,11 +147,11 @@ Any static host works. On Vercel, import the repository and deploy with the defa
 
 ## Add a template
 
-Add an entry to `js/templates.js` with an `id`, `name`, `blurb`, `html`, and the `structure`, `layout` and `responsive` notes. Style it in `styles.css` using only the `--t-*` variables and the shared classes (`.h` heading, `.m` monospace, `.mu` muted, `.card`, `.bt` button, `.pill`). It then appears in the gallery and in prompts automatically.
+Add a layout to `FL_TEMPLATES` in `js/templates.js` with an `id`, `name`, `blurb`, `cat`, `html`, and the `structure`, `layout` and `responsive` notes, then add one or more entries to `FL_DESIGNS` that pair it with a style from `FL_STYLES`. Style it in `styles.css` using only the `--t-*` variables and the shared classes (`.h` heading, `.m` monospace, `.mu` muted, `.card`, `.bt` button, `.pill`). It then appears in the gallery and in prompts automatically.
 
 ## Roadmap
 
-1. More designs: documentation, analytics, admin and mobile app.
+1. More layouts, so the 24 designs come from more than 12: analytics, admin, pricing and onboarding.
 2. Layout controls such as sidebar or top navigation and content width.
 3. More font pairings and palettes.
 4. A real AI model behind the suggestions, through a small server function.
@@ -147,3 +159,5 @@ Add an entry to `js/templates.js` with an `id`, `name`, `blurb`, `html`, and the
 ## Credits
 
 Fonts are served by Google Fonts and remain under their own open licences. The font list comes from Google Fonts metadata.
+
+Photos in the designs are from [Unsplash](https://unsplash.com), used under the Unsplash License, by Yana Hurska, Chloe Bolton, WARION Taipei, Kasia Sikorska, Oshin Khandelwal, Andrej Lišakov, Denys Striyeshyn, Bench Accounting, Roman Bozhko, Max Andrey and others. The home page and menu took general layout patterns from Framer, Dribbble and Pinterest; no specific design was copied.
