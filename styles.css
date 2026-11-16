@@ -741,3 +741,6 @@ section.on{animation:rise .35s ease both}
 .libmode{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:0 0 18px}
 .libmode>span{font-size:13px;color:var(--muted);margin-right:4px}
 .thumb small i{font-style:normal;font-family:var(--font-mono);font-size:11px;border:1px solid var(--line);border-radius:999px;padding:1px 7px;margin-left:6px;white-space:nowrap}
+
+/* whole page drawn 10% smaller on computers; phones and small tablets stay full size */
+@media (min-width:861px){html{zoom:.9}}
