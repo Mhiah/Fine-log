@@ -2,6 +2,10 @@
    Each template is plain markup styled only through the --t-* design tokens,
    so changing a font, colour or shape restyles every template at once.
    The structure, layout and responsive notes feed the prompt generator. */
+/* Photos are served by Unsplash (free to use under the Unsplash License). If one fails to load, the tinted block behind it shows instead. */
+function flPhoto(id, alt, w) {
+  return '<img src="https://images.unsplash.com/photo-' + id + '?auto=format&fit=crop&w=' + (w || 800) + '&q=70" alt="' + alt + '" loading="lazy" onerror="this.remove()">';
+}
 window.FL_TEMPLATES = [
   {
     id: "dashboard",
@@ -79,12 +83,7 @@ window.FL_TEMPLATES = [
           '<span class="h">Creative work with <span class="ac">purpose.</span></span>' +
           '<p>A small studio for brands, websites and product launches. We make things that are clear, considered and built to last.</p>' +
           '<div class="acts"><span class="bt">Get started</span><span class="bt gh">View work</span></div></div>' +
-          '<svg class="art" viewBox="0 0 400 300" role="img" aria-label="Abstract building artwork">' +
-            '<polygon points="400,34 236,128 236,300 400,300" style="fill:var(--t-accent)" opacity=".55"/>' +
-            '<polygon points="236,128 40,262 40,300 236,300" style="fill:var(--t-primary)"/>' +
-            '<polygon points="400,34 236,128 40,262 40,250 236,112 400,20" style="fill:var(--t-surface)"/>' +
-            '<g style="stroke:var(--t-surface)" stroke-width="2" opacity=".5"><line x1="290" y1="98" x2="290" y2="300"/><line x1="345" y1="66" x2="345" y2="300"/><line x1="236" y1="190" x2="400" y2="150"/><line x1="236" y1="246" x2="400" y2="224"/></g>' +
-          '</svg></div>' +
+          '<div class="ph g4 art">' + flPhoto("1483366774565-c783b9f70e2c", "Concrete building seen from below", 900) + '</div></div>' +
         '<div class="logos"><span>Northwind</span><span>Lumen</span><span>Fieldnote</span><span>Harbor</span><span>Quill</span></div>' +
         '<div class="feat">' +
           '<div class="card"><div class="ic g1"></div><span class="h">Brand identity</span><p class="mu">Names, marks and a visual system your team can actually use.</p></div>' +
@@ -130,10 +129,10 @@ window.FL_TEMPLATES = [
         '<span class="h big">Brand designer for small, stubborn companies</span>' +
         '<div class="intro"><p>I build identities and websites for founders who would rather be clear than loud. Nine years, forty-one launches.</p><span class="mu m sm">Available from January · Based in Lagos, working worldwide</span></div>' +
         '<div class="work">' +
-          '<div><div class="ph g1"></div><div class="rowb"><span class="h">Fieldnote</span><span class="m mu sm">2026</span></div><span class="mu sm">Identity and web for a research app</span></div>' +
-          '<div><div class="ph g5"></div><div class="rowb"><span class="h">Harbor Coffee</span><span class="m mu sm">2025</span></div><span class="mu sm">Packaging and shop</span></div>' +
-          '<div><div class="ph g6"></div><div class="rowb"><span class="h">Lumen Health</span><span class="m mu sm">2025</span></div><span class="mu sm">Brand system</span></div>' +
-          '<div><div class="ph g2"></div><div class="rowb"><span class="h">Quill</span><span class="m mu sm">2024</span></div><span class="mu sm">Editorial site for a writing tool</span></div>' +
+          '<div><div class="ph g1">' + flPhoto("1449247709967-d4461a6a6103", "White table beside a brown chair") + '</div><div class="rowb"><span class="h">Fieldnote</span><span class="m mu sm">2026</span></div><span class="mu sm">Identity and web for a research app</span></div>' +
+          '<div><div class="ph g5">' + flPhoto("1592078615290-033ee584e267", "Black chair against a teal wall") + '</div><div class="rowb"><span class="h">Harbor Coffee</span><span class="m mu sm">2025</span></div><span class="mu sm">Packaging and shop</span></div>' +
+          '<div><div class="ph g6">' + flPhoto("1527576539890-dfa815648363", "Curved building facade against the sky") + '</div><div class="rowb"><span class="h">Lumen Health</span><span class="m mu sm">2025</span></div><span class="mu sm">Brand system</span></div>' +
+          '<div><div class="ph g2">' + flPhoto("1597696929736-6d13bed8e6a8", "Ceramic vases in neutral tones") + '</div><div class="rowb"><span class="h">Quill</span><span class="m mu sm">2024</span></div><span class="mu sm">Editorial site for a writing tool</span></div>' +
         '</div>' +
         '<div class="about"><span class="h" style="font-size:1.5em">About</span><p>I start with words before pixels: what the company does, for whom, and why anyone should care. The visuals follow from that. If you have a launch coming, <span class="lk">write to me</span>.</p></div>' +
       '</div>',
@@ -166,11 +165,11 @@ window.FL_TEMPLATES = [
           '<span class="h">Why the best interfaces feel a little boring</span>' +
           '<p class="mu">Familiar patterns are not a lack of imagination. They are a kindness to the person trying to get something done.</p>' +
           '<div class="meta" style="margin-top:16px"><span class="bt">Read the essay</span><span class="sm">By Tolu Bakare</span></div></div>' +
-          '<div class="ph g1"></div></div>' +
+          '<div class="ph g1">' + flPhoto("1519219788971-8d9797e0928e", "Desk lamp on a wooden table", 900) + '</div></div>' +
         '<div class="posts">' +
-          '<div class="card"><div class="ph g5"></div><span class="pill">Guide</span><span class="h">A type scale you can set once and forget</span><span class="m mu sm">05 Nov · 6 min</span></div>' +
-          '<div class="card"><div class="ph g6"></div><span class="pill">Essay</span><span class="h">Colour is a job title, not a mood</span><span class="m mu sm">29 Oct · 5 min</span></div>' +
-          '<div class="card"><div class="ph g4"></div><span class="pill">Notes</span><span class="h">What I learned shipping forty landing pages</span><span class="m mu sm">21 Oct · 9 min</span></div>' +
+          '<div class="card"><div class="ph g5">' + flPhoto("1493934558415-9d19f0b2b4d2", "Computer on a wooden desk") + '</div><span class="pill">Guide</span><span class="h">A type scale you can set once and forget</span><span class="m mu sm">05 Nov · 6 min</span></div>' +
+          '<div class="card"><div class="ph g6">' + flPhoto("1519947486511-46149fa0a254", "Wooden chair beside a plant") + '</div><span class="pill">Essay</span><span class="h">Colour is a job title, not a mood</span><span class="m mu sm">29 Oct · 5 min</span></div>' +
+          '<div class="card"><div class="ph g4">' + flPhoto("1611269154421-4e27233ac5c7", "Wooden table and chairs") + '</div><span class="pill">Notes</span><span class="h">What I learned shipping forty landing pages</span><span class="m mu sm">21 Oct · 9 min</span></div>' +
         '</div>' +
         '<div class="news"><span class="h">One good essay, every other Thursday</span><div class="in"><span class="fld hidem">you@example.com</span><span class="bt">Subscribe</span></div></div>' +
       '</div>',
@@ -190,6 +189,117 @@ window.FL_TEMPLATES = [
     ]
   },
   {
+    id: "agency",
+    name: "Agency",
+    blurb: "Studio, agency or consultancy",
+    cat: "Agency",
+    what: "a creative agency website",
+    html:
+      '<div class="t-agency">' +
+        '<div class="pillnav"><span class="h logo">Northwind</span><div class="links"><span class="hidem">Work</span><span class="hidem">Services</span><span class="hidem">Studio</span><span class="hidem">Journal</span></div><span class="bt">Start a project</span></div>' +
+        '<div class="top3"><span class="h">We design brands people remember.</span><div class="side2"><p class="mu">Northwind is an independent studio of nine. We do strategy, identity and websites for companies that want to be understood quickly.</p><span class="bt gh">See selected work</span></div></div>' +
+        '<div class="ph g1 wide">' + flPhoto("1527576539890-dfa815648363", "Curved building facade against a bright sky", 1200) + '<span class="pill tagp">Selected work, 2026</span></div>' +
+        '<div class="bento">' +
+          '<div class="card b2"><span class="m mu sm">01</span><span class="h">Strategy</span><p class="mu">Positioning, naming and messaging, written in plain language your team will actually use.</p></div>' +
+          '<div class="ph g5 bph">' + flPhoto("1622396481322-3b83d186701b", "White concrete building under a blue sky") + '</div>' +
+          '<div class="card bnum"><b class="m">120+</b><span>launches since 2017</span></div>' +
+          '<div class="card"><span class="m mu sm">02</span><span class="h">Identity</span><p class="mu">Marks, type and colour as one system.</p></div>' +
+          '<div class="card"><span class="m mu sm">03</span><span class="h">Websites</span><p class="mu">Designed and built in the same room.</p></div>' +
+        '</div>' +
+        '<div class="names"><span>Lumen</span><span>Fieldnote</span><span>Harbor</span><span>Quill</span><span>Kestrel</span><span>Mono</span></div>' +
+        '<div class="talk"><span class="h">Let&rsquo;s talk.</span><span class="m">hello@northwind.studio</span></div>' +
+      '</div>',
+    structure: [
+      "A floating, fully rounded navigation bar centred at the top: studio name on the left, four text links in the middle and a primary Start a project button on the right.",
+      "An opening row: a very large statement headline on the left and, on the right, a short muted paragraph with an outlined button under it.",
+      "A wide feature photo with the card radius and a small accent badge in its lower left corner.",
+      "A bento grid of five tiles: a wide Strategy card, a photo tile, a number tile filled with the primary colour, and two narrower service cards. Each service card has a small monospace number, a heading and one line of muted text.",
+      "A single row of client names in muted text.",
+      "A closing band with a large Let's talk headline on the left and an email address in the monospace font on the right."
+    ],
+    layout: [
+      "Single column, content max width about 1200px, 40px side padding and generous vertical gaps.",
+      "The bento grid has four columns: the first card spans two, the photo and number tiles one each, and the two service cards two each on the second row."
+    ],
+    responsive: [
+      "Below 640px the navigation keeps only the studio name and the button, and the opening row stacks.",
+      "The bento grid becomes one column and the closing band stacks."
+    ]
+  },
+  {
+    id: "moodboard",
+    name: "Moodboard",
+    blurb: "Gallery, inspiration or photo site",
+    cat: "Gallery",
+    what: "an image gallery and moodboard site",
+    html:
+      '<div class="t-mood">' +
+        '<div class="nav"><span class="h logo">Moodboard</span><span class="search hidem">Search ideas</span><div class="links"><span class="hidem">Explore</span><span class="bt">Create</span></div></div>' +
+        '<div class="tags"><span class="on">For you</span><span>Interiors</span><span>Ceramics</span><span>Architecture</span><span>Workspaces</span><span>Furniture</span></div>' +
+        '<div class="mason">' +
+          '<div class="pin"><div class="ph g4 r34">' + flPhoto("1586023492125-27b2c045efd7", "Yellow padded chair with a wooden frame", 500) + '<span class="save bt">Save</span></div><b>Mustard and oak</b><span class="mu sm">Furniture</span></div>' +
+          '<div class="pin"><div class="ph g5 r11">' + flPhoto("1631125915902-d8abe9225ff2", "Three brown clay vases", 500) + '</div><b>Terracotta trio</b><span class="mu sm">Ceramics</span></div>' +
+          '<div class="pin"><div class="ph g6 r45">' + flPhoto("1576831371356-d6e9411ae501", "High-rise building from below", 500) + '</div><b>Lines and sky</b><span class="mu sm">Architecture</span></div>' +
+          '<div class="pin"><div class="ph g1 r43">' + flPhoto("1575318634028-6a0cfcb60c59", "Home office with a wooden desk", 500) + '</div><b>Quiet desk</b><span class="mu sm">Workspaces</span></div>' +
+          '<div class="pin"><div class="ph g2 r34">' + flPhoto("1522404419647-18cb51cc5c7a", "White concrete building under a teal sky", 500) + '</div><b>Teal and white</b><span class="mu sm">Architecture</span></div>' +
+          '<div class="pin"><div class="ph g3 r11">' + flPhoto("1640938776314-4d303f8a1380", "Wooden chair on a yellow background", 500) + '</div><b>Studio yellow</b><span class="mu sm">Furniture</span></div>' +
+          '<div class="pin"><div class="ph g4 r45">' + flPhoto("1572853566597-b83cde546912", "Two white ceramic vases", 500) + '</div><b>Paired vases</b><span class="mu sm">Ceramics</span></div>' +
+          '<div class="pin"><div class="ph g5 r43">' + flPhoto("1501045661006-fcebe0257c3f", "Armchair beside a snake plant", 500) + '</div><b>Reading corner</b><span class="mu sm">Interiors</span></div>' +
+          '<div class="pin"><div class="ph g6 r34">' + flPhoto("1602128110234-2d11c0aaadfe", "White concrete building beside green trees", 500) + '</div><b>Green edge</b><span class="mu sm">Architecture</span></div>' +
+          '<div class="pin"><div class="ph g1 r11">' + flPhoto("1597696929644-a2157a251a43", "Floral ceramic mugs", 500) + '</div><b>Painted mugs</b><span class="mu sm">Ceramics</span></div>' +
+        '</div>' +
+      '</div>',
+    structure: [
+      "Top navigation: site name on the left, a wide rounded search field in the middle, and an Explore link with a primary Create button on the right.",
+      "A horizontal row of topic chips. The active chip is filled with the text colour.",
+      "A masonry grid of image tiles in columns of varying height. Each tile is a photo with the card radius, a bold one-line title and a muted category under it. The first tile shows a small primary Save button over the photo."
+    ],
+    layout: [
+      "Full-width layout with 40px side padding. The masonry grid has four columns with the standard gap, and tiles keep their natural aspect ratios (3:4, 1:1, 4:5 and 4:3).",
+      "No cards or borders around tiles; the photos carry the page."
+    ],
+    responsive: [
+      "Below 640px the search field hides and the grid becomes two columns.",
+      "Topic chips scroll sideways in one row."
+    ]
+  },
+  {
+    id: "app",
+    name: "Mobile app",
+    blurb: "App launch or product page",
+    cat: "Mobile app",
+    what: "a landing page for a mobile app",
+    html:
+      '<div class="t-app">' +
+        '<div class="nav"><span class="h logo">Tally</span><div class="links"><span class="hidem">Features</span><span class="hidem">Pricing</span><span class="hidem">Help</span><span class="bt">Download</span></div></div>' +
+        '<div class="lead2"><span class="pill">New in version 2.0</span><span class="h">Money habits that actually stick</span><p class="mu">Tally shows where your money goes each week and nudges you before you overspend. Two minutes to set up.</p><div class="acts"><span class="bt">Download the app</span><span class="bt gh">See how it works</span></div></div>' +
+        '<div class="show">' +
+          '<div class="col"><div><span class="ic g1"></span><span class="h">Weekly picture</span><p class="mu">One screen, updated every Monday.</p></div><div><span class="ic g2"></span><span class="h">Gentle nudges</span><p class="mu">A heads-up before a budget runs out.</p></div></div>' +
+          '<div class="phone"><div class="scr"><span class="mu sm">This week</span><b class="m big2">$412.60</b><span class="pill">$87 under budget</span>' +
+            '<div class="bars"><i style="height:38%"></i><i style="height:62%"></i><i style="height:45%"></i><i class="hi" style="height:88%"></i><i style="height:54%"></i><i style="height:30%"></i><i style="height:48%"></i></div>' +
+            '<div class="li"><span>Groceries</span><span class="m">$96.20</span></div><div class="li"><span>Transport</span><span class="m">$41.00</span></div><div class="li"><span>Eating out</span><span class="m">$58.75</span></div>' +
+            '<span class="bt full">Add a payment</span></div></div>' +
+          '<div class="col"><div><span class="ic g3"></span><span class="h">Shared budgets</span><p class="mu">Split a budget with a partner or flatmate.</p></div><div><span class="ic g1"></span><span class="h">Private by design</span><p class="mu">Your data stays on your phone.</p></div></div>' +
+        '</div>' +
+        '<div class="rate"><b class="m">4.8</b><span class="mu">average rating from 12,400 reviews</span></div>' +
+      '</div>',
+    structure: [
+      "Top navigation: app name on the left, three text links and a primary Download button on the right.",
+      "A centred hero: a small accent badge, a large headline, one muted paragraph and two buttons (primary and outlined).",
+      "A three-column showcase: two feature blocks on the left, a phone mockup in the centre and two feature blocks on the right. Each feature block has a small coloured icon tile, a heading and one line of muted text.",
+      "The phone mockup is a tall rounded frame in the text colour containing a mini app screen: a muted label, a large amount in the monospace font, an accent badge, a small bar chart with one bar in the primary colour, three list rows with right-aligned amounts, and a full-width primary button.",
+      "A centred rating line: a large number in the monospace font with a muted caption."
+    ],
+    layout: [
+      "Single centred column, content max width about 1100px, 40px side padding.",
+      "The showcase is three columns with the phone about 260px wide in the centre and feature columns vertically centred beside it."
+    ],
+    responsive: [
+      "Below 640px the showcase becomes one column: the phone first, then the four feature blocks stacked.",
+      "The headline drops to about two thirds of its size and buttons go full width."
+    ]
+  },
+  {
     id: "shop",
     name: "E-commerce",
     blurb: "Store, catalog or product launch",
@@ -199,18 +309,18 @@ window.FL_TEMPLATES = [
       '<div class="t-shop">' +
         '<div class="nav"><span class="h logo">Clay &amp; Co.</span><div class="links"><span class="hidem">Shop</span><span class="hidem">Journal</span><span class="hidem">About</span><span>Cart<span class="cart">2</span></span></div></div>' +
         '<div class="body"><div>' +
-          '<span class="h ttl">Tableware</span>' +
-          '<div class="chips"><span class="on">All</span><span>Mugs</span><span>Plates</span><span>Bowls</span><span>Vases</span></div>' +
+          '<span class="h ttl">Ceramics</span>' +
+          '<div class="chips"><span class="on">All</span><span>Vases</span><span>Jars</span><span>Mugs</span><span>Bowls</span></div>' +
           '<div class="grid">' +
-            '<div class="prod"><div class="ph g4"></div><b>Speckled mug</b><div class="rowb"><span class="m">$24.00</span><span class="pill">New</span></div></div>' +
-            '<div class="prod"><div class="ph g5"></div><b>Dinner plate</b><span class="m">$32.00</span></div>' +
-            '<div class="prod"><div class="ph g6"></div><b>Ramen bowl</b><span class="m">$38.00</span></div>' +
-            '<div class="prod"><div class="ph g1"></div><b>Bud vase</b><span class="m">$29.00</span></div>' +
-            '<div class="prod"><div class="ph g2"></div><b>Espresso cup</b><div class="rowb"><span class="m">$18.00</span><span class="pill">Low stock</span></div></div>' +
-            '<div class="prod"><div class="ph g3"></div><b>Serving dish</b><span class="m">$54.00</span></div>' +
+            '<div class="prod"><div class="ph g4">' + flPhoto("1631125915902-d8abe9225ff2", "Three brown clay vases", 500) + '</div><b>Terracotta trio</b><div class="rowb"><span class="m">$24.00</span><span class="pill">New</span></div></div>' +
+            '<div class="prod"><div class="ph g5">' + flPhoto("1631125915973-e0d155a14e4e", "Three white ceramic jars", 500) + '</div><b>White jar set</b><span class="m">$32.00</span></div>' +
+            '<div class="prod"><div class="ph g6">' + flPhoto("1572853566597-b83cde546912", "Two white ceramic vases", 500) + '</div><b>Twin vases</b><span class="m">$38.00</span></div>' +
+            '<div class="prod"><div class="ph g1">' + flPhoto("1633000116322-d7f5cb7d3ebb", "White vase on a white table", 500) + '</div><b>Tall white vase</b><span class="m">$29.00</span></div>' +
+            '<div class="prod"><div class="ph g2">' + flPhoto("1631125916276-69bcd14e3980", "Brown clay jars", 500) + '</div><b>Clay jars</b><div class="rowb"><span class="m">$18.00</span><span class="pill">Low stock</span></div></div>' +
+            '<div class="prod"><div class="ph g3">' + flPhoto("1520408222757-6f9f95d87d5d", "White clay vases on a table", 500) + '</div><b>Studio vases</b><span class="m">$54.00</span></div>' +
           '</div></div>' +
           '<div class="card sum"><span class="h">Your order</span>' +
-            '<div class="line"><span>Speckled mug × 2</span><span class="m">$48.00</span></div>' +
+            '<div class="line"><span>Terracotta trio × 2</span><span class="m">$48.00</span></div>' +
             '<div class="line mu"><span>Shipping</span><span class="m">$6.50</span></div>' +
             '<div class="line tot"><span>Total</span><span class="m">$54.50</span></div>' +
             '<span class="bt">Check out</span><span class="mu sm">Free returns within 30 days</span></div>' +
@@ -219,7 +329,7 @@ window.FL_TEMPLATES = [
     structure: [
       "Top navigation: shop name on the left, three text links and a cart link with a count badge in the accent colour on the right.",
       "A category title in the heading font with a row of filter chips under it. The active chip is filled with the text colour.",
-      "A three-column product grid. Each product has a square image area, a name, a price in the monospace font and an optional accent badge such as New or Low stock.",
+      "A three-column product grid. Each product has a square product photo, a name, a price in the monospace font and an optional accent badge such as New or Low stock.",
       "An order summary card in a right-hand column: line items, shipping, a total separated by a border, a full-width primary Check out button and a short reassurance line."
     ],
     layout: [
