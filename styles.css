@@ -744,3 +744,5 @@ section.on{animation:rise .35s ease both}
 
 /* whole page drawn 10% smaller on computers; phones and small tablets stay full size */
 @media (min-width:861px){html{zoom:.9}}
+
+a.brand{color:var(--ink);text-decoration:none;cursor:pointer}

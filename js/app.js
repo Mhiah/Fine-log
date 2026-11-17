@@ -114,7 +114,7 @@ function setWelcome(i) {
   fitWord(); requestAnimationFrame(fitWord);
 }
 function lockScroll(on) { document.documentElement.classList.toggle("intro-on", on); }
-function closeIntro() { running = false; clearTimeout(introT); intro.classList.add("out"); lockScroll(false); setTimeout(() => intro.classList.remove("show", "out"), 520); }
+function closeIntro() { running = false; clearTimeout(introT); intro.classList.add("out"); lockScroll(false); window.scrollTo(0, 0); setTimeout(() => intro.classList.remove("show", "out"), 520); }
 function playWelcome() {
   if (running) return; running = true; intro.classList.remove("out"); intro.classList.add("show"); lockScroll(true); $("rule").classList.remove("draw");
   let i = 0; const n = CYCLE.length;
@@ -489,6 +489,9 @@ function showTab(id, scroll) {
   each(".frame", fitFrame);
   if (scroll) { const y = document.querySelector(".hero").getBoundingClientRect().bottom + window.scrollY - 70; window.scrollTo({ top: Math.max(0, y), behavior: "auto" }); }
 }
+/* the Fine-log name always returns to the main page */
+function goHome() { showTab("library"); window.scrollTo(0, 0); try { history.replaceState(null, "", location.pathname + location.search); } catch (err) {} }
+$("homelink").addEventListener("click", (e) => { e.preventDefault(); goHome(); });
 document.addEventListener("click", (e) => {
   const a = e.target.closest('a[href^="#"]'); if (!a) return; const id = a.getAttribute("href").slice(1);
   if (TABS.indexOf(id) < 0) return; e.preventDefault();
@@ -502,7 +505,10 @@ document.addEventListener("click", (e) => {
 FL._names = [].concat(MONOS, CYCLE, ...Object.keys(STYLES).map((k) => STYLES[k].fonts), ...Object.keys(PAIRS).map((k) => [k].concat(PAIRS[k])), ...Object.keys(PAIR_BY_CAT).map((k) => PAIR_BY_CAT[k]), ...Object.keys(MOODS).map((k) => MOODS[k].heads.concat(MOODS[k].bodies))).filter((n) => !info(n));
 buildColourStatic(); buildPreviewStatic(); paintThumbs(); renderTools(); renderPromptOpts(); renderFonts(true); renderSaved();
 $("target").value = target; setCur(cur, null, true); apply(); startWelcome();
-showTab(TABS.indexOf(location.hash.slice(1)) > -1 ? location.hash.slice(1) : "library");
+/* always open on the main page, whatever screen was open last time */
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+if (TABS.indexOf(location.hash.slice(1)) > -1) { try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
+showTab("library"); window.scrollTo(0, 0);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => each(".frame", fitFrame));
 if (cameFromLink) { toast("Opened a shared design"); try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
 })();
