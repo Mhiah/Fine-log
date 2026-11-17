@@ -57,7 +57,29 @@ A complete interface needs more than three colours, so Fine-log works with eight
 
 ### 3. UI Library
 
-24 ready-made designs built from 12 working layouts. Each layout appears twice in two very different styles, and every card shows its design in its own fonts, colours and shape.
+76 ready-made designs built from 25 working layouts. Every card shows its design in its own fonts, colours and shape.
+
+**Crypto screens (52 designs).** Thirteen original crypto layouts, each in four looks: minimal, detailed, colourful and dark.
+
+| Crypto layout | What it contains |
+| --- | --- |
+| Portfolio overview | Stat cards, net-worth chart, allocation donut, holdings table with sparklines |
+| Trading terminal | Pair bar, candlestick chart, order book, order form, open orders |
+| Swap | Swap card with pay and receive panels, route details, price chart, recent swaps |
+| Staking | Stat cards, rewards per epoch, positions donut, validators table |
+| Lending | Health factor gauge, net APY, borrow limit, supplies, borrows, markets table |
+| Protocol analytics | TVL, volume, fees and wallets, TVL chart, by-chain bars, top pools |
+| Block explorer | Search header, network stats, latest blocks, latest transactions |
+| NFT collection | Banner, collection header, stats, tabs, grid of generative artwork |
+| Wallet | Balance card with actions, tokens, activity, send again |
+| Governance | Proposal cards with vote bars, voting power, treasury |
+| Token launch | Sale card with progress and countdown, purchase box, tiers, distribution |
+| Yield vaults | Vault cards with APY and risk, your deposits |
+| Markets | Mover cards, sector switch, market table with sparklines |
+
+All names, figures and addresses in them are invented sample content. Token icons are round letter badges; no coin or exchange logos are used.
+
+**Other screens (24 designs).** Twelve layouts, each in two very different styles.
 
 | Layout | What it contains |
 | --- | --- |
@@ -74,8 +96,9 @@ A complete interface needs more than three colours, so Fine-log works with eight
 | Event | Dates, large headline, speaker cards, schedule, ticket tiers |
 | Moodboard | Search, topic chips and a masonry wall of photos |
 
-- **Filter row:** narrow the designs by type.
-- **Their own style / My fonts and colours:** a switch above the cards. In the first mode, choosing a design applies its fonts, colours and shape, which you can then change. In the second, all 24 are redrawn in your picks and choosing one changes only the layout.
+- **Filter row:** narrow the designs by type, with Crypto first.
+- **Crypto look:** show only the minimal, detailed, colourful or dark crypto designs.
+- **Their own style / My fonts and colours:** a switch above the cards. In the first mode, choosing a design applies its fonts, colours and shape, which you can then change. In the second, all 76 are redrawn in your picks and choosing one changes only the layout.
 
 Controls above the preview:
 
@@ -135,7 +158,8 @@ index.html          Page markup
 styles.css          Page styles and the UI designs' styles
 js/fonts.js         The Google Fonts family list (name, style, weights) and the Apple and Windows system fonts
 js/colour.js        Colour maths, the eight roles and how five are derived
-js/templates.js     Layout markup, structure notes used in prompts, signature styles and the list of 24 designs
+js/templates.js     Layout markup, structure notes used in prompts, signature styles and the first 24 designs
+js/crypto.js        The 13 crypto layouts, their 12 styles and the 52 crypto designs
 js/prompt.js        Prompt generator and CSS, Tailwind and token exports
 js/app.js           State, font library, colour tools, preview, sharing
 README.md           This file
@@ -160,7 +184,7 @@ Add a layout to `FL_TEMPLATES` in `js/templates.js` with an `id`, `name`, `blurb
 
 ## Roadmap
 
-1. More layouts, so the 24 designs come from more than 12: analytics, admin, pricing and onboarding.
+1. More layouts: perpetuals, bridge, airdrop claim, points and leaderboard, on-chain profile.
 2. Layout controls such as sidebar or top navigation and content width.
 3. More font pairings and palettes.
 4. A real AI model behind the suggestions, through a small server function.

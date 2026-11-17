@@ -19,7 +19,7 @@ const GOOGLE_COUNT = FONTS.length;
 FONTS.sort((a, b) => a.n.localeCompare(b.n));
 $("statFonts").textContent = FONTS.length.toLocaleString("en");
 const info = (n) => BYNAME[String(n || "").toLowerCase()];
-const TPLS = window.FL_TEMPLATES, DESIGNS = window.FL_DESIGNS, STYLES = window.FL_STYLES;
+const TPLS = window.FL_TEMPLATES, DESIGNS = window.FL_DESIGNS, STYLES = window.FL_STYLES, LOOKS = window.FL_LOOKS || {};
 const designOf = (id) => DESIGNS.filter((d) => d.id === id)[0] || DESIGNS[0];
 
 $("statTpl").textContent = DESIGNS.length;
@@ -55,10 +55,10 @@ function fontCss(name, bold) { return "font-family:" + fam(name) + ";font-weight
 /* ---------- state ---------- */
 const DEFAULT = {
   fonts: { head: "Manrope", body: "DM Sans", mono: "IBM Plex Mono" },
-  colors: { bg: "#FAF7F2", text: "#241A22", primary: "#32132D", secondary: "#8A5A6B", accent: "#B65B3D" },
+  colors: { bg: "#F7F1E8", text: "#2A1830", primary: "#5B2A6B", secondary: "#B8683A", accent: "#D99A2B" },
   auto: { surface: true, muted: true, secondary: false, accent: false, border: true },
-  shape: { radius: "soft", shadow: "soft", density: "comfortable", spacing: "tight", size: "medium" },
-  tpl: "landing", view: "desktop",
+  shape: { radius: "round", shadow: "strong", density: "comfortable", spacing: "tight", size: "medium" },
+  tpl: "c-portfolio-rich", look: "rich", view: "desktop",
   prompt: { mode: "new", tool: "any", len: "full" }
 };
 function sanitize(o) {
@@ -68,7 +68,7 @@ function sanitize(o) {
   if (o.auto) FL.AUTO_ROLES.forEach((k) => { S.auto[k] = !(o.auto[k] === false && S.colors[k]); });
   else if (o.colors) FL.AUTO_ROLES.forEach((k) => { S.auto[k] = !FL.normHex(o.colors[k]); });
   Object.keys(FL.SHAPE).forEach((k) => { if (o.shape && FL.SHAPE[k][o.shape[k]]) S.shape[k] = o.shape[k]; });
-  if (DESIGNS.some((d) => d.id === o.tpl)) S.tpl = o.tpl;
+  if (DESIGNS.some((d) => d.id === o.tpl)) { S.tpl = o.tpl; S.look = LOOKS[o.look] ? o.look : designOf(o.tpl).look || ""; }
   if (o.view === "mobile") S.view = "mobile";
   if (o.prompt) { if (o.prompt.mode === "redesign") S.prompt.mode = "redesign"; if (FL.TOOLS[o.prompt.tool]) S.prompt.tool = o.prompt.tool; if (o.prompt.len === "compact") S.prompt.len = "compact"; }
   FL.derive(S.colors, S.auto);
@@ -76,7 +76,7 @@ function sanitize(o) {
 }
 function encodeState(S) {
   const o = { f: [S.fonts.head, S.fonts.body, S.fonts.mono], c: FL.ROLES.map((r) => S.colors[r[0]].slice(1)), a: FL.AUTO_ROLES.map((k) => (S.auto[k] ? 1 : 0)).join(""),
-    s: Object.keys(FL.SHAPE).map((k) => S.shape[k]), t: S.tpl };
+    s: Object.keys(FL.SHAPE).map((k) => S.shape[k]), t: S.tpl, l: S.look || "" };
   return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 function decodeState(code) {
@@ -86,18 +86,18 @@ function decodeState(code) {
     FL.ROLES.forEach((r, i) => { colors[r[0]] = "#" + o.c[i]; });
     FL.AUTO_ROLES.forEach((k, i) => { auto[k] = o.a.charAt(i) === "1"; });
     Object.keys(FL.SHAPE).forEach((k, i) => { shape[k] = o.s[i]; });
-    return { fonts: { head: o.f[0], body: o.f[1], mono: o.f[2] }, colors, auto, shape, tpl: o.t };
+    return { fonts: { head: o.f[0], body: o.f[1], mono: o.f[2] }, colors, auto, shape, tpl: o.t, look: o.l };
   } catch (e) { return null; }
 }
 let S, cameFromLink = false;
 (function boot() {
   let o = null;
   if (/^#s=/.test(location.hash)) { o = decodeState(location.hash.slice(3)); cameFromLink = !!o; }
-  if (!o) { try { o = JSON.parse(localStorage.getItem("fl-state-v7") || "null"); } catch (e) {} }
+  if (!o) { try { o = JSON.parse(localStorage.getItem("fl-state-v8") || "null"); } catch (e) {} }
   S = sanitize(o);
 })();
 let target = "primary", cur = S.colors.primary;
-function save() { try { localStorage.setItem("fl-state-v7", JSON.stringify(S)); } catch (e) {} }
+function save() { try { localStorage.setItem("fl-state-v8", JSON.stringify(S)); } catch (e) {} }
 
 /* ---------- welcome ---------- */
 /* 49 fonts grouped by resemblance, from cursive down to clean, then the site font: 50 in all */
@@ -385,24 +385,36 @@ function fitFrame(frame) {
 }
 const ro = "ResizeObserver" in window ? new ResizeObserver((es) => es.forEach((e) => fitFrame(e.target.classList.contains("frame") ? e.target : e.target.parentNode))) : null;
 function watch(frame) { if (ro) { ro.observe(frame); ro.observe(frame.firstElementChild); } fitFrame(frame); }
-function paintThumbs() {
-  each("#gallery .thumb", (b) => {
-    const el = b.querySelector(".tpl"), d = designOf(b.dataset.tpl);
-    el.removeAttribute("style");
-    if (libMode === "own") { const st = styleState(d.style), v = varsFor(st.fonts, st.colors, st.shape); Object.keys(v).forEach((k) => el.style.setProperty("--t-" + k, v[k])); }
-  });
+function paintThumb(b) {
+  const el = b.querySelector(".tpl"), d = designOf(b.dataset.tpl);
+  el.removeAttribute("style"); el.dataset.look = d.look || "";
+  if (libMode === "own") { const st = styleState(d.style), v = varsFor(st.fonts, st.colors, st.shape); Object.keys(v).forEach((k) => el.style.setProperty("--t-" + k, v[k])); st.fonts && Object.keys(st.fonts).forEach((k) => ensureFont(st.fonts[k])); }
+}
+function paintThumbs() { each("#gallery .thumb", paintThumb); }
+/* cards are only drawn when they come near the screen, so 76 live designs stay light */
+const thumbIO = "IntersectionObserver" in window ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { fillThumb(e.target); thumbIO.unobserve(e.target); } }), { rootMargin: "500px" }) : null;
+function fillThumb(b) {
+  const el = b.querySelector(".tpl"); if (el.dataset.filled) return; el.dataset.filled = "1";
+  el.innerHTML = tplOf(b.dataset.tpl).html; paintThumb(b); watch(b.querySelector(".frame"));
+}
+let libCat = "All", libLook = "any";
+function filterThumbs() {
+  each("#gallery .thumb", (t) => { const d = designOf(t.dataset.tpl), l = tplOf(d.id); t.hidden = (libCat !== "All" && l.cat !== libCat) || (libLook !== "any" && d.look !== libLook); });
+  each("#gallery .frame", fitFrame);
 }
 function buildPreviewStatic() {
-  Object.keys(STYLES).forEach((k) => STYLES[k].fonts.forEach(ensureFont));
   $("gallery").innerHTML = DESIGNS.map((d) => { const l = TPLS.filter((t) => t.id === d.layout)[0];
-    return '<button class="thumb" type="button" data-tpl="' + d.id + '" aria-pressed="' + (S.tpl === d.id) + '"><div class="frame" data-mode="thumb"><div class="tpl">' + l.html + "</div></div><span><b>" + esc(d.name) + "</b><small>" + l.name + "</small></span></button>"; }).join("");
-  each("#gallery .frame", watch);
+    return '<button class="thumb" type="button" data-tpl="' + d.id + '" aria-pressed="' + (S.tpl === d.id) + '"><div class="frame" data-mode="thumb"><div class="tpl"></div></div><span><b>' + esc(d.look ? l.name : d.name) + "</b><small>" + (d.look ? "Crypto · " + LOOKS[d.look] : l.name) + "</small></span></button>"; }).join("");
+  each("#gallery .thumb", (b) => (thumbIO ? thumbIO.observe(b) : fillThumb(b)));
   const cats = []; TPLS.forEach((t) => { if (cats.indexOf(t.cat) < 0) cats.push(t.cat); });
+  cats.sort((a, b) => (a === "Crypto" ? -1 : b === "Crypto" ? 1 : 0));
   $("filters").innerHTML = seg("cat", [["All", "All"]].concat(cats.map((c) => [c, c])), "All").replace(/class="btn small"/g, "");
   $("libmode").innerHTML = "<span>Show designs in</span>" + seg("lib", [["own", "Their own style"], ["mine", "My fonts and colours"]], libMode);
+  $("lookf").innerHTML = "<span>Crypto look</span>" + seg("look", [["any", "Any"]].concat(Object.keys(LOOKS).map((k) => [k, LOOKS[k]])), libLook);
   $("pvinner").className = "tpl"; watch($("pvframe")); watch($("heroprev").firstElementChild);
   window.addEventListener("resize", () => each(".frame", fitFrame));
 }
+$("lookf").addEventListener("click", function (e) { const b = e.target.closest("[data-v]"); if (!b) return; libLook = b.dataset.v; each("button", (x) => x.setAttribute("aria-pressed", x === b), this); filterThumbs(); });
 $("libmode").addEventListener("click", function (e) { const b = e.target.closest("[data-v]"); if (!b) return; libMode = b.dataset.v; each("button", (x) => x.setAttribute("aria-pressed", x === b), this); paintThumbs(); each("#gallery .frame", fitFrame); });
 function renderTools() {
   const sh = FL.SHAPE, opt = (k) => Object.keys(sh[k]).map((v) => [v, sh[k][v].label]);
@@ -412,7 +424,7 @@ function renderTools() {
 }
 $("tools").addEventListener("click", (e) => { const b = e.target.closest("[data-k]"); if (!b) return; if (b.dataset.k === "view") S.view = b.dataset.v; else S.shape[b.dataset.k] = b.dataset.v; apply(); });
 $("gallery").addEventListener("click", (e) => {
-  const b = e.target.closest("[data-tpl]"); if (!b) return; const d = designOf(b.dataset.tpl); S.tpl = d.id;
+  const b = e.target.closest("[data-tpl]"); if (!b) return; const d = designOf(b.dataset.tpl); S.tpl = d.id; S.look = d.look || "";
   if (libMode === "own") {
     const st = styleState(d.style); S.fonts = st.fonts; S.shape = st.shape;
     ["bg", "text", "primary", "secondary", "accent"].forEach((k) => { S.colors[k] = st.colors[k]; });
@@ -422,15 +434,15 @@ $("gallery").addEventListener("click", (e) => {
   apply(); if (target) setCur(S.colors[target], null, true);
 });
 $("filters").addEventListener("click", function (e) {
-  const b = e.target.closest("[data-v]"); if (!b) return; const c = b.dataset.v;
+  const b = e.target.closest("[data-v]"); if (!b) return; libCat = b.dataset.v;
   each("button", (x) => x.setAttribute("aria-pressed", x === b), this);
-  each("#gallery .thumb", (t) => { t.hidden = c !== "All" && tplOf(t.dataset.tpl).cat !== c; });
-  each("#gallery .frame", fitFrame);
+  filterThumbs();
 });
 $("heroprev").onclick = () => { showTab("library"); $("pvframe").scrollIntoView({ block: "start" }); };
 let shownTpl = null;
 function renderPreview() {
   if (shownTpl !== S.tpl) { $("pvinner").innerHTML = tplOf(S.tpl).html; $("heroinner").innerHTML = tplOf(S.tpl).html; shownTpl = S.tpl; each("#gallery .thumb", (b) => b.setAttribute("aria-pressed", b.dataset.tpl === S.tpl)); }
+  $("pvinner").dataset.look = S.look || ""; $("heroinner").dataset.look = S.look || "";
   $("pvframe").dataset.mode = S.view; fitFrame($("pvframe"));
 }
 
@@ -440,6 +452,7 @@ function varsFor(fonts, c, shape) {
   return {
     bg: c.bg, surface: c.surface, text: c.text, muted: c.muted, primary: c.primary, secondary: c.secondary, accent: c.accent, border: c.border,
     onp: FL.onColor(c.primary), ons: FL.onColor(c.secondary), ona: FL.onColor(c.accent),
+    up: FL.lum(c.bg) < 0.35 ? "#4ADE80" : "#15803D", dn: FL.lum(c.bg) < 0.35 ? "#F87171" : "#DC2626",
     fh: fam(fonts.head), fhw: wOf(fonts.head, true), fhs: stOf(fonts.head), fb: fam(fonts.body), fbw: wOf(fonts.body), fbs: stOf(fonts.body), fm: fam(fonts.mono), fmw: wOf(fonts.mono),
     fs: sh.size[shape.size].v + "px", ls: sh.spacing[shape.spacing].v, r: rad.r + "px", rs: Math.min(rad.r, 8) + "px", rb: rad.rb, sh: sh.shadow[shape.shadow].v, pad: den.pad + "px", gap: den.gap + "px"
   };

@@ -15,6 +15,13 @@
     spacing: { tight: { v: "-0.025em", label: "Tight" }, normal: { v: "0", label: "Normal" }, wide: { v: "0.04em", label: "Wide" } },
     size: { small: { v: 15, label: "Small" }, medium: { v: 16, label: "Medium" }, large: { v: 18, label: "Large" } }
   };
+  /* how each crypto look decorates the same layout */
+  FL.LOOKTEXT = {
+    minimal: "Overall look, minimal: no shadows and no filled cards. Cards are transparent with a 1px border, the sidebar and top bar have no background, and the active menu item is marked only by a thin primary-coloured line. Keep decoration to a minimum.",
+    rich: "Overall look, detailed: soft radial tints of the primary and accent colours behind the page, cards with a faint gradient and strong soft shadows, a sidebar filled with the primary colour, and the first stat card filled with a gradient from the primary to the secondary colour.",
+    colour: "Overall look, colourful: the four stat cards are filled with the primary, secondary, accent and text colours in that order, the sidebar is filled with the text colour with the active item in the accent colour, and repeated cards carry a 5px top stripe that cycles through primary, secondary and accent.",
+    dark: "Overall look, dark: a dark page with a soft glow of the primary colour in the top right corner, slightly translucent cards outlined in a tint of the primary colour, primary buttons with a soft glow, and large figures with a faint glow of the primary colour."
+  };
   FL.TOOLS = {
     any: { label: "Any AI", note: "Return complete, runnable code. If this is a single page, give one HTML file with the CSS and JavaScript included. Do not leave placeholders or comments such as \"rest of the code here\"." },
     claude: { label: "Claude Code", note: "You are working in my repository with Claude Code. Read the relevant files before editing, tell me your plan in a few lines, then make the changes. Run the project's build or tests when you finish and report what you changed, file by file." },
@@ -170,7 +177,7 @@
       "Inputs: surface background, 1px border, same radius as buttons, at least 44px tall, primary-coloured focus ring.",
       "Badges: fully rounded, accent colour at about 20% opacity as the fill, text colour for the label.",
       "Tables and lists: muted column labels, 1px row dividers in the border colour, amounts right-aligned in the monospace font."
-    ]));
+    ].concat(FL.LOOKTEXT[S.look] ? [FL.LOOKTEXT[S.look]] : [], tpl.cat === "Crypto" ? ["Gains, buys and positive changes use " + (FL.lum(c.bg) < 0.35 ? "#4ADE80" : "#15803D") + "; losses, sells and negative changes use " + (FL.lum(c.bg) < 0.35 ? "#F87171" : "#DC2626") + ". These two are the only colours allowed outside the eight tokens.", "Token icons are round badges with the ticker's first letter; do not use real coin or exchange logos."] : [])));
 
     out.push("LAYOUT AND SPACING\n" + list(tpl.layout.concat([
       den.label + " density: " + den.pad + "px padding inside cards and " + den.gap + "px gaps between cards and grid items.",
@@ -197,7 +204,7 @@
 
     out.push("BEFORE YOU FINISH, CHECK\n" + list([
       "Every heading is in " + S.fonts.head + " and every paragraph is in " + S.fonts.body + ".",
-      "Only the eight colour tokens (and transparent mixes of them) appear in the UI.",
+      (tpl.cat === "Crypto" ? "Only the eight colour tokens, transparent mixes of them and the two gain and loss colours appear in the UI." : "Only the eight colour tokens (and transparent mixes of them) appear in the UI."),
       "The layout holds at 360px, 768px and 1280px wide.",
       redesign ? "Every feature that worked before still works, and no content was removed." : "Every section in the page structure is present and filled with realistic content.",
       "Then list the fonts and hex codes you used so I can confirm they match."
