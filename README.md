@@ -37,7 +37,7 @@ All 1,908 families in the Google Fonts library, plus 84 fonts built into Apple d
 - **Favourites.** Star any font to keep it under a Favourites filter. Favourites stay in the browser.
 - **Ready-made combinations.** Eight heading, body and numbers trios that apply in one click.
 - **Surprise me.** Picks a random combination from the curated fonts.
-- **Style filters** (sans serif, serif, display, handwriting, monospace), **Apple fonts** and **Windows fonts** filters, and your own sample text.
+- **Four filters inside the list:** All, Apple fonts, Windows fonts and Favourites. Your own sample text sits beside the font box.
 - **System fonts are labelled.** Fonts such as San Francisco, Helvetica Neue, Avenir, Segoe UI and Calibri are not downloaded; each shows only on a device that already has it, and is marked "Apple devices only", "Windows only" or "Apple and Windows". The prompt tells the AI not to look for them on Google Fonts and what other devices should fall back to.
 
 The Numbers font is used wherever digits appear in a design, such as prices, dates and tables, so columns line up.
