@@ -177,11 +177,13 @@ function renderList() {
   box.scrollTop = 0;
   $("fless").disabled = fpage === 0; $("fmore").disabled = (fpage + 1) * FPAGE >= flist.length;
 }
+/* the Sample text box is always drawn in the font shown in the Choose a font box */
+function paintSample(n) { const el = $("fsample"); ensureFont(n); el.style.fontFamily = fam(n); el.style.fontWeight = wOf(n, fslot === "head"); el.style.fontStyle = stOf(n); }
 /* trying a font: show it in the selected row without changing the design yet */
 function tryFont(n) {
   const row = $("pair").querySelector('[data-row="' + fslot + '"]'); if (!row) return;
-  if (!n) { renderPair(); return; }
-  ensureFont(n); row.classList.add("previewing");
+  if (!n) { renderPair(); paintSample(S.fonts[fslot]); return; }
+  ensureFont(n); row.classList.add("previewing"); paintSample(n);
   row.querySelector(".who b").textContent = n;
   row.querySelector(".ex1,.ex2,.ex3").style.cssText = fontCss(n, fslot === "head");
 }
@@ -197,7 +199,7 @@ function setSlot(slot) {
   $("fsearchlab").textContent = "Choose a font for " + SLOT[slot];
   if (fcat !== "all" && fcat !== "mac" && fcat !== "win" && fcat !== "fav") fcat = "all";
   renderCats();
-  filterFonts(); if (!drop.hidden) renderList(); renderPair();
+  filterFonts(); if (!drop.hidden) renderList(); renderPair(); paintSample(picked);
 }
 function renderCats() {
   $("fcats").innerHTML = [["all", "All"], ["mac", "Apple fonts"], ["win", "Windows fonts"], ["fav", "★ Favourites" + (favs.length ? " (" + favs.length + ")" : "")]]
@@ -450,7 +452,7 @@ function renderExport() {
   $("exlab").textContent = { css: "CSS variables", tailwind: "Tailwind config", tokens: "Design tokens (JSON)" }[exTab];
   $("sharelink").value = location.href.split("#")[0] + "#s=" + encodeState(S);
 }
-function markFonts() { if (document.activeElement !== $("fsearch")) { picked = S.fonts[fslot]; $("fsearch").value = picked; } renderTrios(); }
+function markFonts() { if (document.activeElement !== $("fsearch")) { picked = S.fonts[fslot]; $("fsearch").value = picked; } paintSample(S.fonts[fslot]); renderTrios(); }
 let promptShown = false;
 function syncSegs() {
   each("#tools [data-k], #popts [data-k]", (b) => { const k = b.dataset.k, v = k === "view" ? S.view : k in S.shape ? S.shape[k] : S.prompt[k]; b.setAttribute("aria-pressed", v === b.dataset.v); });
