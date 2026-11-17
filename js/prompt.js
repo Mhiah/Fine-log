@@ -177,7 +177,7 @@
       "Inputs: surface background, 1px border, same radius as buttons, at least 44px tall, primary-coloured focus ring.",
       "Badges: fully rounded, accent colour at about 20% opacity as the fill, text colour for the label.",
       "Tables and lists: muted column labels, 1px row dividers in the border colour, amounts right-aligned in the monospace font."
-    ].concat(FL.LOOKTEXT[S.look] ? [FL.LOOKTEXT[S.look]] : [], tpl.cat === "Crypto" ? ["Gains, buys and positive changes use " + (FL.lum(c.bg) < 0.35 ? "#4ADE80" : "#15803D") + "; losses, sells and negative changes use " + (FL.lum(c.bg) < 0.35 ? "#F87171" : "#DC2626") + ". These two are the only colours allowed outside the eight tokens.", "Token icons are round badges with the ticker's first letter; do not use real coin or exchange logos."] : [])));
+    ].concat(FL.LOOKTEXT[S.look] ? [FL.LOOKTEXT[S.look]] : [], tpl.cat === "Crypto" ? ["Gains, buys and positive changes use " + (FL.lum(c.bg) < 0.35 ? "#4ADE80" : "#15803D") + "; losses, sells and negative changes use " + (FL.lum(c.bg) < 0.35 ? "#F87171" : "#DC2626") + ". These two are the only colours allowed outside the eight tokens.", (tpl.tag === "Stocks" ? "Company icons are rounded-square badges holding the ticker letters; company names are invented, so do not use real company names or logos." : "Token icons are round badges with the ticker's first letter; do not use real coin, exchange or chain logos.")] : [])));
 
     out.push("LAYOUT AND SPACING\n" + list(tpl.layout.concat([
       den.label + " density: " + den.pad + "px padding inside cards and " + den.gap + "px gaps between cards and grid items.",

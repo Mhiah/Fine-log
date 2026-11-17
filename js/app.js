@@ -391,7 +391,7 @@ function paintThumb(b) {
   if (libMode === "own") { const st = styleState(d.style), v = varsFor(st.fonts, st.colors, st.shape); Object.keys(v).forEach((k) => el.style.setProperty("--t-" + k, v[k])); st.fonts && Object.keys(st.fonts).forEach((k) => ensureFont(st.fonts[k])); }
 }
 function paintThumbs() { each("#gallery .thumb", paintThumb); }
-/* cards are only drawn when they come near the screen, so 76 live designs stay light */
+/* cards are only drawn when they come near the screen, so 100 live designs stay light */
 const thumbIO = "IntersectionObserver" in window ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { fillThumb(e.target); thumbIO.unobserve(e.target); } }), { rootMargin: "500px" }) : null;
 function fillThumb(b) {
   const el = b.querySelector(".tpl"); if (el.dataset.filled) return; el.dataset.filled = "1";
@@ -404,7 +404,7 @@ function filterThumbs() {
 }
 function buildPreviewStatic() {
   $("gallery").innerHTML = DESIGNS.map((d) => { const l = TPLS.filter((t) => t.id === d.layout)[0];
-    return '<button class="thumb" type="button" data-tpl="' + d.id + '" aria-pressed="' + (S.tpl === d.id) + '"><div class="frame" data-mode="thumb"><div class="tpl"></div></div><span><b>' + esc(d.look ? l.name : d.name) + "</b><small>" + (d.look ? "Crypto · " + LOOKS[d.look] : l.name) + "</small></span></button>"; }).join("");
+    return '<button class="thumb" type="button" data-tpl="' + d.id + '" aria-pressed="' + (S.tpl === d.id) + '"><div class="frame" data-mode="thumb"><div class="tpl"></div></div><span><b>' + esc(d.look ? l.name : d.name) + "</b><small>" + (d.look ? (l.tag || "Crypto") + " · " + LOOKS[d.look] : l.name) + "</small></span></button>"; }).join("");
   each("#gallery .thumb", (b) => (thumbIO ? thumbIO.observe(b) : fillThumb(b)));
   const cats = []; TPLS.forEach((t) => { if (cats.indexOf(t.cat) < 0) cats.push(t.cat); });
   cats.sort((a, b) => (a === "Crypto" ? -1 : b === "Crypto" ? 1 : 0));

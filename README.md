@@ -57,9 +57,9 @@ A complete interface needs more than three colours, so Fine-log works with eight
 
 ### 3. UI Library
 
-76 ready-made designs built from 25 working layouts. Every card shows its design in its own fonts, colours and shape.
+100 ready-made designs built from 31 working layouts. Every card shows its design in its own fonts, colours and shape.
 
-**Crypto screens (52 designs).** Thirteen original crypto layouts, each in four looks: minimal, detailed, colourful and dark.
+**Crypto and markets screens (76 designs).** Nineteen original layouts, each in four looks: minimal, detailed, colourful and dark. Seventeen are crypto screens and two are stock screens.
 
 | Crypto layout | What it contains |
 | --- | --- |
@@ -76,8 +76,14 @@ A complete interface needs more than three colours, so Fine-log works with eight
 | Token launch | Sale card with progress and countdown, purchase box, tiers, distribution |
 | Yield vaults | Vault cards with APY and risk, your deposits |
 | Markets | Mover cards, sector switch, market table with sparklines |
+| Research hub | Market stats, featured report, narratives with 30-day moves, latest reports, coverage scores |
+| Token report | Price chart, fundamentals grid, what is working and what could go wrong, score card, quick swap |
+| Bridge | Bridge card with from and to chains, fees and arrival time, transfer tracker, route comparison, recent transfers |
+| Stocks | Index cards, stock table with sparklines, sectors today, earnings this week |
+| Stock page | Price chart, key figures, about and news, buy and sell form, analyst view, your position |
+| Rewards | Points, rank, multiplier and streak, quests with progress, tier card, leaderboard |
 
-All names, figures and addresses in them are invented sample content. Token icons are round letter badges; no coin or exchange logos are used.
+All names, figures and addresses in them are invented sample content, including the companies on the stock screens. Token and ticker icons are plain letter badges, and chains are shown as a coloured square with the name; no coin, exchange, chain or company logos are used.
 
 **Other screens (24 designs).** Twelve layouts, each in two very different styles.
 
@@ -98,7 +104,7 @@ All names, figures and addresses in them are invented sample content. Token icon
 
 - **Filter row:** narrow the designs by type, with Crypto first.
 - **Crypto look:** show only the minimal, detailed, colourful or dark crypto designs.
-- **Their own style / My fonts and colours:** a switch above the cards. In the first mode, choosing a design applies its fonts, colours and shape, which you can then change. In the second, all 76 are redrawn in your picks and choosing one changes only the layout.
+- **Their own style / My fonts and colours:** a switch above the cards. In the first mode, choosing a design applies its fonts, colours and shape, which you can then change. In the second, all 100 are redrawn in your picks and choosing one changes only the layout.
 
 Controls above the preview:
 
@@ -159,7 +165,7 @@ styles.css          Page styles and the UI designs' styles
 js/fonts.js         The Google Fonts family list (name, style, weights) and the Apple and Windows system fonts
 js/colour.js        Colour maths, the eight roles and how five are derived
 js/templates.js     Layout markup, structure notes used in prompts, signature styles and the first 24 designs
-js/crypto.js        The 13 crypto layouts, their 12 styles and the 52 crypto designs
+js/crypto.js        The 19 crypto and stock layouts, their 12 styles and their 76 designs
 js/prompt.js        Prompt generator and CSS, Tailwind and token exports
 js/app.js           State, font library, colour tools, preview, sharing
 README.md           This file

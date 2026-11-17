@@ -1117,3 +1117,68 @@ a.brand{color:var(--ink);text-decoration:none;cursor:pointer}
 @container (max-width:640px){
   .cx .tgrid{grid-template-columns:minmax(0,1fr)}
 }
+
+/* research, token report, bridge, stocks, stock page, rewards */
+.cx .feat{display:grid;gap:12px;align-content:start}
+.cx .feat .big{font-size:1.9em}
+.cx .feat p{margin:0}
+.cx .tags{display:flex;gap:6px;flex-wrap:wrap}
+.cx .nar{display:grid;gap:14px;margin-top:14px}
+.cx .nar>div{display:grid;gap:6px}
+.cx .rgt2{display:grid;justify-items:end;gap:2px;text-align:right}
+.cx .head .as .tk{width:46px;height:46px;font-size:1em}
+.cx .head .as small{display:block;color:var(--t-muted)}
+.cx .sgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 18px;margin-top:14px}
+.cx .sgrid span{display:grid;gap:2px;min-width:0}
+.cx .sgrid b{font-size:.98em}
+.cx .pts{display:grid;gap:9px;margin-top:12px}
+.cx .pts span{display:block;padding-left:16px;position:relative;font-size:.93em}
+.cx .pts span::before{content:"";position:absolute;left:0;top:.5em;width:7px;height:7px;border-radius:50%;background:var(--t-up)}
+.cx .pts.neg span::before{background:var(--t-dn)}
+.cx .score{display:grid;gap:9px}
+.cx .score .big{font-size:2em}
+.cx .tk.sq{border-radius:var(--t-rs);width:38px;font-size:.62em;letter-spacing:.02em}
+.cx .head .as .tk.sq{width:54px;font-size:.8em}
+.cx .chn{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.cx .cdot{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--t-primary);flex:none}
+.cx .cdot.d2{background:var(--t-secondary)}.cx .cdot.d3{background:var(--t-accent)}
+.cx .trk{display:grid;margin-top:14px}
+.cx .stp{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:12px;padding-bottom:18px;position:relative;align-items:start}
+.cx .stp::before{content:"";position:absolute;left:10px;top:22px;bottom:0;width:2px;background:var(--t-border)}
+.cx .stp.done::before{background:var(--t-up)}
+.cx .stp:last-child{padding-bottom:0}.cx .stp:last-child::before{display:none}
+.cx .stp>i{width:22px;height:22px;border-radius:50%;border:2px solid var(--t-border);background:var(--t-surface);display:grid;place-items:center;font-style:normal;font-size:.7em;position:relative}
+.cx .stp.done>i{background:var(--t-up);border-color:var(--t-up);color:#fff}
+.cx .stp.now>i{border-color:var(--t-primary);box-shadow:0 0 0 4px color-mix(in srgb,var(--t-primary) 22%,transparent)}
+.cx .stp>span:nth-child(2){display:grid;gap:1px}
+.cx .tri{display:flex;height:10px;gap:3px;margin:14px 0 8px}
+.cx .tri i{display:block;border-radius:99px;background:var(--t-up)}
+.cx .tri i:nth-child(2){background:var(--t-muted)}.cx .tri i:nth-child(3){background:var(--t-dn)}
+.cx .news{display:grid;margin-top:6px}
+.cx .news div{padding:10px 0;border-top:1px solid var(--t-border);display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.cx .news small{white-space:nowrap}
+.cx .qs{display:grid;margin-top:6px}
+.cx .quest{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(60px,1fr) auto auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--t-border)}
+.cx .quest:last-child{border-bottom:0}
+.cx .quest>span:first-child{display:grid;gap:2px}
+.cx .lb.c3{grid-template-columns:52px minmax(0,1fr) auto}
+.cx .lb:last-child{font-weight:700}
+.cx .vp .gauge{background:color-mix(in srgb,currentColor 25%,transparent);margin-top:6px}
+.cx .vp .gauge i{background:currentColor}
+.cx .vp .big{font-size:2em}
+.tpl[data-look="minimal"] .cdot{background:var(--t-text)}
+.tpl[data-look="minimal"] .cdot.d2,.tpl[data-look="minimal"] .cdot.d3{background:var(--t-muted)}
+.tpl[data-look="colour"] .feat{border-top:5px solid var(--t-primary)}
+.tpl[data-look="colour"] .score{border-top:5px solid var(--t-secondary)}
+.tpl[data-look="dark"] .score .big,.tpl[data-look="dark"] .rgt2 .big{text-shadow:0 0 22px color-mix(in srgb,var(--t-primary) 45%,transparent)}
+@container (max-width:640px){
+  .cx .sgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cx .quest{grid-template-columns:minmax(0,1fr) auto auto;gap:10px}
+  .cx .head .as .t1{font-size:1.4em}
+  .cx .rgt2{justify-items:start;text-align:left}
+  .cx .news div{flex-direction:column;gap:2px}
+}
+.cx .as>span{min-width:0}
+.cx .abt{margin:8px 0 12px}
+.cx .mv .rowb>b{font-size:.92em}
+.tpl[data-look="dark"] .bal,.tpl[data-look="dark"] .vp,.tpl[data-look="dark"] .kp.best{background:var(--t-primary);border-color:transparent}

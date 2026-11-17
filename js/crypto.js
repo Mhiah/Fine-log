@@ -1,4 +1,4 @@
-/* Fine-log crypto designs: 13 original screens, each shown in four looks (minimal, detailed, colourful, dark).
+/* Fine-log crypto and markets designs: 19 original screens, each shown in four looks (minimal, detailed, colourful, dark).
    All names, figures and addresses are invented sample content. Token tickers are plain text; no logos are used. */
 (function () {
   "use strict";
@@ -7,15 +7,15 @@
   /* ---------- small builders ---------- */
   var tk = function (l, g) { return '<i class="tk g' + (g || 1) + '">' + l + "</i>"; };
   var addr = '<span class="addr m">0x7a…e41</span>';
-  function side(brand, items, on) {
+  function side(brand, items, on, wal) {
     return '<div class="cside"><span class="h logo">' + brand + '</span><span class="onlym bt gh sm">Menu</span><div class="menu">' +
       items.map(function (x, i) { return "<span" + (i === on ? ' class="on"' : "") + ">" + x + "</span>"; }).join("") +
-      '</div><div class="wal card"><span class="mu sm">Connected</span>' + addr + "</div></div>";
+      '</div><div class="wal card"><span class="mu sm">' + (wal ? wal[0] : "Connected") + "</span>" + (wal ? '<span class="addr m">' + wal[1] + "</span>" : addr) + "</div></div>";
   }
-  function top(brand, links, on, cta) {
+  function top(brand, links, on, cta, acct) {
     return '<div class="ctop"><span class="h logo">' + brand + '</span><div class="links hidem">' +
       links.map(function (x, i) { return "<span" + (i === on ? ' class="on"' : "") + ">" + x + "</span>"; }).join("") +
-      '</div><div class="rgt"><span class="hidem">' + addr + '</span><span class="bt">' + (cta || "Connect") + "</span></div></div>";
+      '</div><div class="rgt"><span class="hidem">' + (acct || addr) + '</span><span class="bt">' + (cta || "Connect") + "</span></div></div>";
   }
   function kpi(label, val, note, cls) {
     return '<div class="card kp"><span class="mu sm">' + label + '</span><b class="m">' + val + "</b>" + (note ? '<span class="sm ' + (cls || "mu") + '">' + note + "</span>" : "") + "</div>";
@@ -56,7 +56,7 @@
   var A30 = [42, 44, 43, 47, 46, 51, 49, 54, 58, 55, 61, 64, 62, 68, 72], B30 = [40, 41, 41, 43, 44, 44, 46, 47, 47, 49, 50, 52, 52, 54, 55];
   var CND = [[30, 34, 28, 33], [33, 36, 31, 32], [32, 35, 29, 34], [34, 39, 33, 38], [38, 40, 35, 36], [36, 37, 32, 33], [33, 38, 32, 37], [37, 42, 36, 41], [41, 43, 38, 39], [39, 44, 38, 43], [43, 47, 42, 46], [46, 48, 43, 44], [44, 45, 40, 41], [41, 46, 40, 45], [45, 50, 44, 49], [49, 51, 46, 47], [47, 52, 46, 51], [51, 55, 50, 54], [54, 56, 51, 52], [52, 57, 51, 56], [56, 59, 54, 55], [55, 60, 54, 59]];
 
-  /* ---------- the 13 screens ---------- */
+  /* ---------- the first 13 screens ---------- */
   var L = [
     {
       id: "c-portfolio", name: "Portfolio overview", blurb: "Holdings, allocation and performance", what: "a crypto portfolio dashboard",
@@ -329,6 +329,157 @@
       responsive: ["Below 640px the sidebar collapses to a top bar, mover cards become two columns and the table keeps rank, asset and price."]
     }
   ];
+  /* ---------- six more screens: research, token report, bridge, stocks, stock page, rewards ---------- */
+  var sq = function (l, g) { return '<i class="tk sq g' + (g || 1) + '">' + l + "</i>"; };
+  var bp = ["Buying power", "$12,480.00"];
+  L.push(
+    {
+      id: "c-research", name: "Research hub", blurb: "Reports, narratives and coverage", what: "a crypto research dashboard",
+      html: '<div class="cshell">' + side("Lantern", ["Research", "Reports", "Narratives", "Screener", "Unlocks", "Saved"], 0) + '<div class="cmain">' +
+        '<div class="rowb head"><div><span class="mu sm">142 reports &middot; updated 40 minutes ago</span><span class="h t1">Research</span></div><div class="acts"><span class="search hidem">Search tokens, sectors, reports</span><span class="bt">New note</span></div></div>' +
+        '<div class="kpis k4">' + kpi("Total market cap", "$3.41T", "+1.6% this week", "up") + kpi("Stablecoin supply", "$214.8B", "+$2.1B in 7 days", "up") + kpi("DEX share of volume", "18.4%", "up from 16.9%") + kpi("Unlocks this week", "$412M", "7 tokens", "ac") + "</div>" +
+        '<div class="two"><div class="card feat"><div class="rowb"><span class="pill">Deep dive</span><span class="mu sm m">18 min read</span></div><span class="h big">Restaking after the yield reset</span>' +
+        '<p class="mu">Rewards fell by a third this quarter while deposits kept growing. We look at who still pays for security, and which operators earn more than they cost.</p>' +
+        '<div class="tags"><span class="pill">Restaking</span><span class="pill">Ethereum</span><span class="pill">Yield</span></div>' + chart(A30, B30, ["Aug", "Sep", "Oct", "Nov"]) +
+        '<div class="rowb"><span class="mu sm">Lantern Research &middot; 17 Nov</span><span class="bt gh sm">Read report</span></div></div>' +
+        '<div class="card"><div class="rowb"><b class="h">Narratives</b><span class="mu sm">30 days</span></div><div class="nar">' +
+        [["Restaking", "+38%", 82, 1, "p"], ["Real-world assets", "+24%", 64, 1, "p"], ["Layer 2", "+11%", 41, 1, "s"], ["Gaming", "-6%", 22, -1, ""], ["Memecoins", "-19%", 12, -1, ""]].map(function (n) {
+          return '<div><div class="rowb sm"><span>' + n[0] + "</span>" + (n[3] > 0 ? up(n[1]) : dn(n[1])) + '</div><span class="bar ' + n[4] + '"><i style="width:' + n[2] + '%"></i></span></div>'; }).join("") + "</div></div></div>" +
+        '<div class="two eq"><div class="card"><div class="rowb"><b class="h">Latest reports</b><span class="segc"><i class="on">All</i><i>DeFi</i><i class="hidem">Infra</i></span></div><div class="tb">' +
+        [["What a fee switch would pay holders", "DeFi", "16 Nov", "9 min"], ["Stablecoin flows by chain, October", "Data", "14 Nov", "6 min"], ["Sequencer revenue, ranked", "Infra", "12 Nov", "11 min"], ["Who is buying tokenised treasuries", "RWA", "10 Nov", "8 min"]].map(function (r) {
+          return tr("c3", ["<span><b>" + r[0] + '</b><small class="mu"> ' + r[1] + "</small></span>", '<span class="m mu hidem">' + r[2] + "</span>", '<span class="m mu">' + r[3] + "</span>"]); }).join("") + "</div></div>" +
+        '<div class="card"><div class="rowb"><b class="h">Coverage</b><span class="mu sm">Score out of 10</span></div><div class="tb">' + tr("c4 hd", ["<span>Asset</span>", '<span class="hidem">Sector</span>', '<span class="hidem">Updated</span>', "<span>Score</span>"]) +
+        [["E", 2, "Ether", "Layer 1", "14 Nov", "8.6"], ["L", 3, "Chainlink", "Oracles", "10 Nov", "7.9"], ["A", 2, "Aave", "Lending", "3 Nov", "7.4"], ["S", 1, "Solana", "Layer 1", "1 Nov", "7.1"]].map(function (a) {
+          return tr("c4", ['<span class="as">' + tk(a[0], a[1]) + "<b>" + a[2] + "</b></span>", '<span class="mu hidem">' + a[3] + "</span>", '<span class="mu hidem">' + a[4] + "</span>", '<span class="m"><b>' + a[5] + "</b></span>"]); }).join("") + "</div></div></div></div></div>",
+      structure: [
+        "Left sidebar: product name, vertical menu (Research, Reports, Narratives, Screener, Unlocks, Saved) with the active item filled in the primary colour, and a connected-wallet card at the bottom.",
+        "Page header: report count and last update in muted text, the page title, a rounded search field and a primary New note button.",
+        "A row of four stat cards: total market cap, stablecoin supply, DEX share of volume and the value of token unlocks this week, each with a muted label, a large monospace figure and a short note.",
+        "A two-column row: a featured report card (a Deep dive badge, read time, a large headline, a two-sentence summary, topic tags, a small chart comparing two lines, the byline and an outlined Read report button) beside a Narratives card listing five themes, each with its 30-day change coloured by direction and a thin progress bar.",
+        "A second row of two equal cards: Latest reports (title, topic, date and read time, with a filter switch) and Coverage (asset badge and name, sector, last updated and a score out of 10)."
+      ],
+      layout: ["Two-column app shell: fixed 210px sidebar and a fluid main area.", "The featured report takes about two thirds of its row; the two list cards below share the width equally."],
+      responsive: ["Below 640px the sidebar collapses to a top bar, stat cards become two columns and every two-column row stacks; the lists keep the title and the last column."]
+    },
+    {
+      id: "c-token", name: "Token report", blurb: "One token: thesis, score and quick swap", what: "a single-token research page with a built-in swap",
+      html: '<div class="cfull">' + top("Lantern", ["Research", "Screener", "Unlocks", "Compare"], 0, "Follow") +
+        '<div class="cpad"><div class="rowb head"><div class="as">' + tk("T", 2) + '<span><b class="h t1">Tidal</b><small>TDL &middot; Lending &middot; Rank 31</small></span></div><div class="rgt2"><b class="m big">$32.64</b>' + up("+3.0% today") + "</div></div>" +
+        '<div class="two"><div class="scol"><div class="card"><div class="rowb"><b class="h">Price</b><span class="segc"><i>7D</i><i class="on">30D</i><i>1Y</i><i class="hidem">All</i></span></div>' + chart(A30, null, ["18 Oct", "25 Oct", "1 Nov", "8 Nov", "17 Nov"]) + "</div>" +
+        '<div class="card"><b class="h">Fundamentals</b><div class="sgrid">' + [["Market cap", "$4.9B"], ["Fully diluted", "$5.2B"], ["Value locked", "$18.4B"], ["Fees, 30 days", "$41.2M"], ["Revenue, 30 days", "$6.8M"], ["Price to fees", "9.9x"], ["Holders", "184,220"], ["Next unlock", "None"]].map(function (s) { return '<span><small class="mu">' + s[0] + '</small><b class="m">' + s[1] + "</b></span>"; }).join("") + "</div></div>" +
+        '<div class="two eq"><div class="card"><b class="h">What is working</b><div class="pts"><span>Fees have grown five quarters in a row.</span><span>Supply is fully unlocked, so no selling overhang.</span><span>Largest lender on four chains.</span></div></div>' +
+        '<div class="card"><b class="h">What could go wrong</b><div class="pts neg"><span>Two thirds of deposits sit in three assets.</span><span>Rates fall quickly when borrowing demand cools.</span><span>A governance vote could redirect fees.</span></div></div></div></div>' +
+        '<div class="scol"><div class="card score"><div class="rowb"><b class="h">Lantern score</b><b class="m big">7.4</b></div>' +
+        [["Fundamentals", 86, "p"], ["Token design", 78, "p"], ["Momentum", 61, "s"], ["Risk", 44, ""]].map(function (s) { return '<div class="rowb sm"><span>' + s[0] + '</span><span class="m mu">' + (s[1] / 10).toFixed(1) + '</span></div><span class="bar ' + s[2] + '"><i style="width:' + s[1] + '%"></i></span>'; }).join("") + "</div>" +
+        '<div class="card swap"><div class="rowb"><b class="h">Quick swap</b><span class="pill">Slippage 0.5%</span></div>' +
+        '<div class="leg"><div class="rowb sm mu"><span>You pay</span><span class="m">Balance 14,315.00</span></div><div class="rowb"><b class="m amt">1,000.00</b><span class="tsel">' + tk("U", 3) + "USDC</span></div></div>" +
+        '<div class="flip"><span>&darr;</span></div>' +
+        '<div class="leg"><div class="rowb sm mu"><span>You receive</span><span class="m">Balance 0.00</span></div><div class="rowb"><b class="m amt">30.58</b><span class="tsel">' + tk("T", 2) + "TDL</span></div></div>" +
+        '<div class="det"><div class="rowb sm"><span class="mu">Rate</span><span class="m">1 TDL = 32.70 USDC</span></div><div class="rowb sm"><span class="mu">Network fee</span><span class="m">$0.86</span></div></div><span class="bt full">Swap</span></div></div></div></div></div>',
+      structure: [
+        "Top bar: product name, four text links with the active one marked, a shortened wallet address and a primary Follow button.",
+        "Page header: a round token badge, the token name with its ticker, sector and rank in small text, and on the right the price in a large monospace figure with today's change coloured by direction.",
+        "Main column: a price chart card with a 7D / 30D / 1Y / All range switch; a Fundamentals card showing eight label and value pairs in a four-column grid (market cap, fully diluted value, value locked, fees, revenue, price to fees, holders, next unlock); then two equal cards side by side, What is working (bullets marked with the gain colour) and What could go wrong (bullets marked with the loss colour).",
+        "Side column: a score card with an overall score out of 10 in a large figure and four rated lines (fundamentals, token design, momentum, risk), each with a thin bar; under it a Quick swap card with You pay and You receive panels, a round flip button, the rate and network fee, and a full-width primary Swap button."
+      ],
+      layout: ["Single page inside a container about 1240px wide: a main column of about two thirds and a side column of one third.", "The two swap panels use the background colour inside the card so they read as inset fields."],
+      responsive: ["Below 640px the two columns stack with the main column first, the fundamentals grid becomes two columns and the two thesis cards stack."]
+    },
+    {
+      id: "c-bridge", name: "Bridge", blurb: "Move tokens between chains", what: "a cross-chain bridge screen",
+      html: '<div class="cfull">' + top("Causeway", ["Bridge", "Swap", "Transfers", "Routes"], 0) +
+        '<div class="swapw"><div class="card swap"><div class="rowb"><b class="h">Bridge</b><span class="pill">Fastest route</span></div>' +
+        '<div class="leg"><div class="rowb sm mu"><span>From</span><span class="chn"><i class="cdot"></i>Ethereum</span></div><div class="rowb"><b class="m amt">2,500.00</b><span class="tsel">' + tk("U", 3) + 'USDC</span></div><span class="mu sm m">Balance 14,315.00</span></div>' +
+        '<div class="flip"><span>&darr;</span></div>' +
+        '<div class="leg"><div class="rowb sm mu"><span>To</span><span class="chn"><i class="cdot d2"></i>Base</span></div><div class="rowb"><b class="m amt">2,497.12</b><span class="tsel">' + tk("U", 3) + 'USDC</span></div><span class="mu sm m">Same address &middot; 0x7a…e41</span></div>' +
+        '<div class="det"><div class="rowb sm"><span class="mu">Arrives in</span><span class="m">About 2 minutes</span></div><div class="rowb sm"><span class="mu">Bridge fee</span><span class="m">$2.50</span></div><div class="rowb sm"><span class="mu">Gas on Base</span><span class="m">$0.38</span></div><div class="rowb sm"><span class="mu">You receive at least</span><span class="m up">2,494.60 USDC</span></div></div>' +
+        '<span class="bt full">Bridge USDC</span></div>' +
+        '<div class="sidec"><div class="card"><div class="rowb"><b class="h">Transfer in progress</b><span class="pill ok">On time</span></div><div class="trk">' +
+        '<div class="stp done"><i>&#10003;</i><span><b>Sent on Ethereum</b><small class="mu">800.00 USDC left your wallet</small></span><span class="m mu sm">11:42</span></div>' +
+        '<div class="stp now"><i></i><span><b>Confirming</b><small class="mu">12 of 15 confirmations</small></span><span class="m mu sm">11:43</span></div>' +
+        '<div class="stp"><i></i><span><b>Arriving on Arbitrum</b><small class="mu">799.10 USDC expected</small></span><span class="m mu sm">~11:45</span></div></div></div>' +
+        '<div class="card"><b class="h">Routes</b><div class="tb">' + tr("c4 hd", ["<span>Route</span>", '<span class="hidem">Time</span>', '<span class="hidem">Fee</span>', "<span>You receive</span>"]) +
+        [["Direct", "Fastest", "2 min", "$2.88", "2,497.12"], ["Liquidity pool", "", "6 min", "$1.92", "2,498.08"], ["Canonical", "Cheapest", "18 min", "$0.94", "2,499.06"]].map(function (r) {
+          return tr("c4", ["<span><b>" + r[0] + "</b>" + (r[1] ? ' <span class="pill">' + r[1] + "</span>" : "") + "</span>", '<span class="m mu hidem">' + r[2] + "</span>", '<span class="m mu hidem">' + r[3] + "</span>", '<span class="m">' + r[4] + "</span>"]); }).join("") + "</div></div>" +
+        '<div class="card"><b class="h">Recent transfers</b><div class="tb">' +
+        tr("c3", ['<span class="chn"><i class="cdot"></i>Ethereum &rarr; <i class="cdot d3"></i>Arbitrum</span>', '<span class="m mu hidem">In progress</span>', '<span class="m">800.00</span>']) +
+        tr("c3", ['<span class="chn"><i class="cdot d2"></i>Base &rarr; <i class="cdot"></i>Ethereum</span>', '<span class="m mu hidem">Yesterday</span>', '<span class="m">1,200.00</span>']) + "</div></div></div></div></div>",
+      structure: [
+        "Top bar: product name, four text links with the active one marked, a shortened wallet address and a primary button.",
+        "A bridge card about 440px wide: a title with a route badge; a From panel naming the source chain with a small coloured square, a large amount in the monospace font, a token selector and the balance; a round flip button; a matching To panel naming the destination chain and the receiving address; a details list (arrival time, bridge fee, destination gas, minimum received); and a full-width primary button.",
+        "Beside it, a column of three cards: Transfer in progress, a vertical three-step tracker (sent, confirming, arriving) where finished steps show a filled tick in the gain colour and the current step has a ring in the primary colour, each with a time on the right; Routes, a small table comparing three routes by time, fee and amount received, with Fastest and Cheapest badges; and Recent transfers, listing chain to chain, status and amount."
+      ],
+      layout: ["Two columns centred on the page: the bridge card on the left and a fluid column on the right, max width about 1040px.", "Chains are shown as a small coloured square plus the chain name in text, never a logo."],
+      responsive: ["Below 640px the bridge card goes full width and the tracker, routes and recent transfers stack under it; the routes table keeps the route and the amount received."]
+    },
+    {
+      id: "c-stocks", name: "Stocks", blurb: "Indices, stock list and sectors", what: "a stock market app that lists stocks", tag: "Stocks",
+      html: '<div class="cshell">' + side("Orchard", ["Stocks", "Watchlist", "Sectors", "Earnings", "Screener", "Orders"], 0, bp) + '<div class="cmain">' +
+        '<div class="rowb head"><div><span class="mu sm">Market open &middot; closes in 3h 12m</span><span class="h t1">Stocks</span></div><div class="acts"><span class="search hidem">Search 4,800 stocks</span><span class="bt">Add to watchlist</span></div></div>' +
+        '<div class="kpis k4">' + [["Large Cap 500", "5,912.40", "+0.6%", [3, 4, 4, 5, 5, 6, 7], "up"], ["Tech 100", "20,884.10", "+1.1%", [3, 3, 5, 4, 6, 7, 8], "up"], ["Small Cap 2000", "2,304.75", "-0.4%", [6, 6, 5, 6, 5, 4, 4], "dn"], ["Volatility", "14.20", "-2.1%", [7, 6, 6, 5, 4, 4, 3], "dn"]].map(function (m) {
+          return '<div class="card mv"><div class="rowb"><b>' + m[0] + '</b><span class="m ' + m[4] + ' sm">' + m[2] + '</span></div><b class="m">' + m[1] + '</b><span class="' + m[4] + '">' + spark(m[3]) + "</span></div>"; }).join("") + "</div>" +
+        '<div class="two"><div class="card"><div class="rowb"><b class="h">All stocks</b><span class="segc"><i class="on">All</i><i>Tech</i><i>Energy</i><i class="hidem">Health</i></span></div><div class="tb">' + tr("c5 hd", ["<span>Company</span>", '<span class="hidem">Today</span>', '<span class="hidem">Market cap</span>', '<span class="hidem">30 days</span>', "<span>Price</span>"]) +
+        [["NWS", 1, "Northwind Systems", "+1.9%", 1, "$412.6B", [3, 4, 4, 5, 6, 6, 7], "$248.16"], ["LMS", 2, "Lumen Chips", "+3.4%", 1, "$286.1B", [2, 3, 4, 4, 6, 7, 8], "$131.72"], ["HLD", 3, "Halden Motors", "-1.2%", -1, "$98.4B", [7, 6, 6, 5, 5, 4, 4], "$64.05"], ["BWE", 1, "Brightwater Energy", "+0.4%", 1, "$74.9B", [4, 5, 4, 5, 5, 5, 6], "$88.30"], ["CVH", 2, "Corvid Health", "-0.6%", -1, "$61.2B", [6, 5, 6, 5, 5, 4, 5], "$172.44"], ["VRB", 3, "Verano Bank", "+0.9%", 1, "$58.7B", [4, 4, 5, 5, 5, 6, 6], "$41.18"], ["PCF", 1, "Pinecrest Foods", "0.0%", 0, "$22.3B", [5, 5, 5, 5, 5, 5, 5], "$57.90"]].map(function (a) {
+          var c = a[4] > 0 ? "up" : a[4] < 0 ? "dn" : "mu";
+          return tr("c5", ['<span class="as">' + sq(a[0], a[1]) + "<span><b>" + a[2] + "</b><small>" + a[0] + "</small></span></span>", '<span class="m hidem ' + c + '">' + a[3] + "</span>", '<span class="m hidem">' + a[5] + "</span>", '<span class="hidem ' + c + '">' + spark(a[6]) + "</span>", '<span class="m">' + a[7] + "</span>"]); }).join("") + "</div></div>" +
+        '<div class="scol"><div class="card"><div class="rowb"><b class="h">Sectors today</b></div><div class="nar">' +
+        [["Technology", "+1.4%", 78, 1, "p"], ["Energy", "+0.7%", 52, 1, "p"], ["Financials", "+0.3%", 34, 1, "s"], ["Health care", "-0.5%", 26, -1, ""], ["Consumer", "-0.9%", 18, -1, ""]].map(function (n) {
+          return '<div><div class="rowb sm"><span>' + n[0] + "</span>" + (n[3] > 0 ? up(n[1]) : dn(n[1])) + '</div><span class="bar ' + n[4] + '"><i style="width:' + n[2] + '%"></i></span></div>'; }).join("") + "</div></div>" +
+        '<div class="card"><b class="h">Earnings this week</b><div class="tb">' +
+        [["LMS", 2, "Lumen Chips", "Wed, after close"], ["VRB", 3, "Verano Bank", "Thu, before open"], ["PCF", 1, "Pinecrest Foods", "Fri, before open"]].map(function (e) {
+          return tr("c2", ['<span class="as">' + sq(e[0], e[1]) + "<span><b>" + e[2] + "</b><small>" + e[3] + "</small></span></span>", '<span class="bt gh sm">Remind</span>']); }).join("") + "</div></div></div></div></div></div>",
+      structure: [
+        "Left sidebar: product name, vertical menu (Stocks, Watchlist, Sectors, Earnings, Screener, Orders) with the active item filled in the primary colour, and a Buying power card at the bottom showing a cash amount in the monospace font.",
+        "Page header: market status and time to close in muted text, the page title, a rounded search field and a primary Add to watchlist button.",
+        "Four index cards: the index name with today's change, the level in a large monospace figure, and a sparkline coloured by direction.",
+        "A two-column row. Left: an All stocks table with a sector switch, listing seven companies with a rounded-square ticker badge, company name and ticker, today's change coloured by direction, market cap, a 30-day sparkline and price. Right: a Sectors today card (five sectors, each with its change and a thin bar) above an Earnings this week card (company, day and session, and an outlined Remind button)."
+      ],
+      layout: ["Two-column app shell: fixed 210px sidebar and a fluid main area.", "Index cards are four equal columns; the stock table takes about two thirds of the row beside the sector and earnings cards.", "Company names are invented sample content; ticker badges are plain letters, never a company logo."],
+      responsive: ["Below 640px the sidebar collapses to a top bar, index cards become two columns, the side cards drop under the table and the table keeps company and price."]
+    },
+    {
+      id: "c-stock", name: "Stock page", blurb: "One stock: chart, stats and order form", what: "a single-stock page with a buy and sell form", tag: "Stocks",
+      html: '<div class="cfull">' + top("Orchard", ["Stocks", "Watchlist", "Portfolio", "Orders"], 0, "Deposit", '<span class="addr m">$12,480.00</span>') +
+        '<div class="cpad"><div class="rowb head"><div class="as">' + sq("NWS", 1) + '<span><b class="h t1">Northwind Systems</b><small>NWS &middot; Technology &middot; Large cap</small></span></div><div class="rgt2"><b class="m big">$248.16</b>' + up("+$4.62 (1.9%) today") + "</div></div>" +
+        '<div class="two"><div class="scol"><div class="card"><div class="rowb"><b class="h">Price</b><span class="segc"><i>1D</i><i>1W</i><i class="on">1M</i><i>1Y</i><i class="hidem">5Y</i></span></div>' + chart(A30, null, ["18 Oct", "25 Oct", "1 Nov", "8 Nov", "17 Nov"]) + "</div>" +
+        '<div class="card"><b class="h">Key figures</b><div class="sgrid">' + [["Open", "$244.10"], ["Day low", "$243.80"], ["Day high", "$249.02"], ["Volume", "18.4M"], ["Market cap", "$412.6B"], ["Price to earnings", "28.4"], ["Dividend yield", "0.8%"], ["Next earnings", "4 Feb"]].map(function (s) { return '<span><small class="mu">' + s[0] + '</small><b class="m">' + s[1] + "</b></span>"; }).join("") + "</div></div>" +
+        '<div class="card"><b class="h">About</b><p class="mu abt">Northwind Systems builds networking equipment and the software that runs it for data centres. About 60% of sales come from subscriptions.</p><div class="news">' +
+        [["Northwind raises full-year sales forecast", "2 hours ago"], ["New data centre contract signed in Lagos", "Yesterday"], ["Quarterly dividend set at $0.50 a share", "12 Nov"]].map(function (n) { return "<div><b>" + n[0] + '</b><small class="mu m">' + n[1] + "</small></div>"; }).join("") + "</div></div></div>" +
+        '<div class="scol"><div class="card form"><div class="bs"><span class="on">Buy</span><span>Sell</span></div><label>Shares<span class="fld2 m">10 <em>NWS</em></span></label><label>Order type<span class="fld2">Market <em>&darr;</em></span></label><div class="pct"><i>$100</i><i class="on">$500</i><i>$1,000</i><i>Max</i></div>' +
+        '<div class="rowb sm"><span class="mu">Estimated cost</span><span class="m">$2,481.60</span></div><div class="rowb sm"><span class="mu">Buying power</span><span class="m">$12,480.00</span></div><span class="bt buy full">Buy NWS</span></div>' +
+        '<div class="card"><div class="rowb"><b class="h">Analyst view</b><span class="mu sm">31 analysts</span></div><div class="tri"><i style="flex:20"></i><i style="flex:8"></i><i style="flex:3"></i></div><div class="rowb sm"><span class="up m">20 buy</span><span class="mu m">8 hold</span><span class="dn m">3 sell</span></div><div class="rowb sm" style="margin-top:10px"><span class="mu">Average target</span><span class="m">$271.00</span></div></div>' +
+        '<div class="card"><b class="h">Your position</b><div class="det"><div class="rowb sm"><span class="mu">Shares</span><span class="m">24</span></div><div class="rowb sm"><span class="mu">Average cost</span><span class="m">$201.35</span></div><div class="rowb sm"><span class="mu">Total return</span>' + up("+$1,123.44") + "</div></div></div></div></div></div></div>",
+      structure: [
+        "Top bar: product name, four text links with the active one marked, the cash balance in a pill and a primary Deposit button.",
+        "Page header: a rounded-square ticker badge, the company name with ticker, sector and size in small text, and on the right the share price in a large monospace figure with today's change coloured by direction.",
+        "Main column: a price chart card with a 1D / 1W / 1M / 1Y / 5Y range switch; a Key figures card with eight label and value pairs in a four-column grid (open, day low, day high, volume, market cap, price to earnings, dividend yield, next earnings); and an About card with a short company description followed by three news headlines with their times.",
+        "Side column: an order card with a Buy / Sell switch (the active side filled in the gain colour), a shares field, an order type field, four quick-amount chips, estimated cost and buying power lines and a full-width Buy button in the gain colour; an Analyst view card with a three-part bar (buy, hold, sell) and the counts under it plus the average target; and a Your position card (shares, average cost, total return)."
+      ],
+      layout: ["Single page inside a container about 1240px wide: a main column of about two thirds and a side column of one third.", "The company is invented sample content; the ticker badge is plain letters, never a company logo."],
+      responsive: ["Below 640px the two columns stack with the chart first, and the key figures grid becomes two columns."]
+    },
+    {
+      id: "c-rewards", name: "Rewards", blurb: "Points, quests and leaderboard", what: "a points and airdrop rewards dashboard",
+      html: '<div class="cshell">' + side("Beacon", ["Rewards", "Quests", "Leaderboard", "Referrals", "History", "Settings"], 0) + '<div class="cmain">' +
+        '<div class="rowb head"><div><span class="mu sm">Season 3 &middot; ends in 21 days</span><span class="h t1">Rewards</span></div><div class="acts"><span class="bt gh">Invite</span><span class="bt">Claim 312 points</span></div></div>' +
+        '<div class="kpis k4">' + kpi("Your points", "48,210", "+1,240 this week", "up") + kpi("Rank", "#1,842", "top 6% of 31,400") + kpi("Multiplier", "1.5x", "Gold tier") + kpi("Streak", "23 days", "next bonus at 30", "ac") + "</div>" +
+        '<div class="two"><div class="card"><div class="rowb"><b class="h">Quests</b><span class="segc"><i class="on">Open</i><i>Done</i></span></div><div class="qs">' +
+        [["Swap on three different days", "2 of 3 days", 66, "+500", "Go"], ["Bridge to a new chain", "Not started", 0, "+800", "Go"], ["Keep $1,000 supplied for a week", "5 of 7 days", 71, "+1,200", "Go"], ["Vote on a proposal", "Done", 100, "+300", "Claim"], ["Invite a friend who trades", "1 of 3 friends", 33, "+2,000", "Share"]].map(function (q) {
+          return '<div class="quest"><span><b>' + q[0] + '</b><small class="mu">' + q[1] + '</small></span><span class="bar p hidem"><i style="width:' + q[2] + '%"></i></span><span class="pill">' + q[3] + '</span><span class="bt ' + (q[4] === "Claim" ? "" : "gh ") + 'sm">' + q[4] + "</span></div>"; }).join("") + "</div></div>" +
+        '<div class="scol"><div class="card vp"><span class="sm">Current tier</span><b class="h big">Gold</b><div class="gauge"><i style="width:64%"></i></div><span class="sm m">48,210 of 75,000 to Platinum (2x)</span></div>' +
+        '<div class="card"><b class="h">Leaderboard</b><div class="tb">' +
+        [["1", "0x3c…b07", "912,400"], ["2", "0xa1…44e", "880,150"], ["3", "0x9f…2d0", "861,020"], ["1,842", "You", "48,210"]].map(function (r) {
+          return tr("c3 lb", ['<span class="m mu">' + r[0] + "</span>", '<span class="m">' + (r[1] === "You" ? "<b>You</b>" : r[1]) + "</span>", '<span class="m">' + r[2] + "</span>"]); }).join("") + "</div></div></div></div></div></div>",
+      structure: [
+        "Left sidebar: product name, vertical menu (Rewards, Quests, Leaderboard, Referrals, History, Settings) with the active item filled in the primary colour, and a connected-wallet card at the bottom.",
+        "Page header: the season and days left in muted text, the page title, an outlined Invite button and a primary Claim button that states the points ready to claim.",
+        "A row of four stat cards: points, rank, multiplier and streak, each with a muted label, a large monospace figure and a short note.",
+        "A two-column row. Left: a Quests card with an Open / Done switch and five quests; each row has the quest name, its progress in small text, a thin progress bar, a badge with the points on offer and a small button (outlined Go or Share, filled Claim when finished). Right: a tier card filled with the primary colour (tier name, a progress bar and the points needed for the next tier) above a Leaderboard card listing rank, shortened address and points, with the user's own row at the bottom."
+      ],
+      layout: ["Two-column app shell: fixed 210px sidebar and a fluid main area.", "The quests card takes about two thirds of the row beside the tier and leaderboard cards."],
+      responsive: ["Below 640px the sidebar collapses to a top bar, stat cards become two columns, the tier and leaderboard cards drop under the quests, and quest rows drop the progress bar."]
+    }
+  );
   L.forEach(function (l) { l.cat = "Crypto"; l.html = '<div class="cx">' + l.html + "</div>"; T.push(l); });
 
   /* ---------- twelve crypto styles: three per look ---------- */
