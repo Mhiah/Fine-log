@@ -45,9 +45,8 @@
   <section id="fonts">
     <div class="shead"><span class="mono">01</span><h2>Fonts</h2></div>
     <p class="sub">Every family in the Google Fonts library, free to use on any site. Type your own words to try them on.</p>
-    <div class="pair" id="pair"></div>
-    <div class="grid2">
-      <div><label class="lab" for="fsearch">Choose a font</label>
+    <div class="frow">
+      <div class="fchoose"><label class="lab" for="fsearch" id="fsearchlab">Choose a font for Heading</label>
         <div class="fcombo" id="fcombo">
           <input class="field" id="fsearch" type="text" placeholder="Search by name, or open the list" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="fdrop">
           <button class="fopen" id="fopen" type="button" aria-label="Show all fonts"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
@@ -57,10 +56,10 @@
           </div>
         </div>
       </div>
-      <div><label class="lab" for="fsample">Sample text</label><input class="field" id="fsample" type="text" value="Welcome to Fine-log" autocomplete="off"></div>
+      <div class="fsamp"><label class="lab" for="fsample">Sample text</label><input class="field" id="fsample" type="text" value="Welcome to Fine-log" autocomplete="off" maxlength="40"></div>
     </div>
     <div class="row" id="fcats" role="group" aria-label="Font style" style="margin-top:12px"></div>
-    <div id="fpick" style="margin-top:16px"></div>
+    <div class="pair" id="pair"></div>
   </section>
 
   <section id="colours">

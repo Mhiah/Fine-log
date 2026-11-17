@@ -146,8 +146,9 @@ $("replay").onclick = playWelcome;
 $("skip").onclick = closeIntro;
 window.addEventListener("resize", () => { if (running) fitWord(); });
 
+const SLOT = { head: "Heading", body: "Body", mono: "Numbers" };
 /* ---------- font chooser: a dropdown list, 100 fonts at a time ---------- */
-let fq = "", fcat = "all", fpage = 0, flist = FONTS, picked = null;
+let fq = "", fcat = "all", fpage = 0, flist = FONTS, picked = null, fslot = "head";
 const FPAGE = 100, combo = $("fcombo"), drop = $("fdrop");
 const io = "IntersectionObserver" in window ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { ensureFont(e.target.dataset.n); io.unobserve(e.target); } }), { root: $("flist"), rootMargin: "200px" }) : null;
 function filterFonts() {
@@ -164,15 +165,15 @@ function renderList() {
   $("fless").disabled = fpage === 0; $("fmore").disabled = (fpage + 1) * FPAGE >= flist.length;
 }
 function openList(on) { drop.hidden = !on; combo.classList.toggle("open", on); $("fsearch").setAttribute("aria-expanded", on); if (on) renderList(); }
-function renderPick() {
-  const f = info(picked); if (!f) { $("fpick").innerHTML = ""; return; }
-  ensureFont(f.n);
-  const btn = (slot, label) => '<button class="btn small" data-use="' + slot + '" aria-pressed="' + (S.fonts[slot] === f.n) + '" type="button">' + label + "</button>";
-  $("fpick").innerHTML = '<article class="fcard" data-n="' + esc(f.n) + '"><header><h3>' + esc(f.n) + '</h3><span class="tag">' + CATS[f.c] + (f.x ? " · non-Latin" : "") + "</span></header>" +
-    '<p class="sample" style="' + fontCss(f.n) + '">' + esc($("fsample").value || f.n) + "</p>" +
-    '<div class="row">' + btn("head", "Use as heading") + btn("body", "Use as body") + btn("mono", "Use for numbers") + '<button class="btn small" data-use="copy" type="button">Copy font name</button></div></article>';
+/* choosing a font applies it straight away to whichever row is selected */
+function pickFont(n) { picked = n; $("fsearch").value = n; fq = ""; openList(false); setFont(fslot, n); }
+function setSlot(slot) {
+  fslot = slot; picked = S.fonts[slot]; $("fsearch").value = picked; fq = "";
+  $("fsearchlab").textContent = "Choose a font for " + SLOT[slot];
+  fcat = slot === "mono" ? "m" : "all";
+  each("#fcats button", (x) => x.setAttribute("aria-pressed", x.dataset.c === fcat));
+  filterFonts(); if (!drop.hidden) renderList(); renderPair();
 }
-function pickFont(n) { picked = n; $("fsearch").value = n; fq = ""; openList(false); renderPick(); }
 function renderFonts() { filterFonts(); if (!drop.hidden) renderList(); }
 $("fcats").innerHTML = '<button class="btn small" data-c="all" aria-pressed="true" type="button">All</button>' + Object.keys(CATS).map((k) => '<button class="btn small" data-c="' + k + '" aria-pressed="false" type="button">' + CATS[k] + "</button>").join("");
 $("fsearch").addEventListener("input", function () { fq = this.value.trim(); filterFonts(); openList(true); });
@@ -184,15 +185,10 @@ $("flist").addEventListener("keydown", (e) => { const cur = document.activeEleme
 $("fmore").onclick = () => { fpage++; renderList(); };
 $("fless").onclick = () => { fpage = Math.max(0, fpage - 1); renderList(); };
 document.addEventListener("click", (e) => { if (!drop.hidden && !combo.contains(e.target)) openList(false); });
-$("fsample").addEventListener("input", function () { const v = this.value; each(".sample", (p) => { p.textContent = v || p.parentNode.dataset.n; }); renderPair(); });
+$("fsample").addEventListener("input", renderPair);
 $("fcats").addEventListener("click", function (e) { const b = e.target.closest("button"); if (!b) return; fcat = b.dataset.c; each("button", (x) => x.setAttribute("aria-pressed", x === b), this); fq = ""; filterFonts(); openList(true); });
-const SLOT = { head: "Heading", body: "Body", mono: "Numbers" };
+
 function setFont(slot, name) { const f = info(name); if (!f) return; S.fonts[slot] = f.n; ensureFont(f.n); apply(); toast(SLOT[slot] + " font set to " + f.n); }
-$("fpick").addEventListener("click", (e) => {
-  const b = e.target.closest("button"); if (!b) return; const n = b.closest(".fcard").dataset.n, u = b.dataset.use;
-  if (u === "copy") return copy(n, "Copied the name " + n);
-  setFont(u, n);
-});
 
 /* pairing suggestions: fixed, hand-picked rules */
 const PAIRS = {
@@ -208,13 +204,17 @@ const MONOS = ["IBM Plex Mono", "DM Mono", "JetBrains Mono", "Space Mono"];
 function renderPair() {
   const chip = (slot, n) => { ensureFont(n); return '<button class="btn small" type="button" data-slot="' + slot + '" data-n="' + esc(n) + '" aria-pressed="' + (S.fonts[slot] === n) + '" style="' + fontCss(n) + '">' + esc(n) + "</button>"; };
   const sample = esc($("fsample").value || "Welcome to Fine-log");
+  const row = (slot, ex) => '<button type="button" class="slotrow' + (fslot === slot ? " on" : "") + '" data-row="' + slot + '" aria-pressed="' + (fslot === slot) + '"><span class="who"><span>' + SLOT[slot] + "</span><b>" + esc(S.fonts[slot]) + "</b></span>" + ex + '<span class="tagc">' + (fslot === slot ? "Choosing" : "Change") + "</span></button>";
   $("pair").innerHTML =
-    '<div class="slotrow"><span>Heading</span><b>' + esc(S.fonts.head) + '</b><span class="ex1" style="' + fontCss(S.fonts.head, true) + '">' + sample + "</span></div>" +
-    '<div class="slotrow"><span>Body</span><b>' + esc(S.fonts.body) + '</b><span class="ex2" style="' + fontCss(S.fonts.body) + '">This is how paragraphs, buttons and labels will read in your design.</span></div>' +
-    '<div class="slotrow"><span>Numbers</span><b>' + esc(S.fonts.mono) + '</b><span class="ex3" style="' + fontCss(S.fonts.mono) + '">0123456789 &nbsp; $1,240.50 &nbsp; 17/11/2026</span></div>' +
-    '<div class="sug">Suggested fonts for numbers: ' + MONOS.map((n) => chip("mono", n)).join("") + "</div>";
+    row("head", '<span class="ex1" style="' + fontCss(S.fonts.head, true) + '">' + sample + "</span>") +
+    row("body", '<span class="ex2" style="' + fontCss(S.fonts.body) + '">This is how paragraphs, buttons and labels will read in your design.</span>') +
+    row("mono", '<span class="ex3" style="' + fontCss(S.fonts.mono) + '">0123456789 &nbsp; $1,240.50 &nbsp; 17/11/2026</span>') +
+    (fslot === "mono" ? '<div class="sug">Suggested fonts for numbers: ' + MONOS.map((n) => chip("mono", n)).join("") + "</div>" : "");
 }
-$("pair").addEventListener("click", (e) => { const b = e.target.closest("[data-slot]"); if (b) setFont(b.dataset.slot, b.dataset.n); });
+$("pair").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-slot]"); if (b) { setFont(b.dataset.slot, b.dataset.n); picked = b.dataset.n; $("fsearch").value = picked; return; }
+  const r = e.target.closest("[data-row]"); if (r) setSlot(r.dataset.row);
+});
 
 /* ---------- colours ---------- */
 function setCur(hex, from, silent) {
@@ -385,9 +385,7 @@ function renderExport() {
   $("exlab").textContent = { css: "CSS variables", tailwind: "Tailwind config", tokens: "Design tokens (JSON)" }[exTab];
   $("sharelink").value = location.href.split("#")[0] + "#s=" + encodeState(S);
 }
-function markFonts() {
-  each("#fpick .fcard", (c) => ["head", "body", "mono"].forEach((k) => { const b = c.querySelector('[data-use="' + k + '"]'); if (b) b.setAttribute("aria-pressed", S.fonts[k] === c.dataset.n); }));
-}
+function markFonts() { if (document.activeElement !== $("fsearch")) { picked = S.fonts[fslot]; $("fsearch").value = picked; } }
 let promptShown = false;
 function syncSegs() {
   each("#tools [data-k], #popts [data-k]", (b) => { const k = b.dataset.k, v = k === "view" ? S.view : k in S.shape ? S.shape[k] : S.prompt[k]; b.setAttribute("aria-pressed", v === b.dataset.v); });
@@ -513,7 +511,7 @@ document.addEventListener("click", (e) => {
 
 /* ---------- boot ---------- */
 FL._names = [].concat(MONOS, CYCLE, ...Object.keys(STYLES).map((k) => STYLES[k].fonts), ...Object.keys(PAIRS).map((k) => [k].concat(PAIRS[k])), ...Object.keys(PAIR_BY_CAT).map((k) => PAIR_BY_CAT[k]), ...Object.keys(MOODS).map((k) => MOODS[k].heads.concat(MOODS[k].bodies))).filter((n) => !info(n));
-buildColourStatic(); buildPreviewStatic(); paintThumbs(); renderTools(); renderPromptOpts(); filterFonts(); picked = S.fonts.head; $("fsearch").value = picked; renderPick(); renderSaved();
+buildColourStatic(); buildPreviewStatic(); paintThumbs(); renderTools(); renderPromptOpts(); filterFonts(); picked = S.fonts.head; $("fsearch").value = picked; renderSaved();
 $("target").value = target; setCur(cur, null, true); apply(); startWelcome();
 /* always open on the main page, whatever screen was open last time */
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";

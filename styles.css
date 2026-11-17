@@ -775,3 +775,20 @@ a.brand{color:var(--ink);text-decoration:none;cursor:pointer}
 #fpick .sample{font-size:44px;min-height:0;margin:6px 0 10px}
 @media (max-width:640px){.pair .slotrow{grid-template-columns:70px minmax(0,1fr)}.pair .slotrow .ex1,.pair .slotrow .ex2,.pair .slotrow .ex3{grid-column:1/-1}#fpick .sample{font-size:32px}}
 .flist{max-height:min(300px,32vh)}
+
+/* ---------- fonts screen: pick a row, then choose its font ---------- */
+.frow{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.fchoose{flex:1 1 320px;max-width:520px}
+.fsamp{flex:0 1 250px}
+.pair{margin:18px 0 0;padding:6px;gap:4px}
+.pair .slotrow{width:100%;text-align:left;border:1.5px solid transparent;border-bottom-color:transparent;background:none;border-radius:12px;padding:16px 14px;cursor:pointer;grid-template-columns:150px minmax(0,1fr) auto}
+.pair .slotrow:hover{background:var(--soft)}
+.pair .slotrow.on{border-color:var(--ink);background:var(--soft)}
+.pair .slotrow .who{display:grid;gap:3px}
+.pair .slotrow .who span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.pair .slotrow .who b{font-size:15px;font-weight:600}
+.pair .slotrow .ex1{font-size:34px}
+.pair .slotrow .tagc{font-size:12px;border-radius:999px;padding:4px 10px;white-space:nowrap;color:var(--muted);border:1px solid var(--line);background:var(--card)}
+.pair .slotrow.on .tagc{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pair .sug{margin:4px 8px 6px;padding:12px 6px 6px}
+@media (max-width:640px){.pair .slotrow{grid-template-columns:minmax(0,1fr) auto}.pair .slotrow .ex1,.pair .slotrow .ex2,.pair .slotrow .ex3{grid-column:1/-1;grid-row:2}.pair .slotrow .ex1{font-size:28px}.fsamp{flex:1 1 100%}}
