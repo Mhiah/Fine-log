@@ -147,47 +147,84 @@ $("skip").onclick = closeIntro;
 window.addEventListener("resize", () => { if (running) fitWord(); });
 
 const SLOT = { head: "Heading", body: "Body", mono: "Numbers" };
-/* ---------- font chooser: a dropdown list, 100 fonts at a time ---------- */
-let fq = "", fcat = "all", fpage = 0, flist = FONTS, picked = null, fslot = "head";
+/* ---------- font chooser: a dropdown, 100 fonts at a time, as a list or as tiles ---------- */
+let fq = "", fcat = "all", fpage = 0, flist = FONTS, picked = null, fslot = "head", fviewMode = "list", favs = [];
+try { favs = JSON.parse(localStorage.getItem("fl-favs") || "[]").filter((n) => info(n)); } catch (e) {}
 const FPAGE = 100, combo = $("fcombo"), drop = $("fdrop");
 const io = "IntersectionObserver" in window ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { ensureFont(e.target.dataset.n); io.unobserve(e.target); } }), { root: $("flist"), rootMargin: "200px" }) : null;
 function filterFonts() {
   const q = fq.toLowerCase();
-  flist = FONTS.filter((f) => (fcat === "all" || f.c === fcat) && (!q || f.n.toLowerCase().indexOf(q) > -1));
+  flist = FONTS.filter((f) => (fcat === "all" || (fcat === "fav" ? favs.indexOf(f.n) > -1 : f.c === fcat)) && (!q || f.n.toLowerCase().indexOf(q) > -1));
   fpage = 0;
 }
 function renderList() {
-  const items = flist.slice(fpage * FPAGE, (fpage + 1) * FPAGE), box = $("flist");
-  box.innerHTML = items.length ? items.map((f) => '<button class="fitem" type="button" role="option" data-n="' + esc(f.n) + '" aria-selected="' + (picked === f.n) + '"><span style="' + fontCss(f.n) + '">' + esc(f.n) + "</span><small>" + CATS[f.c] + "</small></button>").join("")
-    : '<div class="fnone">No font matches that. Check the spelling or try a shorter search.</div>';
-  each(".fitem", (el) => (io ? io.observe(el) : ensureFont(el.dataset.n)), box);
+  const items = flist.slice(fpage * FPAGE, (fpage + 1) * FPAGE), box = $("flist"), tiles = fviewMode === "tiles";
+  box.classList.toggle("tiles", tiles);
+  const star = (f) => '<button class="fstar" type="button" aria-pressed="' + (favs.indexOf(f.n) > -1) + '" aria-label="Favourite ' + esc(f.n) + '">★</button>';
+  box.innerHTML = items.length ? items.map((f) => tiles
+      ? '<div class="ftile" role="option" data-n="' + esc(f.n) + '" aria-selected="' + (picked === f.n) + '"><button class="fsel" type="button"><span class="aa" style="' + fontCss(f.n) + '">Aa</span><span class="nm">' + esc(f.n) + "</span></button>" + star(f) + "</div>"
+      : '<div class="fitem" role="option" data-n="' + esc(f.n) + '" aria-selected="' + (picked === f.n) + '"><button class="fsel" type="button"><span style="' + fontCss(f.n) + '">' + esc(f.n) + "</span><small>" + CATS[f.c] + "</small></button>" + star(f) + "</div>").join("")
+    : '<div class="fnone">' + (fcat === "fav" && !fq ? "No favourites yet. Press the star beside any font to keep it here." : "No font matches that. Check the spelling or try a shorter search.") + "</div>";
+  each("[data-n]", (el) => (io ? io.observe(el) : ensureFont(el.dataset.n)), box);
   box.scrollTop = 0;
   $("fless").disabled = fpage === 0; $("fmore").disabled = (fpage + 1) * FPAGE >= flist.length;
 }
-function openList(on) { drop.hidden = !on; combo.classList.toggle("open", on); $("fsearch").setAttribute("aria-expanded", on); if (on) renderList(); }
+/* trying a font: show it in the selected row without changing the design yet */
+function tryFont(n) {
+  const row = $("pair").querySelector('[data-row="' + fslot + '"]'); if (!row) return;
+  if (!n) { renderPair(); return; }
+  ensureFont(n); row.classList.add("previewing");
+  row.querySelector(".who b").textContent = n;
+  row.querySelector(".ex1,.ex2,.ex3").style.cssText = fontCss(n, fslot === "head");
+}
+function openList(on) {
+  drop.hidden = !on; combo.classList.toggle("open", on); $("fsearch").setAttribute("aria-expanded", on);
+  if (on) { renderList(); const r = drop.getBoundingClientRect(), limit = window.innerHeight - 90; if (r.bottom > limit) window.scrollBy({ top: r.bottom - limit, behavior: "auto" }); }
+  else tryFont(null);
+}
 /* choosing a font applies it straight away to whichever row is selected */
 function pickFont(n) { picked = n; $("fsearch").value = n; fq = ""; openList(false); setFont(fslot, n); }
 function setSlot(slot) {
   fslot = slot; picked = S.fonts[slot]; $("fsearch").value = picked; fq = "";
   $("fsearchlab").textContent = "Choose a font for " + SLOT[slot];
-  fcat = slot === "mono" ? "m" : "all";
-  each("#fcats button", (x) => x.setAttribute("aria-pressed", x.dataset.c === fcat));
+  fcat = slot === "mono" ? "m" : "all"; renderCats();
   filterFonts(); if (!drop.hidden) renderList(); renderPair();
 }
-function renderFonts() { filterFonts(); if (!drop.hidden) renderList(); }
-$("fcats").innerHTML = '<button class="btn small" data-c="all" aria-pressed="true" type="button">All</button>' + Object.keys(CATS).map((k) => '<button class="btn small" data-c="' + k + '" aria-pressed="false" type="button">' + CATS[k] + "</button>").join("");
+function renderCats() {
+  $("fcats").innerHTML = [["all", "All"]].concat(Object.keys(CATS).map((k) => [k, CATS[k]]), [["fav", "★ Favourites" + (favs.length ? " (" + favs.length + ")" : "")]])
+    .map((c) => '<button class="btn small" data-c="' + c[0] + '" aria-pressed="' + (fcat === c[0]) + '" type="button">' + c[1] + "</button>").join("");
+}
+function toggleFav(n) {
+  const i = favs.indexOf(n); if (i > -1) favs.splice(i, 1); else favs.push(n);
+  try { localStorage.setItem("fl-favs", JSON.stringify(favs)); } catch (e) {}
+  renderCats(); toast(i > -1 ? n + " removed from favourites" : n + " added to favourites");
+}
+renderCats();
 $("fsearch").addEventListener("input", function () { fq = this.value.trim(); filterFonts(); openList(true); });
 $("fsearch").addEventListener("focus", function () { this.select(); });
-$("fsearch").addEventListener("keydown", (e) => { if (e.key === "Escape") openList(false); if (e.key === "ArrowDown") { e.preventDefault(); openList(true); const first = $("flist").querySelector(".fitem"); if (first) first.focus(); } });
+$("fsearch").addEventListener("keydown", (e) => { if (e.key === "Escape") openList(false); if (e.key === "ArrowDown") { e.preventDefault(); openList(true); const first = $("flist").querySelector(".fsel"); if (first) first.focus(); } });
 $("fopen").onclick = () => { if (drop.hidden) { fq = ""; filterFonts(); } openList(drop.hidden); };
-$("flist").addEventListener("click", (e) => { const b = e.target.closest(".fitem"); if (b) pickFont(b.dataset.n); });
-$("flist").addEventListener("keydown", (e) => { const cur = document.activeElement; if (e.key === "Escape") { openList(false); $("fsearch").focus(); } if (e.key === "ArrowDown" && cur.nextElementSibling) { e.preventDefault(); cur.nextElementSibling.focus(); } if (e.key === "ArrowUp") { e.preventDefault(); (cur.previousElementSibling || $("fsearch")).focus(); } });
+$("flist").addEventListener("click", (e) => {
+  const w = e.target.closest("[data-n]"); if (!w) return;
+  const st = e.target.closest(".fstar");
+  if (st) { toggleFav(w.dataset.n); st.setAttribute("aria-pressed", favs.indexOf(w.dataset.n) > -1); if (fcat === "fav") { filterFonts(); renderList(); } return; }
+  pickFont(w.dataset.n);
+});
+$("flist").addEventListener("mouseover", (e) => { const w = e.target.closest("[data-n]"); if (w) tryFont(w.dataset.n); });
+$("flist").addEventListener("focusin", (e) => { const w = e.target.closest("[data-n]"); if (w && e.target.classList.contains("fsel")) tryFont(w.dataset.n); });
+$("flist").addEventListener("mouseleave", () => { if (!drop.hidden) tryFont(null); });
+$("flist").addEventListener("keydown", (e) => {
+  if (e.key === "Escape") { openList(false); $("fsearch").focus(); return; }
+  if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+  const all = Array.prototype.slice.call($("flist").querySelectorAll(".fsel")), i = all.indexOf(document.activeElement); if (i < 0) return;
+  e.preventDefault(); const nx = all[i + (e.key === "ArrowDown" ? 1 : -1)]; if (nx) nx.focus(); else if (e.key === "ArrowUp") $("fsearch").focus();
+});
+$("fview").addEventListener("click", function (e) { const b = e.target.closest("[data-view]"); if (!b) return; fviewMode = b.dataset.view; each("button", (x) => x.setAttribute("aria-pressed", x === b), this); renderList(); });
 $("fmore").onclick = () => { fpage++; renderList(); };
 $("fless").onclick = () => { fpage = Math.max(0, fpage - 1); renderList(); };
 document.addEventListener("click", (e) => { if (!drop.hidden && !combo.contains(e.target)) openList(false); });
-$("fsample").addEventListener("input", renderPair);
-$("fcats").addEventListener("click", function (e) { const b = e.target.closest("button"); if (!b) return; fcat = b.dataset.c; each("button", (x) => x.setAttribute("aria-pressed", x === b), this); fq = ""; filterFonts(); openList(true); });
-
+$("fsample").addEventListener("input", () => { renderPair(); });
+$("fcats").addEventListener("click", function (e) { const b = e.target.closest("button"); if (!b) return; e.stopPropagation(); fcat = b.dataset.c; renderCats(); fq = ""; filterFonts(); openList(true); });
 function setFont(slot, name) { const f = info(name); if (!f) return; S.fonts[slot] = f.n; ensureFont(f.n); apply(); toast(SLOT[slot] + " font set to " + f.n); }
 
 /* pairing suggestions: fixed, hand-picked rules */
@@ -201,6 +238,24 @@ const PAIRS = {
 };
 const PAIR_BY_CAT = { s: ["Source Serif 4", "Inter", "Lora"], e: ["DM Sans", "Inter", "Work Sans"], d: ["DM Sans", "Inter", "Work Sans"], h: ["DM Sans", "Karla", "Work Sans"], m: ["IBM Plex Sans", "Inter", "Work Sans"] };
 const MONOS = ["IBM Plex Mono", "DM Mono", "JetBrains Mono", "Space Mono"];
+/* ready-made combinations: heading, body, numbers */
+const TRIOS = [
+  ["Manrope", "DM Sans", "IBM Plex Mono"], ["Playfair Display", "Source Sans 3", "IBM Plex Mono"], ["Fraunces", "Work Sans", "DM Mono"], ["Space Grotesk", "Inter", "JetBrains Mono"],
+  ["Bebas Neue", "Inter", "Space Mono"], ["DM Serif Display", "Karla", "DM Mono"], ["Bricolage Grotesque", "Instrument Sans", "DM Mono"], ["Syne", "Inter", "IBM Plex Mono"]
+];
+function setTrio(t, msg) { S.fonts.head = t[0]; S.fonts.body = t[1]; S.fonts.mono = t[2]; apply(); toast(msg); }
+function renderTrios() {
+  $("trios").innerHTML = TRIOS.map((t, i) => { t.forEach(ensureFont); const on = S.fonts.head === t[0] && S.fonts.body === t[1] && S.fonts.mono === t[2];
+    return '<button class="trio" type="button" data-trio="' + i + '" aria-pressed="' + on + '"><b style="' + fontCss(t[0], true) + '">' + esc(t[0]) + '</b><span style="' + fontCss(t[1]) + '">with ' + esc(t[1]) + '</span><code style="' + fontCss(t[2]) + '">' + esc(t[2]) + " 0123</code></button>"; }).join("");
+}
+$("trios").addEventListener("click", (e) => { const b = e.target.closest("[data-trio]"); if (b) { const t = TRIOS[+b.dataset.trio]; setTrio(t, t[0] + " with " + t[1] + " applied"); } });
+$("fsurprise").onclick = () => {
+  const heads = []; Object.keys(MOODS).forEach((m) => MOODS[m].heads.forEach((n) => { if (heads.indexOf(n) < 0) heads.push(n); }));
+  let h = heads[Math.floor(Math.random() * heads.length)], tries = 0; while (h === S.fonts.head && tries++ < 5) h = heads[Math.floor(Math.random() * heads.length)];
+  const bodies = (PAIRS[h] || PAIR_BY_CAT[info(h).c]).filter((n) => n !== h);
+  setTrio([h, bodies[Math.floor(Math.random() * bodies.length)], MONOS[Math.floor(Math.random() * MONOS.length)]], "Surprise: " + h + " it is");
+};
+
 function renderPair() {
   const chip = (slot, n) => { ensureFont(n); return '<button class="btn small" type="button" data-slot="' + slot + '" data-n="' + esc(n) + '" aria-pressed="' + (S.fonts[slot] === n) + '" style="' + fontCss(n) + '">' + esc(n) + "</button>"; };
   const sample = esc($("fsample").value || "Welcome to Fine-log");
@@ -385,7 +440,7 @@ function renderExport() {
   $("exlab").textContent = { css: "CSS variables", tailwind: "Tailwind config", tokens: "Design tokens (JSON)" }[exTab];
   $("sharelink").value = location.href.split("#")[0] + "#s=" + encodeState(S);
 }
-function markFonts() { if (document.activeElement !== $("fsearch")) { picked = S.fonts[fslot]; $("fsearch").value = picked; } }
+function markFonts() { if (document.activeElement !== $("fsearch")) { picked = S.fonts[fslot]; $("fsearch").value = picked; } renderTrios(); }
 let promptShown = false;
 function syncSegs() {
   each("#tools [data-k], #popts [data-k]", (b) => { const k = b.dataset.k, v = k === "view" ? S.view : k in S.shape ? S.shape[k] : S.prompt[k]; b.setAttribute("aria-pressed", v === b.dataset.v); });
@@ -510,7 +565,7 @@ document.addEventListener("click", (e) => {
 });
 
 /* ---------- boot ---------- */
-FL._names = [].concat(MONOS, CYCLE, ...Object.keys(STYLES).map((k) => STYLES[k].fonts), ...Object.keys(PAIRS).map((k) => [k].concat(PAIRS[k])), ...Object.keys(PAIR_BY_CAT).map((k) => PAIR_BY_CAT[k]), ...Object.keys(MOODS).map((k) => MOODS[k].heads.concat(MOODS[k].bodies))).filter((n) => !info(n));
+FL._names = [].concat(MONOS, CYCLE, ...TRIOS, ...Object.keys(STYLES).map((k) => STYLES[k].fonts), ...Object.keys(PAIRS).map((k) => [k].concat(PAIRS[k])), ...Object.keys(PAIR_BY_CAT).map((k) => PAIR_BY_CAT[k]), ...Object.keys(MOODS).map((k) => MOODS[k].heads.concat(MOODS[k].bodies))).filter((n) => !info(n));
 buildColourStatic(); buildPreviewStatic(); paintThumbs(); renderTools(); renderPromptOpts(); filterFonts(); picked = S.fonts.head; $("fsearch").value = picked; renderSaved();
 $("target").value = target; setCur(cur, null, true); apply(); startWelcome();
 /* always open on the main page, whatever screen was open last time */
