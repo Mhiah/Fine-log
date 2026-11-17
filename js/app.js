@@ -254,7 +254,7 @@ const TRIOS = [
   ["Manrope", "DM Sans", "IBM Plex Mono"], ["Playfair Display", "Source Sans 3", "IBM Plex Mono"], ["Fraunces", "Work Sans", "DM Mono"], ["Space Grotesk", "Inter", "JetBrains Mono"],
   ["Bebas Neue", "Inter", "Space Mono"], ["DM Serif Display", "Karla", "DM Mono"], ["Bricolage Grotesque", "Instrument Sans", "DM Mono"], ["Syne", "Inter", "IBM Plex Mono"]
 ];
-function setTrio(t, msg) { S.fonts.head = t[0]; S.fonts.body = t[1]; S.fonts.mono = t[2]; apply(); toast(msg); }
+function setTrio(t, msg) { S.fonts.head = t[0]; S.fonts.body = t[1]; S.fonts.mono = t[2]; apply(); if (msg) toast(msg); }
 function renderTrios() {
   $("trios").innerHTML = TRIOS.map((t, i) => { t.forEach(ensureFont); const on = S.fonts.head === t[0] && S.fonts.body === t[1] && S.fonts.mono === t[2];
     return '<button class="trio" type="button" data-trio="' + i + '" aria-pressed="' + on + '"><b style="' + fontCss(t[0], true) + '">' + esc(t[0]) + '</b><span style="' + fontCss(t[1]) + '">with ' + esc(t[1]) + '</span><code style="' + fontCss(t[2]) + '">' + esc(t[2]) + " 0123</code></button>"; }).join("");
@@ -264,7 +264,7 @@ $("fsurprise").onclick = () => {
   const heads = []; Object.keys(MOODS).forEach((m) => MOODS[m].heads.forEach((n) => { if (heads.indexOf(n) < 0) heads.push(n); }));
   let h = heads[Math.floor(Math.random() * heads.length)], tries = 0; while (h === S.fonts.head && tries++ < 5) h = heads[Math.floor(Math.random() * heads.length)];
   const bodies = (PAIRS[h] || PAIR_BY_CAT[info(h).c]).filter((n) => n !== h);
-  setTrio([h, bodies[Math.floor(Math.random() * bodies.length)], MONOS[Math.floor(Math.random() * MONOS.length)]], "Surprise: " + h + " it is");
+  setTrio([h, bodies[Math.floor(Math.random() * bodies.length)], MONOS[Math.floor(Math.random() * MONOS.length)]], "");
 };
 
 function renderPair() {
