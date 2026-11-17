@@ -28,7 +28,7 @@ A centred headline, two buttons, three numbers and a live preview of the design 
 
 ### 1. Fonts
 
-All 1,908 families in the Google Fonts library.
+All 1,908 families in the Google Fonts library, plus 84 fonts built into Apple devices and Windows: 1,992 in total.
 
 - **Heading, Body, Numbers.** One box shows the three fonts of your design with a live sample of each. Click a row to select it.
 - **Choose a font.** A dropdown lists every font in its own style, 100 at a time, with Show more and Show less. Typing a name filters the list. Choosing a font applies it straight away to the selected row.
@@ -37,7 +37,8 @@ All 1,908 families in the Google Fonts library.
 - **Favourites.** Star any font to keep it under a Favourites filter. Favourites stay in the browser.
 - **Ready-made combinations.** Eight heading, body and numbers trios that apply in one click.
 - **Surprise me.** Picks a random combination from the curated fonts.
-- **Style filters** (sans serif, serif, display, handwriting, monospace) and your own sample text.
+- **Style filters** (sans serif, serif, display, handwriting, monospace), **Apple fonts** and **Windows fonts** filters, and your own sample text.
+- **System fonts are labelled.** Fonts such as San Francisco, Helvetica Neue, Avenir, Segoe UI and Calibri are not downloaded; each shows only on a device that already has it, and is marked "Apple devices only", "Windows only" or "Apple and Windows". The prompt tells the AI not to look for them on Google Fonts and what other devices should fall back to.
 
 The Numbers font is used wherever digits appear in a design, such as prices, dates and tables, so columns line up.
 
@@ -131,7 +132,7 @@ Fine-log is a static site. There is no build step, no framework and no backend.
 ```
 index.html          Page markup
 styles.css          Page styles and the UI designs' styles
-js/fonts.js         The Google Fonts family list (name, style, weights)
+js/fonts.js         The Google Fonts family list (name, style, weights) and the Apple and Windows system fonts
 js/colour.js        Colour maths, the eight roles and how five are derived
 js/templates.js     Layout markup, structure notes used in prompts, signature styles and the list of 24 designs
 js/prompt.js        Prompt generator and CSS, Tailwind and token exports
