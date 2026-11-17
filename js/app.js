@@ -195,11 +195,12 @@ function pickFont(n) { picked = n; $("fsearch").value = n; fq = ""; openList(fal
 function setSlot(slot) {
   fslot = slot; picked = S.fonts[slot]; $("fsearch").value = picked; fq = "";
   $("fsearchlab").textContent = "Choose a font for " + SLOT[slot];
-  fcat = slot === "mono" ? "m" : "all"; renderCats();
+  if (fcat !== "all" && fcat !== "mac" && fcat !== "win" && fcat !== "fav") fcat = "all";
+  renderCats();
   filterFonts(); if (!drop.hidden) renderList(); renderPair();
 }
 function renderCats() {
-  $("fcats").innerHTML = [["all", "All"]].concat(Object.keys(CATS).map((k) => [k, CATS[k]]), [["mac", "Apple fonts"], ["win", "Windows fonts"], ["fav", "★ Favourites" + (favs.length ? " (" + favs.length + ")" : "")]])
+  $("fcats").innerHTML = [["all", "All"], ["mac", "Apple fonts"], ["win", "Windows fonts"], ["fav", "★ Favourites" + (favs.length ? " (" + favs.length + ")" : "")]]
     .map((c) => '<button class="btn small" data-c="' + c[0] + '" aria-pressed="' + (fcat === c[0]) + '" type="button">' + c[1] + "</button>").join("");
 }
 function toggleFav(n) {
