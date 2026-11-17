@@ -829,3 +829,7 @@ a.brand{color:var(--ink);text-decoration:none;cursor:pointer}
 /* font filters live inside the open list */
 .fbar{display:flex;gap:6px;flex-wrap:wrap;padding:8px;border-bottom:1px solid var(--line)}
 .fview{justify-content:flex-end}
+
+/* font filters sit on the page, above the font box, so the open list never covers them */
+.fbar.onpage{padding:0;border:0;margin:0 0 12px}
+.fbar.onpage .btn{min-height:38px}
