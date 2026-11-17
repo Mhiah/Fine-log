@@ -481,7 +481,7 @@ $("saved").addEventListener("click", (e) => {
 
 /* ---------- tabs ---------- */
 const TABS = ["fonts", "colours", "library", "prompt", "export"];
-let tab = "library";
+let tab = "fonts";
 function showTab(id, scroll) {
   if (TABS.indexOf(id) < 0) return; tab = id;
   each("section", (s) => s.classList.toggle("on", s.id === id));
@@ -490,7 +490,7 @@ function showTab(id, scroll) {
   if (scroll) { const y = document.querySelector(".hero").getBoundingClientRect().bottom + window.scrollY - 70; window.scrollTo({ top: Math.max(0, y), behavior: "auto" }); }
 }
 /* the Fine-log name always returns to the main page */
-function goHome() { showTab("library"); window.scrollTo(0, 0); try { history.replaceState(null, "", location.pathname + location.search); } catch (err) {} }
+function goHome() { showTab("fonts"); window.scrollTo(0, 0); try { history.replaceState(null, "", location.pathname + location.search); } catch (err) {} }
 $("homelink").addEventListener("click", (e) => { e.preventDefault(); goHome(); });
 document.addEventListener("click", (e) => {
   const a = e.target.closest('a[href^="#"]'); if (!a) return; const id = a.getAttribute("href").slice(1);
@@ -508,7 +508,7 @@ $("target").value = target; setCur(cur, null, true); apply(); startWelcome();
 /* always open on the main page, whatever screen was open last time */
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 if (TABS.indexOf(location.hash.slice(1)) > -1) { try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
-showTab("library"); window.scrollTo(0, 0);
+showTab("fonts"); window.scrollTo(0, 0);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => each(".frame", fitFrame));
 if (cameFromLink) { toast("Opened a shared design"); try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
 })();
