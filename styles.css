@@ -746,3 +746,32 @@ section.on{animation:rise .35s ease both}
 @media (min-width:861px){html{zoom:.9}}
 
 a.brand{color:var(--ink);text-decoration:none;cursor:pointer}
+
+/* ---------- fonts screen: combination, font chooser ---------- */
+.pair{gap:0;padding:6px 18px}
+.pair .slotrow{display:grid;grid-template-columns:88px 190px minmax(0,1fr);gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.pair .slotrow:last-of-type{border-bottom:0}
+.pair .slotrow>span:first-child{font-size:13px;color:var(--muted)}
+.pair .slotrow b{font-weight:600;font-size:15px}
+.pair .slotrow .ex1{font-size:28px;line-height:1.15;overflow-wrap:anywhere}
+.pair .slotrow .ex2{font-size:16px;line-height:1.5;color:var(--muted)}
+.pair .slotrow .ex3{font-size:17px}
+.pair .sug{padding:12px 0 10px;border-top:1px solid var(--line)}
+.fcombo{position:relative}
+.fcombo .field{padding-right:48px}
+.fopen{position:absolute;right:4px;top:4px;width:36px;height:36px;border:0;background:none;border-radius:8px;display:grid;place-items:center;color:var(--ink)}
+.fopen:hover{background:var(--soft)}
+.fcombo.open .fopen svg{transform:rotate(180deg)}
+.fdrop{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:12;background:var(--card);border:1px solid #DCDCDC;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.12);overflow:hidden}
+.flist{max-height:340px;overflow:auto;padding:6px}
+.fitem{display:flex;justify-content:space-between;align-items:baseline;gap:12px;width:100%;text-align:left;border:0;background:none;border-radius:8px;padding:9px 10px;font-size:19px;line-height:1.25}
+.fitem:hover,.fitem:focus-visible{background:var(--soft)}
+.fitem[aria-selected="true"]{background:var(--ink);color:#fff}
+.fitem small{font-family:var(--font-mono);font-size:11px;color:var(--muted);white-space:nowrap}
+.fitem[aria-selected="true"] small{color:#ddd}
+.fnone{padding:14px 10px;color:var(--muted);font-size:14px}
+.fpager{display:flex;justify-content:space-between;gap:8px;padding:8px;border-top:1px solid var(--line);background:#FAFAFA}
+#fpick .fcard{max-width:none}
+#fpick .sample{font-size:44px;min-height:0;margin:6px 0 10px}
+@media (max-width:640px){.pair .slotrow{grid-template-columns:70px minmax(0,1fr)}.pair .slotrow .ex1,.pair .slotrow .ex2,.pair .slotrow .ex3{grid-column:1/-1}#fpick .sample{font-size:32px}}
+.flist{max-height:min(300px,32vh)}

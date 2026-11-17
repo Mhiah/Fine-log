@@ -146,42 +146,51 @@ $("replay").onclick = playWelcome;
 $("skip").onclick = closeIntro;
 window.addEventListener("resize", () => { if (running) fitWord(); });
 
-/* ---------- font library ---------- */
-let fq = "", fcat = "all", fshown = 0, flist = FONTS;
-const PAGE = 12;
-const io = "IntersectionObserver" in window ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { ensureFont(e.target.dataset.n); io.unobserve(e.target); } }), { rootMargin: "400px" }) : null;
-function cardHtml(f) {
-  return '<article class="fcard" data-n="' + esc(f.n) + '"><header><h3>' + esc(f.n) + '</h3><span class="tag">' + CATS[f.c] + (f.x ? " · non-Latin" : "") + "</span></header>" +
+/* ---------- font chooser: a dropdown list, 100 fonts at a time ---------- */
+let fq = "", fcat = "all", fpage = 0, flist = FONTS, picked = null;
+const FPAGE = 100, combo = $("fcombo"), drop = $("fdrop");
+const io = "IntersectionObserver" in window ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { ensureFont(e.target.dataset.n); io.unobserve(e.target); } }), { root: $("flist"), rootMargin: "200px" }) : null;
+function filterFonts() {
+  const q = fq.toLowerCase();
+  flist = FONTS.filter((f) => (fcat === "all" || f.c === fcat) && (!q || f.n.toLowerCase().indexOf(q) > -1));
+  fpage = 0;
+}
+function renderList() {
+  const items = flist.slice(fpage * FPAGE, (fpage + 1) * FPAGE), box = $("flist");
+  box.innerHTML = items.length ? items.map((f) => '<button class="fitem" type="button" role="option" data-n="' + esc(f.n) + '" aria-selected="' + (picked === f.n) + '"><span style="' + fontCss(f.n) + '">' + esc(f.n) + "</span><small>" + CATS[f.c] + "</small></button>").join("")
+    : '<div class="fnone">No font matches that. Check the spelling or try a shorter search.</div>';
+  each(".fitem", (el) => (io ? io.observe(el) : ensureFont(el.dataset.n)), box);
+  box.scrollTop = 0;
+  $("fless").disabled = fpage === 0; $("fmore").disabled = (fpage + 1) * FPAGE >= flist.length;
+}
+function openList(on) { drop.hidden = !on; combo.classList.toggle("open", on); $("fsearch").setAttribute("aria-expanded", on); if (on) renderList(); }
+function renderPick() {
+  const f = info(picked); if (!f) { $("fpick").innerHTML = ""; return; }
+  ensureFont(f.n);
+  const btn = (slot, label) => '<button class="btn small" data-use="' + slot + '" aria-pressed="' + (S.fonts[slot] === f.n) + '" type="button">' + label + "</button>";
+  $("fpick").innerHTML = '<article class="fcard" data-n="' + esc(f.n) + '"><header><h3>' + esc(f.n) + '</h3><span class="tag">' + CATS[f.c] + (f.x ? " · non-Latin" : "") + "</span></header>" +
     '<p class="sample" style="' + fontCss(f.n) + '">' + esc($("fsample").value || f.n) + "</p>" +
-    '<div class="row"><button class="btn small" data-use="head" aria-pressed="' + (S.fonts.head === f.n) + '" type="button">Heading</button>' +
-    '<button class="btn small" data-use="body" aria-pressed="' + (S.fonts.body === f.n) + '" type="button">Body</button>' +
-    (f.c === "m" ? '<button class="btn small" data-use="mono" aria-pressed="' + (S.fonts.mono === f.n) + '" type="button">Numbers</button>' : "") +
-    '<button class="btn small" data-use="copy" type="button">Copy name</button></div></article>';
+    '<div class="row">' + btn("head", "Use as heading") + btn("body", "Use as body") + btn("mono", "Use for numbers") + '<button class="btn small" data-use="copy" type="button">Copy font name</button></div></article>';
 }
-function renderFonts(reset) {
-  const g = $("fgrid");
-  if (reset) {
-    const q = fq.toLowerCase();
-    flist = FONTS.filter((f) => (fcat === "all" || f.c === fcat) && (!q || f.n.toLowerCase().indexOf(q) > -1));
-    g.innerHTML = ""; fshown = 0;
-  }
-  const next = flist.slice(fshown, fshown + (fshown ? 24 : PAGE));
-  g.insertAdjacentHTML("beforeend", next.map(cardHtml).join(""));
-  fshown += next.length;
-  if (next.length) Array.prototype.slice.call(g.children, -next.length).forEach((c) => (io ? io.observe(c) : ensureFont(c.dataset.n)));
-  $("fcount").textContent = flist.length ? "Showing " + fshown.toLocaleString("en") + " of " + flist.length.toLocaleString("en") + " families" : "No font matches that. Check the spelling or try a shorter search.";
-  $("fmore").hidden = fshown >= flist.length;
-}
+function pickFont(n) { picked = n; $("fsearch").value = n; fq = ""; openList(false); renderPick(); }
+function renderFonts() { filterFonts(); if (!drop.hidden) renderList(); }
 $("fcats").innerHTML = '<button class="btn small" data-c="all" aria-pressed="true" type="button">All</button>' + Object.keys(CATS).map((k) => '<button class="btn small" data-c="' + k + '" aria-pressed="false" type="button">' + CATS[k] + "</button>").join("");
-$("fsearch").addEventListener("input", function () { fq = this.value.trim(); renderFonts(true); });
-$("fsample").addEventListener("input", function () { const v = this.value; each(".sample", (p) => { p.textContent = v || p.parentNode.dataset.n; }); });
-$("fcats").addEventListener("click", function (e) { const b = e.target.closest("button"); if (!b) return; fcat = b.dataset.c; each("button", (x) => x.setAttribute("aria-pressed", x === b), this); renderFonts(true); });
-$("fmore").onclick = () => renderFonts(false);
+$("fsearch").addEventListener("input", function () { fq = this.value.trim(); filterFonts(); openList(true); });
+$("fsearch").addEventListener("focus", function () { this.select(); });
+$("fsearch").addEventListener("keydown", (e) => { if (e.key === "Escape") openList(false); if (e.key === "ArrowDown") { e.preventDefault(); openList(true); const first = $("flist").querySelector(".fitem"); if (first) first.focus(); } });
+$("fopen").onclick = () => { if (drop.hidden) { fq = ""; filterFonts(); } openList(drop.hidden); };
+$("flist").addEventListener("click", (e) => { const b = e.target.closest(".fitem"); if (b) pickFont(b.dataset.n); });
+$("flist").addEventListener("keydown", (e) => { const cur = document.activeElement; if (e.key === "Escape") { openList(false); $("fsearch").focus(); } if (e.key === "ArrowDown" && cur.nextElementSibling) { e.preventDefault(); cur.nextElementSibling.focus(); } if (e.key === "ArrowUp") { e.preventDefault(); (cur.previousElementSibling || $("fsearch")).focus(); } });
+$("fmore").onclick = () => { fpage++; renderList(); };
+$("fless").onclick = () => { fpage = Math.max(0, fpage - 1); renderList(); };
+document.addEventListener("click", (e) => { if (!drop.hidden && !combo.contains(e.target)) openList(false); });
+$("fsample").addEventListener("input", function () { const v = this.value; each(".sample", (p) => { p.textContent = v || p.parentNode.dataset.n; }); renderPair(); });
+$("fcats").addEventListener("click", function (e) { const b = e.target.closest("button"); if (!b) return; fcat = b.dataset.c; each("button", (x) => x.setAttribute("aria-pressed", x === b), this); fq = ""; filterFonts(); openList(true); });
 const SLOT = { head: "Heading", body: "Body", mono: "Numbers" };
 function setFont(slot, name) { const f = info(name); if (!f) return; S.fonts[slot] = f.n; ensureFont(f.n); apply(); toast(SLOT[slot] + " font set to " + f.n); }
-$("fgrid").addEventListener("click", (e) => {
+$("fpick").addEventListener("click", (e) => {
   const b = e.target.closest("button"); if (!b) return; const n = b.closest(".fcard").dataset.n, u = b.dataset.use;
-  if (u === "copy") return copy(n, "Copied " + n);
+  if (u === "copy") return copy(n, "Copied the name " + n);
   setFont(u, n);
 });
 
@@ -197,12 +206,13 @@ const PAIRS = {
 const PAIR_BY_CAT = { s: ["Source Serif 4", "Inter", "Lora"], e: ["DM Sans", "Inter", "Work Sans"], d: ["DM Sans", "Inter", "Work Sans"], h: ["DM Sans", "Karla", "Work Sans"], m: ["IBM Plex Sans", "Inter", "Work Sans"] };
 const MONOS = ["IBM Plex Mono", "DM Mono", "JetBrains Mono", "Space Mono"];
 function renderPair() {
-  const f = info(S.fonts.head), sug = (PAIRS[S.fonts.head] || PAIR_BY_CAT[f ? f.c : "s"]).filter((n) => n !== S.fonts.head);
   const chip = (slot, n) => { ensureFont(n); return '<button class="btn small" type="button" data-slot="' + slot + '" data-n="' + esc(n) + '" aria-pressed="' + (S.fonts[slot] === n) + '" style="' + fontCss(n) + '">' + esc(n) + "</button>"; };
+  const sample = esc($("fsample").value || "Welcome to Fine-log");
   $("pair").innerHTML =
-    '<div class="cur"><div><span>Heading</span><b style="' + fontCss(S.fonts.head, true) + '">' + esc(S.fonts.head) + "</b></div><div><span>Body</span><b style=\"" + fontCss(S.fonts.body) + '">' + esc(S.fonts.body) + "</b></div><div><span>Numbers</span><b style=\"" + fontCss(S.fonts.mono) + '">' + esc(S.fonts.mono) + "</b></div></div>" +
-    '<div class="sug">Body fonts that pair with ' + esc(S.fonts.head) + ": " + sug.map((n) => chip("body", n)).join("") + "</div>" +
-    '<div class="sug">For numbers and code: ' + MONOS.map((n) => chip("mono", n)).join("") + "</div>";
+    '<div class="slotrow"><span>Heading</span><b>' + esc(S.fonts.head) + '</b><span class="ex1" style="' + fontCss(S.fonts.head, true) + '">' + sample + "</span></div>" +
+    '<div class="slotrow"><span>Body</span><b>' + esc(S.fonts.body) + '</b><span class="ex2" style="' + fontCss(S.fonts.body) + '">This is how paragraphs, buttons and labels will read in your design.</span></div>' +
+    '<div class="slotrow"><span>Numbers</span><b>' + esc(S.fonts.mono) + '</b><span class="ex3" style="' + fontCss(S.fonts.mono) + '">0123456789 &nbsp; $1,240.50 &nbsp; 17/11/2026</span></div>' +
+    '<div class="sug">Suggested fonts for numbers: ' + MONOS.map((n) => chip("mono", n)).join("") + "</div>";
 }
 $("pair").addEventListener("click", (e) => { const b = e.target.closest("[data-slot]"); if (b) setFont(b.dataset.slot, b.dataset.n); });
 
@@ -376,7 +386,7 @@ function renderExport() {
   $("sharelink").value = location.href.split("#")[0] + "#s=" + encodeState(S);
 }
 function markFonts() {
-  each(".fcard", (c) => ["head", "body", "mono"].forEach((k) => { const b = c.querySelector('[data-use="' + k + '"]'); if (b) b.setAttribute("aria-pressed", S.fonts[k] === c.dataset.n); }));
+  each("#fpick .fcard", (c) => ["head", "body", "mono"].forEach((k) => { const b = c.querySelector('[data-use="' + k + '"]'); if (b) b.setAttribute("aria-pressed", S.fonts[k] === c.dataset.n); }));
 }
 let promptShown = false;
 function syncSegs() {
@@ -503,7 +513,7 @@ document.addEventListener("click", (e) => {
 
 /* ---------- boot ---------- */
 FL._names = [].concat(MONOS, CYCLE, ...Object.keys(STYLES).map((k) => STYLES[k].fonts), ...Object.keys(PAIRS).map((k) => [k].concat(PAIRS[k])), ...Object.keys(PAIR_BY_CAT).map((k) => PAIR_BY_CAT[k]), ...Object.keys(MOODS).map((k) => MOODS[k].heads.concat(MOODS[k].bodies))).filter((n) => !info(n));
-buildColourStatic(); buildPreviewStatic(); paintThumbs(); renderTools(); renderPromptOpts(); renderFonts(true); renderSaved();
+buildColourStatic(); buildPreviewStatic(); paintThumbs(); renderTools(); renderPromptOpts(); filterFonts(); picked = S.fonts.head; $("fsearch").value = picked; renderPick(); renderSaved();
 $("target").value = target; setCur(cur, null, true); apply(); startWelcome();
 /* always open on the main page, whatever screen was open last time */
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
