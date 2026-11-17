@@ -823,3 +823,5 @@ a.brand{color:var(--ink);text-decoration:none;cursor:pointer}
 .trio span{font-size:14px;color:var(--muted)}
 .trio code{font-size:12px;color:var(--muted)}
 .pair .slotrow.previewing .who b::after{content:" (trying)";font-weight:400;color:var(--muted)}
+
+.pair .slotrow .who .sysn{font-style:normal;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px;justify-self:start;background:var(--card)}

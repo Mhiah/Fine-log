@@ -11,10 +11,17 @@ const FONTS = window.FL_FONTS.trim().split("\n").map((l) => {
 });
 const BYNAME = {};
 FONTS.forEach((f) => { BYNAME[f.n.toLowerCase()] = f; });
+/* system fonts: never downloaded, shown only where the device already has them */
+const WHERE = { mac: "Apple devices", win: "Windows", both: "Apple and Windows" };
+const GOOGLE_COUNT = FONTS.length;
+(window.FL_SYSFONTS || []).forEach((l) => { const p = l.split("|"); if (BYNAME[p[0].toLowerCase()]) return;
+  const f = { n: p[0], c: p[1], v: "", b: true, x: false, sys: p[2], css: p[3] || "" }; FONTS.push(f); BYNAME[f.n.toLowerCase()] = f; });
+FONTS.sort((a, b) => a.n.localeCompare(b.n));
+$("statFonts").textContent = FONTS.length.toLocaleString("en");
 const info = (n) => BYNAME[String(n || "").toLowerCase()];
 const TPLS = window.FL_TEMPLATES, DESIGNS = window.FL_DESIGNS, STYLES = window.FL_STYLES;
 const designOf = (id) => DESIGNS.filter((d) => d.id === id)[0] || DESIGNS[0];
-$("statFonts").textContent = FONTS.length.toLocaleString("en");
+
 $("statTpl").textContent = DESIGNS.length;
 
 /* ---------- small helpers ---------- */
@@ -32,7 +39,7 @@ function seg(key, options, current) {
 /* ---------- fonts ---------- */
 const loaded = {};
 function ensureFont(name) {
-  const f = info(name); if (!f || loaded[f.n]) return; loaded[f.n] = 1;
+  const f = info(name); if (!f || f.sys || loaded[f.n]) return; loaded[f.n] = 1;
   let spec = "";
   if (f.v) { const it = f.v.charAt(0) === "i", w = f.v.replace("i", ""); spec = it ? ":ital,wght@1," + w : ":wght@" + w; }
   else if (f.b) spec = ":wght@400;700";
@@ -40,7 +47,7 @@ function ensureFont(name) {
   l.href = "https://fonts.googleapis.com/css2?family=" + encodeURIComponent(f.n).replace(/%20/g, "+") + spec + "&display=swap";
   document.head.appendChild(l);
 }
-function fam(name) { const f = info(name); return f ? "'" + f.n + "'," + FALLBACK[f.c] : "sans-serif"; }
+function fam(name) { const f = info(name); return f ? (f.css || "'" + f.n + "'") + "," + FALLBACK[f.c] : "sans-serif"; }
 function wOf(name, bold) { const f = info(name); return !f ? "400" : f.v ? f.v.replace("i", "") : bold && f.b ? "700" : "400"; }
 function stOf(name) { const f = info(name); return f && f.v && f.v.charAt(0) === "i" ? "italic" : "normal"; }
 function fontCss(name, bold) { return "font-family:" + fam(name) + ";font-weight:" + wOf(name, bold) + ";font-style:" + stOf(name); }
@@ -154,7 +161,8 @@ const FPAGE = 100, combo = $("fcombo"), drop = $("fdrop");
 const io = "IntersectionObserver" in window ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { ensureFont(e.target.dataset.n); io.unobserve(e.target); } }), { root: $("flist"), rootMargin: "200px" }) : null;
 function filterFonts() {
   const q = fq.toLowerCase();
-  flist = FONTS.filter((f) => (fcat === "all" || (fcat === "fav" ? favs.indexOf(f.n) > -1 : f.c === fcat)) && (!q || f.n.toLowerCase().indexOf(q) > -1));
+  const inCat = (f) => fcat === "all" || (fcat === "fav" ? favs.indexOf(f.n) > -1 : fcat === "mac" ? f.sys === "mac" || f.sys === "both" : fcat === "win" ? f.sys === "win" || f.sys === "both" : f.c === fcat);
+  flist = FONTS.filter((f) => inCat(f) && (!q || f.n.toLowerCase().indexOf(q) > -1));
   fpage = 0;
 }
 function renderList() {
@@ -163,7 +171,7 @@ function renderList() {
   const star = (f) => '<button class="fstar" type="button" aria-pressed="' + (favs.indexOf(f.n) > -1) + '" aria-label="Favourite ' + esc(f.n) + '">★</button>';
   box.innerHTML = items.length ? items.map((f) => tiles
       ? '<div class="ftile" role="option" data-n="' + esc(f.n) + '" aria-selected="' + (picked === f.n) + '"><button class="fsel" type="button"><span class="aa" style="' + fontCss(f.n) + '">Aa</span><span class="nm">' + esc(f.n) + "</span></button>" + star(f) + "</div>"
-      : '<div class="fitem" role="option" data-n="' + esc(f.n) + '" aria-selected="' + (picked === f.n) + '"><button class="fsel" type="button"><span style="' + fontCss(f.n) + '">' + esc(f.n) + "</span><small>" + CATS[f.c] + "</small></button>" + star(f) + "</div>").join("")
+      : '<div class="fitem" role="option" data-n="' + esc(f.n) + '" aria-selected="' + (picked === f.n) + '"><button class="fsel" type="button"><span style="' + fontCss(f.n) + '">' + esc(f.n) + "</span><small>" + (f.sys ? WHERE[f.sys] + " only" : CATS[f.c]) + "</small></button>" + star(f) + "</div>").join("")
     : '<div class="fnone">' + (fcat === "fav" && !fq ? "No favourites yet. Press the star beside any font to keep it here." : "No font matches that. Check the spelling or try a shorter search.") + "</div>";
   each("[data-n]", (el) => (io ? io.observe(el) : ensureFont(el.dataset.n)), box);
   box.scrollTop = 0;
@@ -191,7 +199,7 @@ function setSlot(slot) {
   filterFonts(); if (!drop.hidden) renderList(); renderPair();
 }
 function renderCats() {
-  $("fcats").innerHTML = [["all", "All"]].concat(Object.keys(CATS).map((k) => [k, CATS[k]]), [["fav", "★ Favourites" + (favs.length ? " (" + favs.length + ")" : "")]])
+  $("fcats").innerHTML = [["all", "All"]].concat(Object.keys(CATS).map((k) => [k, CATS[k]]), [["mac", "Apple fonts"], ["win", "Windows fonts"], ["fav", "★ Favourites" + (favs.length ? " (" + favs.length + ")" : "")]])
     .map((c) => '<button class="btn small" data-c="' + c[0] + '" aria-pressed="' + (fcat === c[0]) + '" type="button">' + c[1] + "</button>").join("");
 }
 function toggleFav(n) {
@@ -259,7 +267,8 @@ $("fsurprise").onclick = () => {
 function renderPair() {
   const chip = (slot, n) => { ensureFont(n); return '<button class="btn small" type="button" data-slot="' + slot + '" data-n="' + esc(n) + '" aria-pressed="' + (S.fonts[slot] === n) + '" style="' + fontCss(n) + '">' + esc(n) + "</button>"; };
   const sample = esc($("fsample").value || "Welcome to Fine-log");
-  const row = (slot, ex) => '<button type="button" class="slotrow' + (fslot === slot ? " on" : "") + '" data-row="' + slot + '" aria-pressed="' + (fslot === slot) + '"><span class="who"><span>' + SLOT[slot] + "</span><b>" + esc(S.fonts[slot]) + "</b></span>" + ex + '<span class="tagc">' + (fslot === slot ? "Choosing" : "Change") + "</span></button>";
+  const sysNote = (n) => { const f = info(n); return f && f.sys ? '<i class="sysn">' + WHERE[f.sys] + " only</i>" : ""; };
+  const row = (slot, ex) => '<button type="button" class="slotrow' + (fslot === slot ? " on" : "") + '" data-row="' + slot + '" aria-pressed="' + (fslot === slot) + '"><span class="who"><span>' + SLOT[slot] + "</span><b>" + esc(S.fonts[slot]) + "</b>" + sysNote(S.fonts[slot]) + "</span>" + ex + '<span class="tagc">' + (fslot === slot ? "Choosing" : "Change") + "</span></button>";
   $("pair").innerHTML =
     row("head", '<span class="ex1" style="' + fontCss(S.fonts.head, true) + '">' + sample + "</span>") +
     row("body", '<span class="ex2" style="' + fontCss(S.fonts.body) + '">This is how paragraphs, buttons and labels will read in your design.</span>') +

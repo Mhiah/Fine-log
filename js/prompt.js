@@ -25,14 +25,25 @@
   function fontsUrl(S, info) {
     var seen = {}, parts = [];
     [[S.fonts.head, true], [S.fonts.body, true], [S.fonts.mono, false]].forEach(function (p) {
-      var f = info(p[0]); if (!f || seen[f.n]) return; seen[f.n] = 1;
+      var f = info(p[0]); if (!f || f.sys || seen[f.n]) return; seen[f.n] = 1;
       var spec = "";
       if (f.v) { var it = f.v.charAt(0) === "i", w = f.v.replace("i", ""); spec = it ? ":ital,wght@1," + w : ":wght@" + w; }
       else if (f.b) spec = ":wght@400;700";
       parts.push("family=" + encodeURIComponent(f.n).replace(/%20/g, "+") + spec);
     });
-    return "https://fonts.googleapis.com/css2?" + parts.join("&") + "&display=swap";
+    return parts.length ? "https://fonts.googleapis.com/css2?" + parts.join("&") + "&display=swap" : "";
   }
+  /* plain-language notes about fonts that are built into devices rather than downloaded */
+  var WHERE = { mac: "Apple devices (Mac, iPhone, iPad)", win: "Windows", both: "Apple devices and Windows" }, GEN = { s: "sans-serif", e: "serif", d: "sans-serif", h: "cursive", m: "monospace" };
+  function sysLines(S, info) {
+    var out = [], seen = {};
+    [S.fonts.head, S.fonts.body, S.fonts.mono].forEach(function (n) { var f = info(n); if (!f || !f.sys || seen[f.n]) return; seen[f.n] = 1;
+      out.push(f.n + " is a system font built into " + WHERE[f.sys] + ". Do not download it or look for it on Google Fonts. Use the CSS font-family " + (f.css || "\"" + f.n + "\"") + ", " + GEN[f.c] + " so other devices fall back to their own " + GEN[f.c] + " font."); });
+    return out;
+  }
+  FL.sysLines = sysLines;
+  function fontLoadLines(S, info) { var u = fontsUrl(S, info), l = sysLines(S, info); if (u) l.unshift("Load the fonts from Google Fonts: " + u); return l; }
+  function stack(S, info, slot) { var f = info(S.fonts[slot]); return (f && f.css ? f.css : "\"" + S.fonts[slot] + "\"") + ", " + (f ? GEN[f.c] : "sans-serif"); }
   FL.fontsUrl = fontsUrl;
 
   function headWeight(S, info) { var f = info(S.fonts.head); return f && f.v ? f.v.replace("i", "") : f && f.b ? "700" : "400"; }
@@ -45,7 +56,7 @@
       "  --color-bg: " + c.bg + ";\n  --color-surface: " + c.surface + ";\n  --color-text: " + c.text + ";\n  --color-muted: " + c.muted + ";\n" +
       "  --color-primary: " + c.primary + ";\n  --color-on-primary: " + FL.onColor(c.primary) + ";\n  --color-secondary: " + c.secondary + ";\n  --color-on-secondary: " + FL.onColor(c.secondary) + ";\n" +
       "  --color-accent: " + c.accent + ";\n  --color-on-accent: " + FL.onColor(c.accent) + ";\n  --color-border: " + c.border + ";\n\n" +
-      "  --font-heading: \"" + S.fonts.head + "\", sans-serif;\n  --font-body: \"" + S.fonts.body + "\", sans-serif;\n  --font-mono: \"" + S.fonts.mono + "\", monospace;\n" +
+      "  --font-heading: " + stack(S, info, "head") + ";\n  --font-body: " + stack(S, info, "body") + ";\n  --font-mono: " + stack(S, info, "mono") + ";\n" +
       "  --font-size-base: " + sh.size[S.shape.size].v + "px;\n  --heading-weight: " + headWeight(S, info) + ";\n  --heading-letter-spacing: " + sh.spacing[S.shape.spacing].v + ";\n\n" +
       "  --radius-card: " + sh.radius[S.shape.radius].r + "px;\n  --radius-button: " + sh.radius[S.shape.radius].rb + ";\n  --shadow-card: " + sh.shadow[S.shape.shadow].v + ";\n" +
       "  --space-card: " + sh.density[S.shape.density].pad + "px;\n  --space-gap: " + sh.density[S.shape.density].gap + "px;\n}";
@@ -98,7 +109,7 @@
         ? "Restyle my existing project" + (brief ? " (" + brief + ")" : "") + " to the design system below. Change presentation only. Keep all content, routes, APIs, business logic, wallet or payment integrations and working functionality exactly as they are."
         : (brief ? "Build this: " + brief + ". Use" : "Build " + tpl.what + " using") + " the design system below, laid out as " + tpl.what + ".") +
         "\n\nDo not substitute any font or colour.\n\n" +
-        "Fonts (Google Fonts): headings " + S.fonts.head + " at weight " + hw + ", body " + S.fonts.body + " at " + base + "px, numbers and code " + S.fonts.mono + ".\n" +
+        "Fonts: headings " + S.fonts.head + " at weight " + hw + ", body " + S.fonts.body + " at " + base + "px, numbers and code " + S.fonts.mono + ". " + fontLoadLines(S, info).join(" ") + "\n" +
         "Colours: " + tokenLines.join("; ") + ".\n" +
         "Shape: card radius " + rad.r + "px, button radius " + rad.rb + ", card shadow " + sh.shadow[S.shape.shadow].label.toLowerCase() + ", " + den.label.toLowerCase() + " spacing (" + den.pad + "px card padding, " + den.gap + "px gaps), heading letter-spacing " + sh.spacing[S.shape.spacing].v + ".\n" +
         "Layout: " + tpl.structure.map(function (s) { return s.split(":")[0]; }).join(", ").toLowerCase() + ".\n\n" +
@@ -134,10 +145,9 @@
       "Headings: " + S.fonts.head + ", weight " + hw + ", letter-spacing " + sh.spacing[S.shape.spacing].v + ", line-height 1.1.",
       "Body text, labels and buttons: " + S.fonts.body + ", weight 400 (600 for buttons and emphasis), base size " + base + "px, line-height 1.5.",
       "Numbers, prices, dates, code and anything that must line up: " + S.fonts.mono + " with tabular figures.",
-      "Load the fonts from Google Fonts: " + fontsUrl(S, info),
       "Type scale from the " + base + "px base: display " + Math.round(base * 3.4) + "px, page title " + Math.round(base * 2.1) + "px, section heading " + Math.round(base * 1.5) + "px, card heading " + Math.round(base * 1.25) + "px, small text " + Math.round(base * 0.84) + "px.",
       "Balance multi-line headings and keep paragraphs under about 65 characters wide."
-    ]));
+    ].concat(fontLoadLines(S, info))));
 
     out.push("COLOUR TOKENS\n" + list([
       "Background " + c.bg + ": the page background.",
