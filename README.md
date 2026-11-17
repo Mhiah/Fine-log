@@ -30,11 +30,18 @@ A centred headline, two buttons, three numbers and a live preview of the design 
 
 All 1,908 families in the Google Fonts library.
 
-- Search by name, filter by style (sans serif, serif, display, handwriting, monospace) and type your own sample text.
-- Set any font as the heading font or body font. Monospace fonts can also be set as the numbers font.
-- A pairing strip shows your three current fonts and suggests body and number fonts that go with your heading font.
+- **Heading, Body, Numbers.** One box shows the three fonts of your design with a live sample of each. Click a row to select it.
+- **Choose a font.** A dropdown lists every font in its own style, 100 at a time, with Show more and Show less. Typing a name filters the list. Choosing a font applies it straight away to the selected row.
+- **Try before you click.** With a mouse, pointing at a font shows it in the selected row without changing the design.
+- **List or tiles.** The dropdown can show fonts as a list or as large "Aa" tiles.
+- **Favourites.** Star any font to keep it under a Favourites filter. Favourites stay in the browser.
+- **Ready-made combinations.** Eight heading, body and numbers trios that apply in one click.
+- **Surprise me.** Picks a random combination from the curated fonts.
+- **Style filters** (sans serif, serif, display, handwriting, monospace) and your own sample text.
 
-Fonts load only when their card scrolls into view, so the page stays fast with the full library behind it.
+The Numbers font is used wherever digits appear in a design, such as prices, dates and tables, so columns line up.
+
+Fonts load only when they come into view in the list, so the page stays fast with the full library behind it.
 
 ### 2. Colours
 
