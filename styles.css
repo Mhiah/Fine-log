@@ -825,3 +825,7 @@ a.brand{color:var(--ink);text-decoration:none;cursor:pointer}
 .pair .slotrow.previewing .who b::after{content:" (trying)";font-weight:400;color:var(--muted)}
 
 .pair .slotrow .who .sysn{font-style:normal;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px;justify-self:start;background:var(--card)}
+
+/* font filters live inside the open list */
+.fbar{display:flex;gap:6px;flex-wrap:wrap;padding:8px;border-bottom:1px solid var(--line)}
+.fview{justify-content:flex-end}
