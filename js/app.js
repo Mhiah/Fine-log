@@ -444,10 +444,11 @@ function syncCustom() {
 }
 function openCustom(jump) {
   buildCustom(); $("custbody").hidden = false; $("custbar").setAttribute("aria-expanded", "true");
+  document.documentElement.classList.add("dock-on");
   if (jump) { const y = $("custom").getBoundingClientRect().top + window.scrollY - (window.innerWidth > 860 ? 96 : 84); window.scrollTo({ top: y, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); }
 }
 $("custgo").onclick = () => openCustom(true);
-$("custbar").onclick = () => { const open = $("custbody").hidden; if (open) buildCustom(); $("custbody").hidden = !open; $("custbar").setAttribute("aria-expanded", open); };
+$("custbar").onclick = () => { const open = $("custbody").hidden; if (open) buildCustom(); $("custbody").hidden = !open; $("custbar").setAttribute("aria-expanded", open); document.documentElement.classList.toggle("dock-on", open); };
 $("custtabs").addEventListener("click", function (e) {
   const b = e.target.closest("[data-ct]"); if (!b) return;
   each("button", (x) => x.setAttribute("aria-pressed", x === b), this);

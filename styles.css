@@ -1232,3 +1232,9 @@ a.brand{color:var(--ink);text-decoration:none;cursor:pointer}
   .top nav{flex:1;justify-content:space-evenly;margin-left:clamp(20px,6vw,120px)}
 }
 @media (min-width:861px){.heroprev{max-width:none}}
+
+/* bottom bar: only while Customise is open */
+.dock{transform:translateY(110%);visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
+html.dock-on .dock{transform:none;visibility:visible;transition:transform .22s ease}
+body{padding-bottom:24px}
+html.dock-on body{padding-bottom:96px}
