@@ -106,7 +106,15 @@ All names, figures and addresses in them are invented sample content, including 
 - **Crypto look:** show only the minimal, detailed, colourful or dark crypto designs.
 - **Their own style / My fonts and colours:** a switch above the cards. In the first mode, choosing a design applies its fonts, colours and shape, which you can then change. In the second, all 100 are redrawn in your picks and choosing one changes only the layout.
 
-Controls above the preview:
+Above the preview sits one bar, **Customise this design**. It stays closed until you open it, and it holds three tabs so you can change a design while looking at it:
+
+- **Fonts:** a box each for the heading, body and numbers font. Start typing a name and pick from the list of all fonts, or tap a ready-made combination.
+- **Colours:** a colour picker with its hex code for background, text, primary, secondary and accent, plus the ready-made palettes.
+- **Layout:** the settings below.
+
+The Fonts and Colours screens are still there for browsing the full catalog, copying names and hex codes, and the finer colour tools.
+
+Layout settings:
 
 - **View:** desktop or mobile. Templates respond to their own width, so the mobile view is the real small-screen layout.
 - **Corners:** sharp, soft or round.

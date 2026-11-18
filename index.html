@@ -107,7 +107,28 @@
     <div class="libmode" id="libmode" role="group" aria-label="How designs are shown"></div>
     <div class="libmode" id="lookf" role="group" aria-label="Filter crypto designs by look"></div>
     <div class="gallery" id="gallery"></div>
-    <div class="tools" id="tools"></div>
+    <div class="custom" id="custom">
+      <button class="custbar" id="custbar" type="button" aria-expanded="false" aria-controls="custbody"><b>Customise this design</b><span id="custsum"></span><i aria-hidden="true"></i></button>
+      <div class="custbody" id="custbody" hidden>
+        <div class="custtabs" id="custtabs" role="group" aria-label="What to change">
+          <button class="btn small" type="button" data-ct="fonts" aria-pressed="true">Fonts</button>
+          <button class="btn small" type="button" data-ct="colours" aria-pressed="false">Colours</button>
+          <button class="btn small" type="button" data-ct="layout" aria-pressed="false">Layout</button>
+        </div>
+        <div class="custpane" id="cp-fonts">
+          <div class="cfonts" id="cfonts"></div>
+          <span class="cplab">Ready-made combinations</span>
+          <div class="cchips" id="ctrios"></div>
+        </div>
+        <div class="custpane" id="cp-colours" hidden>
+          <div class="ccols" id="ccols"></div>
+          <span class="cplab">Ready-made palettes</span>
+          <div class="cchips" id="cpals"></div>
+        </div>
+        <div class="custpane tools" id="tools" hidden></div>
+      </div>
+    </div>
+    <datalist id="fontdl"></datalist>
     <div class="frame main" id="pvframe" data-mode="desktop"><div id="pvinner"></div></div>
   </section>
 

@@ -1182,3 +1182,40 @@ a.brand{color:var(--ink);text-decoration:none;cursor:pointer}
 .cx .abt{margin:8px 0 12px}
 .cx .mv .rowb>b{font-size:.92em}
 .tpl[data-look="dark"] .bal,.tpl[data-look="dark"] .vp,.tpl[data-look="dark"] .kp.best{background:var(--t-primary);border-color:transparent}
+
+/* customise panel in the UI Library */
+.custom{border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:14px;overflow:hidden}
+.custbar{display:flex;align-items:center;gap:12px;width:100%;padding:13px 16px;background:none;border:0;text-align:left;font-size:15px;min-height:50px;cursor:pointer}
+.custbar b{font-weight:600;white-space:nowrap}
+.custbar span{display:flex;align-items:center;gap:5px;margin-left:auto;min-width:0;color:var(--muted);font-size:13px}
+.custbar span em{font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:5px}
+.custbar span u{width:14px;height:14px;border-radius:50%;border:1px solid rgba(128,128,128,.3);flex:none}
+.custbar i{width:9px;height:9px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin:-4px 4px 0 6px;flex:none;transition:transform .15s ease}
+.custbar[aria-expanded="true"] i{transform:rotate(-135deg);margin-top:4px}
+.custbody{border-top:1px solid var(--line);padding:14px 16px 16px}
+.custtabs{display:flex;gap:6px;margin-bottom:14px}
+.custtabs .btn{flex:1;min-height:38px;font-size:14px}
+.custpane.tools{margin-bottom:0}
+.cfonts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.cfrow{display:grid;gap:5px}.cfrow>span,.cplab{font-size:12px;color:var(--muted)}
+.cfrow .field{min-height:42px;padding:9px 12px;font-size:16px}
+.cplab{display:block;margin:14px 0 7px}
+.cchips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}.cchips::-webkit-scrollbar{display:none}
+.cchips .btn{white-space:nowrap;flex:none;font-size:15px;min-height:38px}
+.ccols{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.ccrow{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;cursor:pointer;min-width:0}
+.ccrow input{width:36px;height:36px;border:0;padding:0;background:none;border-radius:8px;flex:none;cursor:pointer}
+.ccrow input::-webkit-color-swatch-wrapper{padding:0}.ccrow input::-webkit-color-swatch{border:1px solid rgba(128,128,128,.3);border-radius:8px}
+.ccrow span{display:grid;min-width:0}.ccrow b{font-size:13px;font-weight:600}.ccrow code{font-size:12px;color:var(--muted)}
+.cpal{display:flex;width:74px;height:38px;border-radius:10px;overflow:hidden;border:1px solid rgba(128,128,128,.3);padding:0;flex:none;cursor:pointer;background:none}
+.cpal u{flex:1}.cpal u:first-child{flex:2}
+@media (max-width:860px){.cfonts{grid-template-columns:1fr}.cfrow{grid-template-columns:84px minmax(0,1fr);align-items:center}.ccols{grid-template-columns:repeat(2,minmax(0,1fr))}.custbar span em{display:none}}
+.custpane[hidden]{display:none!important}
+@media (max-width:860px){
+  .custpane.tools{display:grid;gap:9px}
+  .custpane.tools .grp{grid-template-columns:66px minmax(0,1fr);align-items:center;gap:8px}
+  .custpane.tools .grp>span{line-height:1.2}
+  .custpane.tools .seg{flex-wrap:nowrap}
+  .custpane.tools .btn.small{padding:5px 8px;font-size:12px;min-height:34px;white-space:nowrap}
+  .custpane.tools .seg{gap:4px}
+}

@@ -422,6 +422,42 @@ function renderTools() {
   $("tools").innerHTML = grp("View", "view", [["desktop", "Desktop"], ["mobile", "Mobile"]], S.view) + grp("Corners", "radius", opt("radius"), S.shape.radius) + grp("Shadows", "shadow", opt("shadow"), S.shape.shadow) +
     grp("Spacing", "density", opt("density"), S.shape.density) + grp("Heading spacing", "spacing", opt("spacing"), S.shape.spacing) + grp("Text size", "size", opt("size"), S.shape.size);
 }
+/* customise panel: fonts, colours and layout beside the preview */
+const CCOL = [["bg", "Background"], ["text", "Text"], ["primary", "Primary"], ["secondary", "Secondary"], ["accent", "Accent"]];
+let custBuilt = false;
+function buildCustom() {
+  if (custBuilt) return; custBuilt = true;
+  $("fontdl").innerHTML = FONTS.map((f) => '<option value="' + esc(f.n) + '">').join("");
+  $("cfonts").innerHTML = ["head", "body", "mono"].map((k) => '<label class="cfrow"><span>' + SLOT[k] + '</span><input class="field" type="text" list="fontdl" data-cf="' + k + '" autocomplete="off" autocapitalize="words" spellcheck="false" aria-label="' + SLOT[k] + ' font"></label>').join("");
+  $("ccols").innerHTML = CCOL.map((c) => '<label class="ccrow"><input type="color" data-cc="' + c[0] + '" aria-label="' + c[1] + ' colour"><span><b>' + c[1] + '</b><code data-ch="' + c[0] + '"></code></span></label>').join("");
+  $("ctrios").innerHTML = TRIOS.map((t, i) => '<button class="btn small" type="button" data-trio="' + i + '" style="' + fontCss(t[0], true) + '">' + esc(t[0]) + "</button>").join("");
+  $("cpals").innerHTML = PALETTES.map((p, i) => '<button class="cpal" type="button" data-pal="' + i + '" title="' + esc(p[0]) + '" aria-label="' + esc(p[0]) + '">' + p.slice(1).map((x) => '<u style="background:' + x + '"></u>').join("") + "</button>").join("");
+  syncCustom();
+}
+function syncCustom() {
+  $("custsum").innerHTML = '<em style="' + fontCss(S.fonts.head, true) + '">' + esc(S.fonts.head) + "</em>" + ["bg", "primary", "secondary", "accent"].map((k) => '<u style="background:' + S.colors[k] + '"></u>').join("");
+  if (!custBuilt) return;
+  each("#cfonts [data-cf]", (i) => { if (document.activeElement !== i) i.value = S.fonts[i.dataset.cf]; });
+  each("#ccols [data-cc]", (i) => { if (document.activeElement !== i) i.value = S.colors[i.dataset.cc].toLowerCase(); });
+  each("#ccols [data-ch]", (c) => { c.textContent = S.colors[c.dataset.ch]; });
+  each("#ctrios [data-trio]", (b) => { const t = TRIOS[+b.dataset.trio]; b.setAttribute("aria-pressed", S.fonts.head === t[0] && S.fonts.body === t[1] && S.fonts.mono === t[2]); });
+}
+$("custbar").onclick = () => { const open = $("custbody").hidden; if (open) buildCustom(); $("custbody").hidden = !open; $("custbar").setAttribute("aria-expanded", open); };
+$("custtabs").addEventListener("click", function (e) {
+  const b = e.target.closest("[data-ct]"); if (!b) return;
+  each("button", (x) => x.setAttribute("aria-pressed", x === b), this);
+  $("cp-fonts").hidden = b.dataset.ct !== "fonts"; $("cp-colours").hidden = b.dataset.ct !== "colours"; $("tools").hidden = b.dataset.ct !== "layout";
+});
+function custFont(i) { const f = info(i.value.trim()); if (!f || S.fonts[i.dataset.cf] === f.n) return; S.fonts[i.dataset.cf] = f.n; ensureFont(f.n); apply(); }
+$("cfonts").addEventListener("input", (e) => { if (e.target.dataset.cf) custFont(e.target); });
+$("cfonts").addEventListener("change", (e) => { if (e.target.dataset.cf) { custFont(e.target); e.target.value = S.fonts[e.target.dataset.cf]; } });
+$("cfonts").addEventListener("focusin", (e) => { if (e.target.dataset.cf) e.target.select(); });
+$("ccols").addEventListener("input", (e) => {
+  const k = e.target.dataset.cc; if (!k) return; S.colors[k] = e.target.value.toUpperCase(); if (k in S.auto) S.auto[k] = false;
+  apply(); if (target === k) setCur(S.colors[k], null, true);
+});
+$("ctrios").addEventListener("click", (e) => { const b = e.target.closest("[data-trio]"); if (b) setTrio(TRIOS[+b.dataset.trio]); });
+$("cpals").addEventListener("click", (e) => { const b = e.target.closest("[data-pal]"); if (b) applyPalette(PALETTES[+b.dataset.pal]); });
 $("tools").addEventListener("click", (e) => { const b = e.target.closest("[data-k]"); if (!b) return; if (b.dataset.k === "view") S.view = b.dataset.v; else S.shape[b.dataset.k] = b.dataset.v; apply(); });
 $("gallery").addEventListener("click", (e) => {
   const b = e.target.closest("[data-tpl]"); if (!b) return; const d = designOf(b.dataset.tpl); S.tpl = d.id; S.look = d.look || "";
@@ -429,7 +465,7 @@ $("gallery").addEventListener("click", (e) => {
     const st = styleState(d.style); S.fonts = st.fonts; S.shape = st.shape;
     ["bg", "text", "primary", "secondary", "accent"].forEach((k) => { S.colors[k] = st.colors[k]; });
     S.auto = { surface: true, muted: true, border: true, secondary: false, accent: false };
-    toast(d.name + " applied with its own fonts and colours. Change them under Fonts and Colours.");
+    toast(d.name + " applied with its own fonts and colours. Open Customise to change them.");
   } else toast(d.name + " applied with your fonts and colours.");
   apply(); if (target) setCur(S.colors[target], null, true);
 });
@@ -473,7 +509,7 @@ function syncSegs() {
 function apply() {
   FL.derive(S.colors, S.auto);
   ["head", "body", "mono"].forEach((k) => ensureFont(S.fonts[k]));
-  setVars(); renderRoles(); renderPair(); syncSegs(); renderPreview(); renderExport(); markFonts();
+  setVars(); renderRoles(); renderPair(); syncSegs(); renderPreview(); renderExport(); markFonts(); syncCustom();
   $("dockaa").style.cssText = fontCss(S.fonts.head, true) + ";background:" + S.colors.bg + ";color:" + S.colors.text;
   $("dockfonts").textContent = S.fonts.head === S.fonts.body ? S.fonts.head : S.fonts.head + " + " + S.fonts.body;
   $("dockcols").innerHTML = ["bg", "text", "primary", "accent"].map((k) => '<i style="background:' + S.colors[k] + '" title="' + k + " " + S.colors[k] + '"></i>').join("") + ["primary", "accent", "surface", "bg"].map((k) => "<span>" + S.colors[k] + "</span>").join("");
