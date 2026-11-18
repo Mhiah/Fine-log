@@ -1219,3 +1219,10 @@ a.brand{color:var(--ink);text-decoration:none;cursor:pointer}
   .custpane.tools .btn.small{padding:5px 8px;font-size:12px;min-height:34px;white-space:nowrap}
   .custpane.tools .seg{gap:4px}
 }
+/* design filters: wrap on computers so none are cut off; on phones they scroll sideways with a fade as the hint */
+@media (min-width:861px){.filters{flex-wrap:wrap;overflow:visible;row-gap:6px}}
+@media (max-width:860px){.filters{padding-right:36px;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent)}}
+@media (min-width:861px){
+  .libhead .filters{width:100%;gap:2px;justify-content:space-between}
+  .filters button{padding:8px clamp(6px,.75vw,13px);font-size:clamp(12.5px,1.05vw,15px)}
+}
