@@ -1226,3 +1226,9 @@ a.brand{color:var(--ink);text-decoration:none;cursor:pointer}
   .libhead .filters{width:100%;gap:2px;justify-content:space-between}
   .filters button{padding:8px clamp(6px,.75vw,13px);font-size:clamp(12.5px,1.05vw,15px)}
 }
+/* top bar: same width as the page content on computers, with the menu spread across it */
+@media (min-width:861px){
+  .top{max-width:none}
+  .top nav{flex:1;justify-content:space-evenly;margin-left:clamp(20px,6vw,120px)}
+}
+@media (min-width:861px){.heroprev{max-width:none}}
