@@ -442,6 +442,11 @@ function syncCustom() {
   each("#ccols [data-ch]", (c) => { c.textContent = S.colors[c.dataset.ch]; });
   each("#ctrios [data-trio]", (b) => { const t = TRIOS[+b.dataset.trio]; b.setAttribute("aria-pressed", S.fonts.head === t[0] && S.fonts.body === t[1] && S.fonts.mono === t[2]); });
 }
+function openCustom(jump) {
+  buildCustom(); $("custbody").hidden = false; $("custbar").setAttribute("aria-expanded", "true");
+  if (jump) { const y = $("custom").getBoundingClientRect().top + window.scrollY - (window.innerWidth > 860 ? 96 : 84); window.scrollTo({ top: y, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); }
+}
+$("custgo").onclick = () => openCustom(true);
 $("custbar").onclick = () => { const open = $("custbody").hidden; if (open) buildCustom(); $("custbody").hidden = !open; $("custbar").setAttribute("aria-expanded", open); };
 $("custtabs").addEventListener("click", function (e) {
   const b = e.target.closest("[data-ct]"); if (!b) return;
@@ -465,9 +470,10 @@ $("gallery").addEventListener("click", (e) => {
     const st = styleState(d.style); S.fonts = st.fonts; S.shape = st.shape;
     ["bg", "text", "primary", "secondary", "accent"].forEach((k) => { S.colors[k] = st.colors[k]; });
     S.auto = { surface: true, muted: true, border: true, secondary: false, accent: false };
-    toast(d.name + " applied with its own fonts and colours. Open Customise to change them.");
+    toast(d.name + " applied with its own fonts and colours. Change them here.");
   } else toast(d.name + " applied with your fonts and colours.");
   apply(); if (target) setCur(S.colors[target], null, true);
+  openCustom(true);
 });
 $("filters").addEventListener("click", function (e) {
   const b = e.target.closest("[data-v]"); if (!b) return; libCat = b.dataset.v;
