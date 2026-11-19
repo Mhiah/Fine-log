@@ -1238,3 +1238,7 @@ a.brand{color:var(--ink);text-decoration:none;cursor:pointer}
 html.dock-on .dock{transform:none;visibility:visible;transition:transform .22s ease}
 body{padding-bottom:24px}
 html.dock-on body{padding-bottom:96px}
+
+/* section descriptions: smaller, and one straight line on computers */
+.sub{font-size:14px;max-width:none}
+.libhead>div{min-width:0;flex:1 1 100%}
