@@ -429,8 +429,7 @@ const CCOL = [["bg", "Background"], ["text", "Text"], ["primary", "Primary"], ["
 let custBuilt = false;
 function buildCustom() {
   if (custBuilt) return; custBuilt = true;
-  $("fontdl").innerHTML = FONTS.map((f) => '<option value="' + esc(f.n) + '">').join("");
-  $("cfonts").innerHTML = ["head", "body", "mono"].map((k) => '<label class="cfrow"><span>' + SLOT[k] + '</span><input class="field" type="text" list="fontdl" data-cf="' + k + '" autocomplete="off" autocapitalize="words" spellcheck="false" aria-label="' + SLOT[k] + ' font"></label>').join("");
+  $("cfonts").innerHTML = ["head", "body", "mono"].map((k) => '<div class="cfrow"><span>' + SLOT[k] + '</span><div class="cfbox"><input class="field" type="text" data-cf="' + k + '" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="cfdrop-' + k + '" aria-label="' + SLOT[k] + ' font"><button class="cfopen" type="button" tabindex="-1" data-cfo="' + k + '" aria-label="Show all fonts"></button><div class="cfdrop" id="cfdrop-' + k + '" role="listbox" hidden></div></div></div>').join("");
   $("ccols").innerHTML = CCOL.map((c) => '<label class="ccrow"><input type="color" data-cc="' + c[0] + '" aria-label="' + c[1] + ' colour"><span><b>' + c[1] + '</b><code data-ch="' + c[0] + '"></code></span></label>').join("");
   $("ctrios").innerHTML = TRIOS.map((t, i) => '<button class="btn small" type="button" data-trio="' + i + '" style="' + fontCss(t[0], true) + '">' + esc(t[0]) + "</button>").join("");
   $("cpals").innerHTML = PALETTES.map((p, i) => '<button class="cpal" type="button" data-pal="' + i + '" title="' + esc(p[0]) + '" aria-label="' + esc(p[0]) + '">' + p.slice(1).map((x) => '<u style="background:' + x + '"></u>').join("") + "</button>").join("");
@@ -456,10 +455,35 @@ $("custtabs").addEventListener("click", function (e) {
   each("button", (x) => x.setAttribute("aria-pressed", x === b), this);
   $("cp-fonts").hidden = b.dataset.ct !== "fonts"; $("cp-colours").hidden = b.dataset.ct !== "colours"; $("tools").hidden = b.dataset.ct !== "layout";
 });
-function custFont(i) { const f = info(i.value.trim()); if (!f || S.fonts[i.dataset.cf] === f.n) return; S.fonts[i.dataset.cf] = f.n; ensureFont(f.n); apply(); }
-$("cfonts").addEventListener("input", (e) => { if (e.target.dataset.cf) custFont(e.target); });
-$("cfonts").addEventListener("change", (e) => { if (e.target.dataset.cf) { custFont(e.target); e.target.value = S.fonts[e.target.dataset.cf]; } });
-$("cfonts").addEventListener("focusin", (e) => { if (e.target.dataset.cf) e.target.select(); });
+/* font boxes: a searchable list of every font, opened by a tap */
+const CFMAX = 5000; let cfOpen = null;
+function cfList(k, q) {
+  const d = $("cfdrop-" + k); q = (q || "").trim().toLowerCase();
+  const hit = q ? FONTS.filter((f) => f.n.toLowerCase().indexOf(q) > -1).sort((a, b) => (a.n.toLowerCase().indexOf(q) ? 1 : 0) - (b.n.toLowerCase().indexOf(q) ? 1 : 0)) : FONTS;
+  d.innerHTML = (hit.length ? hit.slice(0, CFMAX).map((f) => '<button type="button" role="option" data-fn="' + esc(f.n) + '" aria-selected="' + (S.fonts[k] === f.n) + '"><b>' + esc(f.n) + "</b><small>" + (f.sys ? WHERE[f.sys] : CATS[f.c] || "") + "</small></button>").join("") : '<p>No font with that name.</p>') +
+    (hit.length > CFMAX ? "<p>Showing " + CFMAX + " of " + hit.length.toLocaleString("en") + ". Type a name to narrow it down.</p>" : "");
+  if (!q) { const on = d.querySelector('[aria-selected="true"]'); if (on) d.scrollTop = on.offsetTop - 80; } else d.scrollTop = 0;
+}
+function cfShow(k, q) { if (cfOpen && cfOpen !== k) cfHide(); cfOpen = k; $("cfdrop-" + k).hidden = false; cfList(k, q); document.querySelector('[data-cf="' + k + '"]').setAttribute("aria-expanded", "true"); }
+function cfHide() { if (!cfOpen) return; const i = document.querySelector('[data-cf="' + cfOpen + '"]'); $("cfdrop-" + cfOpen).hidden = true; i.setAttribute("aria-expanded", "false"); i.value = S.fonts[cfOpen]; cfOpen = null; }
+function cfPick(k, n) { const f = info(n); if (!f) return; S.fonts[k] = f.n; ensureFont(f.n); cfHide(); apply(); }
+$("cfonts").addEventListener("focusin", (e) => { const k = e.target.dataset.cf; if (k) { e.target.select(); cfShow(k, ""); } });
+$("cfonts").addEventListener("input", (e) => { const k = e.target.dataset.cf; if (k) cfShow(k, e.target.value); });
+$("cfonts").addEventListener("pointerdown", (e) => { if (e.target.closest(".cfdrop")) e.preventDefault(); });
+$("cfonts").addEventListener("click", (e) => {
+  const o = e.target.closest("[data-fn]"); if (o) { cfPick(o.closest(".cfbox").querySelector("[data-cf]").dataset.cf, o.dataset.fn); document.activeElement.blur(); return; }
+  const b = e.target.closest("[data-cfo]"); if (b) { if (cfOpen === b.dataset.cfo) { cfHide(); document.activeElement.blur(); } else document.querySelector('[data-cf="' + b.dataset.cfo + '"]').focus(); return; }
+  const i = e.target.closest("[data-cf]"); if (i && cfOpen !== i.dataset.cf) cfShow(i.dataset.cf, "");
+});
+$("cfonts").addEventListener("keydown", (e) => {
+  const k = e.target.dataset.cf; if (!k) return; const d = $("cfdrop-" + k), all = [...d.querySelectorAll("[data-fn]")], cur = d.querySelector(".kb");
+  if (e.key === "Escape") { cfHide(); e.target.blur(); }
+  else if (e.key === "Enter") { e.preventDefault(); const t = cur || (e.target.value.trim() && all[0]); if (t) { cfPick(k, t.dataset.fn); e.target.blur(); } }
+  else if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); if (cfOpen !== k) cfShow(k, ""); if (!all.length) return;
+    let n = all.indexOf(cur); if (n < 0) n = all.indexOf(d.querySelector('[aria-selected="true"]')); n = Math.max(0, Math.min(all.length - 1, n + (e.key === "ArrowDown" ? 1 : -1)));
+    if (cur) cur.classList.remove("kb"); all[n].classList.add("kb"); all[n].scrollIntoView({ block: "nearest" }); }
+});
+$("cfonts").addEventListener("focusout", (e) => { if (e.target.dataset.cf) setTimeout(() => { if (cfOpen === e.target.dataset.cf && document.activeElement !== e.target) cfHide(); }, 120); });
 $("ccols").addEventListener("input", (e) => {
   const k = e.target.dataset.cc; if (!k) return; S.colors[k] = e.target.value.toUpperCase(); if (k in S.auto) S.auto[k] = false;
   apply(); if (target === k) setCur(S.colors[k], null, true);
