@@ -26,6 +26,8 @@ $("statTpl").textContent = DESIGNS.length;
 
 /* ---------- small helpers ---------- */
 let toastT;
+/* click confirmations are switched off; only copy results and errors still show a notice */
+function quiet() {}
 function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 1900); }
 function copy(text, ok) {
   const fail = () => toast("Copy is blocked here. Press and hold the text to copy it.");
@@ -208,7 +210,7 @@ function renderCats() {
 function toggleFav(n) {
   const i = favs.indexOf(n); if (i > -1) favs.splice(i, 1); else favs.push(n);
   try { localStorage.setItem("fl-favs", JSON.stringify(favs)); } catch (e) {}
-  renderCats(); toast(i > -1 ? n + " removed from favourites" : n + " added to favourites");
+  renderCats(); quiet(i > -1 ? n + " removed from favourites" : n + " added to favourites");
 }
 renderCats();
 $("fsearch").addEventListener("input", function () { fq = this.value.trim(); filterFonts(); openList(true); });
@@ -236,7 +238,7 @@ $("fless").onclick = () => { fpage = Math.max(0, fpage - 1); renderList(); };
 document.addEventListener("click", (e) => { if (!drop.hidden && !combo.contains(e.target)) openList(false); });
 $("fsample").addEventListener("input", () => { renderPair(); });
 $("fcats").addEventListener("click", function (e) { const b = e.target.closest("button"); if (!b) return; e.stopPropagation(); fcat = b.dataset.c; renderCats(); fq = ""; filterFonts(); openList(true); });
-function setFont(slot, name) { const f = info(name); if (!f) return; S.fonts[slot] = f.n; ensureFont(f.n); apply(); toast(SLOT[slot] + " font set to " + f.n); }
+function setFont(slot, name) { const f = info(name); if (!f) return; S.fonts[slot] = f.n; ensureFont(f.n); apply(); quiet(SLOT[slot] + " font set to " + f.n); }
 
 /* pairing suggestions: fixed, hand-picked rules */
 const PAIRS = {
@@ -254,7 +256,7 @@ const TRIOS = [
   ["Manrope", "DM Sans", "IBM Plex Mono"], ["Playfair Display", "Source Sans 3", "IBM Plex Mono"], ["Fraunces", "Work Sans", "DM Mono"], ["Space Grotesk", "Inter", "JetBrains Mono"],
   ["Bebas Neue", "Inter", "Space Mono"], ["DM Serif Display", "Karla", "DM Mono"], ["Bricolage Grotesque", "Instrument Sans", "DM Mono"], ["Syne", "Inter", "IBM Plex Mono"]
 ];
-function setTrio(t, msg) { S.fonts.head = t[0]; S.fonts.body = t[1]; S.fonts.mono = t[2]; apply(); if (msg) toast(msg); }
+function setTrio(t, msg) { S.fonts.head = t[0]; S.fonts.body = t[1]; S.fonts.mono = t[2]; apply(); if (msg) quiet(msg); }
 function renderTrios() {
   $("trios").innerHTML = TRIOS.map((t, i) => { t.forEach(ensureFont); const on = S.fonts.head === t[0] && S.fonts.body === t[1] && S.fonts.mono === t[2];
     return '<button class="trio" type="button" data-trio="' + i + '" aria-pressed="' + on + '"><b style="' + fontCss(t[0], true) + '">' + esc(t[0]) + '</b><span style="' + fontCss(t[1]) + '">with ' + esc(t[1]) + '</span><code style="' + fontCss(t[2]) + '">' + esc(t[2]) + " 0123</code></button>"; }).join("");
@@ -327,7 +329,7 @@ function renderRoles() {
 }
 $("roles").addEventListener("click", (e) => {
   const r = e.target.closest("[data-reset]"); if (r) { S.auto[r.dataset.reset] = true; apply(); if (target === r.dataset.reset) setCur(S.colors[target], null, true); return; }
-  const b = e.target.closest("[data-role]"); if (b) { setTarget(b.dataset.role); toast("Now changing " + b.querySelector("b").textContent + ". Move the sliders or tap a colour."); }
+  const b = e.target.closest("[data-role]"); if (b) { setTarget(b.dataset.role); quiet("Now changing " + b.querySelector("b").textContent + ". Move the sliders or tap a colour."); }
 });
 const HUES = [["Red", 2, 82], ["Orange", 24, 88], ["Amber", 40, 90], ["Yellow", 52, 90], ["Lime", 85, 70], ["Green", 140, 62], ["Teal", 172, 66], ["Cyan", 192, 80], ["Blue", 218, 84], ["Indigo", 240, 72], ["Violet", 268, 72], ["Pink", 328, 78], ["Neutral", 225, 7]];
 const STEPS = [95, 88, 78, 66, 54, 44, 34, 24, 13];
@@ -360,10 +362,10 @@ function buildColourStatic() {
   $("named").innerHTML = h;
 }
 $("colours").addEventListener("click", (e) => {
-  const p = e.target.closest("[data-pal]"); if (p) { applyPalette(PALETTES[+p.dataset.pal]); toast(PALETTES[+p.dataset.pal][0] + " applied"); return; }
+  const p = e.target.closest("[data-pal]"); if (p) { applyPalette(PALETTES[+p.dataset.pal]); quiet(PALETTES[+p.dataset.pal][0] + " applied"); return; }
   const b = e.target.closest("[data-hex]"); if (!b) return; setCur(b.dataset.hex);
   const role = FL.ROLES.filter((r) => r[0] === target)[0];
-  toast(role ? role[1] + " set to " + b.dataset.hex : b.dataset.hex + " selected");
+  quiet(role ? role[1] + " set to " + b.dataset.hex : b.dataset.hex + " selected");
 });
 
 /* ---------- live preview ---------- */
@@ -471,8 +473,8 @@ $("gallery").addEventListener("click", (e) => {
     const st = styleState(d.style); S.fonts = st.fonts; S.shape = st.shape;
     ["bg", "text", "primary", "secondary", "accent"].forEach((k) => { S.colors[k] = st.colors[k]; });
     S.auto = { surface: true, muted: true, border: true, secondary: false, accent: false };
-    toast(d.name + " applied with its own fonts and colours. Change them here.");
-  } else toast(d.name + " applied with your fonts and colours.");
+    quiet(d.name + " applied with its own fonts and colours. Change them here.");
+  } else quiet(d.name + " applied with your fonts and colours.");
   apply(); if (target) setCur(S.colors[target], null, true);
   openCustom(true);
 });
@@ -584,7 +586,7 @@ $("askex").onclick = suggest;
 $("examples").addEventListener("click", (e) => {
   const a = e.target.closest('[data-k="around"]'); if (a) { around = a.dataset.v; suggest(); return; }
   const b = e.target.closest("[data-ex]"); if (!b) return; const c = examples[+b.dataset.ex];
-  S.fonts.head = c.heading; S.fonts.body = c.body; applyPalette(c.pal); toast("Applied. See it in the UI Library.");
+  S.fonts.head = c.heading; S.fonts.body = c.body; applyPalette(c.pal); quiet("Applied. See it in the UI Library.");
 });
 
 /* ---------- export, share, saved ---------- */
@@ -606,7 +608,7 @@ $("savebtn").onclick = () => {
 };
 $("saved").addEventListener("click", (e) => {
   const o = e.target.closest("[data-open]"), d = e.target.closest("[data-del]"), a = getSaved();
-  if (o) { const st = decodeState(a[+o.dataset.open].code); if (st) { const keep = { view: S.view, prompt: S.prompt }; S = sanitize(Object.assign(st, keep)); apply(); if (target) setCur(S.colors[target], null, true); toast("Opened " + a[+o.dataset.open].name); } }
+  if (o) { const st = decodeState(a[+o.dataset.open].code); if (st) { const keep = { view: S.view, prompt: S.prompt }; S = sanitize(Object.assign(st, keep)); apply(); if (target) setCur(S.colors[target], null, true); quiet("Opened " + a[+o.dataset.open].name); } }
   if (d) { a.splice(+d.dataset.del, 1); putSaved(a); renderSaved(); }
 });
 
@@ -641,5 +643,5 @@ if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 if (TABS.indexOf(location.hash.slice(1)) > -1) { try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
 showTab("fonts"); window.scrollTo(0, 0);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => each(".frame", fitFrame));
-if (cameFromLink) { toast("Opened a shared design"); try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
+if (cameFromLink) { quiet("Opened a shared design"); try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
 })();
