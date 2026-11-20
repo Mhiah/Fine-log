@@ -111,7 +111,7 @@ A complete interface needs more than three colours, so Fine-log works with eight
 | Product box | A cube with front, side and top faces |
 | Cover gallery | Poster tiles fanned into a curve |
 
-The 3D is drawn with plain CSS transforms, so it shows in the previews with no 3D library. The prompt for these screens gives the angles and depths, and tells the AI it may build the same scene with a real 3D library and add gentle motion.
+The 3D is drawn and animated with plain CSS, so it shows and moves in the previews with no 3D library: the box turns, the rings orbit, the globe sweeps, cards and phones float, and bars grow from the floor. In the large preview the scene also leans toward your pointer. Library cards stay still until you point at them, and all movement stops for people who have asked their device for reduced motion. The prompt for these screens gives the angles and depths, and tells the AI it may build the same scene with a real 3D library and add gentle motion.
 
 All names, figures and addresses in them are invented sample content, including the companies on the stock screens. Token and ticker icons are plain letter badges, and chains are shown as a coloured square with the name; no coin, exchange, chain or company logos are used.
 

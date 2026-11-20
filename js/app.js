@@ -424,6 +424,12 @@ function renderTools() {
   $("tools").innerHTML = grp("View", "view", [["desktop", "Desktop"], ["mobile", "Mobile"]], S.view) + grp("Corners", "radius", opt("radius"), S.shape.radius) + grp("Shadows", "shadow", opt("shadow"), S.shape.shadow) +
     grp("Spacing", "density", opt("density"), S.shape.density) + grp("Heading spacing", "spacing", opt("spacing"), S.shape.spacing) + grp("Text size", "size", opt("size"), S.shape.size);
 }
+/* 3D screens lean toward the pointer in the big preview and the home preview */
+["pvinner", "heroinner"].forEach((id) => { const el = $(id); if (!el) return;
+  const set = (x, y) => each(".stg", (g) => { g.style.setProperty("--mx", x); g.style.setProperty("--my", y); }, el);
+  el.addEventListener("pointermove", (e) => { const r = el.getBoundingClientRect(); set(((e.clientX - r.left) / r.width * 2 - 1).toFixed(3), ((e.clientY - r.top) / r.height * 2 - 1).toFixed(3)); });
+  el.addEventListener("pointerleave", () => set(0, 0));
+});
 /* customise panel: fonts, colours and layout beside the preview */
 const CCOL = [["bg", "Background"], ["text", "Text"], ["primary", "Primary"], ["secondary", "Secondary"], ["accent", "Accent"]];
 let custBuilt = false;
