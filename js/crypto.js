@@ -506,4 +506,5 @@
   for (var r = 0; r < L.length; r++) for (var k = 0; k < 4; k++) order.push(out[((r + k * 3) % L.length) * 4 + k]);
   window.FL_DESIGNS = order.concat(D);
   window.FL_LOOKS = { minimal: "Minimal", rich: "Detailed", colour: "Colourful", dark: "Dark" };
+  window.FL_B = { tk: tk, side: side, top: top, kpi: kpi, spark: spark, chart: chart, donut: donut, legend: legend, bars: bars, up: up, dn: dn, tr: tr, A30: A30, B30: B30 };
 })();

@@ -57,7 +57,7 @@ A complete interface needs more than three colours, so Fine-log works with eight
 
 ### 3. UI Library
 
-100 ready-made designs built from 31 working layouts. Every card shows its design in its own fonts, colours and shape.
+120 ready-made designs built from 51 working layouts. Every card shows its design in its own fonts, colours and shape.
 
 **Crypto and markets screens (76 designs).** Nineteen original layouts, each in four looks: minimal, detailed, colourful and dark. Seventeen are crypto screens and two are stock screens.
 
@@ -83,6 +83,36 @@ A complete interface needs more than three colours, so Fine-log works with eight
 | Stock page | Price chart, key figures, about and news, buy and sell form, analyst view, your position |
 | Rewards | Points, rank, multiplier and streak, quests with progress, tier card, leaderboard |
 
+**Twenty more screens (20 designs).** Ten flat product screens and ten with 3D depth, each in its own style.
+
+| Flat screen | What is on it |
+| --- | --- |
+| Pricing | Three plans with the middle one highlighted, a comparison table, questions |
+| Checkout | Progress steps, contact, delivery and payment forms, order summary |
+| Onboarding | A question with six choice cards, a progress bar, a setup tracker |
+| Settings | Profile fields, notification switches, usage, a danger zone |
+| AI chat | Chat list, messages with a table and actions, suggestion chips, a composer |
+| Calendar | A month grid with event chips, today and coming up |
+| Profile | A cover band, avatar and stats, a grid of work |
+| Inbox | A notification list beside a reading pane |
+| Board | Four columns of task cards with owners and due dates |
+| Invoices | Stat cards, an invoice table with status badges, an invoice preview |
+
+| 3D screen | The 3D part |
+| --- | --- |
+| Floating dashboard | Dashboard cards tilted in perspective and layered at different depths |
+| Card stack | Three payment cards lying back and fanned |
+| Isometric analytics | A bar chart of solid blocks with top and side faces |
+| Orb landing | A lit sphere with two orbiting rings |
+| App showcase | Two phone mockups standing at opposite angles |
+| Collectible card | One card turned toward the viewer with a streak of light |
+| Network globe | A wireframe sphere with glowing node dots |
+| Layered stack | Four isometric slabs stacked with gaps |
+| Product box | A cube with front, side and top faces |
+| Cover gallery | Poster tiles fanned into a curve |
+
+The 3D is drawn with plain CSS transforms, so it shows in the previews with no 3D library. The prompt for these screens gives the angles and depths, and tells the AI it may build the same scene with a real 3D library and add gentle motion.
+
 All names, figures and addresses in them are invented sample content, including the companies on the stock screens. Token and ticker icons are plain letter badges, and chains are shown as a coloured square with the name; no coin, exchange, chain or company logos are used.
 
 **Other screens (24 designs).** Twelve layouts, each in two very different styles.
@@ -104,7 +134,7 @@ All names, figures and addresses in them are invented sample content, including 
 
 - **Filter row:** narrow the designs by type, with Crypto first.
 - **Crypto look:** show only the minimal, detailed, colourful or dark crypto designs.
-- **Their own style / My fonts and colours:** a switch above the cards. In the first mode, choosing a design applies its fonts, colours and shape, which you can then change. In the second, all 100 are redrawn in your picks and choosing one changes only the layout.
+- **Their own style / My fonts and colours:** a switch above the cards. In the first mode, choosing a design applies its fonts, colours and shape, which you can then change. In the second, all 120 are redrawn in your picks and choosing one changes only the layout.
 
 Above the preview sits one bar, **Customise this design**. It stays closed until you open it, and it holds three tabs so you can change a design while looking at it:
 
@@ -174,6 +204,7 @@ js/fonts.js         The Google Fonts family list (name, style, weights) and the 
 js/colour.js        Colour maths, the eight roles and how five are derived
 js/templates.js     Layout markup, structure notes used in prompts, signature styles and the first 24 designs
 js/crypto.js        The 19 crypto and stock layouts, their 12 styles and their 76 designs
+js/more.js          Twenty more layouts: ten flat product screens and ten with 3D depth
 js/prompt.js        Prompt generator and CSS, Tailwind and token exports
 js/app.js           State, font library, colour tools, preview, sharing
 README.md           This file
